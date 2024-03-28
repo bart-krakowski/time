@@ -12,7 +12,7 @@ export const packages = [
     name: '@tanstack/time',
     packageDir: 'packages/time',
   },
-  {
+  /* {
     name: '@tanstack/react-time',
     packageDir: 'packages/react-time',
   },
@@ -28,10 +28,10 @@ export const packages = [
     name: '@tanstack/angular-time',
     packageDir: 'packages/angular-time',
   },
-  // {
-  //   name: '@tanstack/svelte-time',
-  //   packageDir: 'packages/svelte-time',
-  // },
+  {
+    name: '@tanstack/svelte-time',
+    packageDir: 'packages/svelte-time',
+  }, */
 ]
 
 /**
