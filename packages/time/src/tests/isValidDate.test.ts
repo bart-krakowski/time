@@ -25,8 +25,10 @@ describe('isValidDate', () => {
       expect(notADate).toBeInstanceOf(Date)
       notADate.getDate()
     } else {
-      // @ts-expect-error
-      notADate.getTime()
+      expect(() => {
+        // @ts-expect-error
+        notADate.getTime()
+      }).toThrowError()
     }
   })
 })
