@@ -3,7 +3,7 @@ import { extractLocaleOptions } from "./extractLocaleOptions";
 import type { DateTimeFormatterBuildParams } from "./shared";
 
 /**
- * @typedef {Object} IDateTimeFormatterOptions
+ * @typedef {Object} DateTimeFormatterOptions
  * @property {string} [localeMatcher]
  * @property {string} [calendar]
  * @property {string} [numberingSystem]
@@ -27,9 +27,9 @@ import type { DateTimeFormatterBuildParams } from "./shared";
  * 
  * @typedef {string | Intl.Locale | string[] | Intl.Locale[]} Locale
  * 
- * @typedef {Object} IDateTimeFormatterOptions
+ * @typedef {Object} DateTimeFormatterOptions
  * @property {Locale} [locale]
- * @property {string | IDateFormatterOptions} [options]
+ * @property {string | DateFormatterOptions} [options]
  */
 
 /**

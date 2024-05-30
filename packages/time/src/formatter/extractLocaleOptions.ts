@@ -1,8 +1,13 @@
-import { getDefaultCalendar, getDefaultTimeZone } from "../utils/dateDefaults";
-import type { DateFormatterOptions, DateTimeFormatterOptions, TimeFormatterOptions  } from "./shared";
+import { getDefaultCalendar, getDefaultTimeZone } from '../utils/dateDefaults'
+import type {
+  DateFormatterOptions,
+  DateTimeFormatterOptions,
+  StrictUnion,
+  TimeFormatterOptions,
+} from './shared'
 
 /**
- * @typedef {Object} IDateFormatterOptions
+ * @typedef {Object} DateFormatterOptions
  * @property {string} [localeMatcher]
  * @property {string} [calendar]
  * @property {string} [numberingSystem]
@@ -16,8 +21,8 @@ import type { DateFormatterOptions, DateTimeFormatterOptions, TimeFormatterOptio
  * @property {string} [month]
  * @property {string} [day]
  * @property {string} [dateStyle]
- * 
- * @typedef {Object} ITimeFormatterOptions
+ *
+ * @typedef {Object} TimeFormatterOptions
  * @property {string} [localeMatcher]
  * @property {string} [calendar]
  * @property {string} [numberingSystem]
@@ -32,8 +37,8 @@ import type { DateFormatterOptions, DateTimeFormatterOptions, TimeFormatterOptio
  * @property {number} [fractionalSecondDigits]
  * @property {string} [timeZoneName]
  * @property {string} [timeStyle]
- * 
- * @typedef {Object} IDateTimeFormatterOptions
+ *
+ * @typedef {Object} DateTimeFormatterOptions
  * @property {string} [localeMatcher]
  * @property {string} [calendar]
  * @property {string} [numberingSystem]
@@ -56,26 +61,32 @@ import type { DateFormatterOptions, DateTimeFormatterOptions, TimeFormatterOptio
  * @property {string} [timeStyle]
  */
 
- /** 
+/**
  * Function: extractLocaleOptions
  * This function is used to extract the locale options from the 'options' parameter of the various
  * formatter 'build' functions.
- * 
+ *
  * If 'calender' or 'timeZone' are not provided, the default values provided by the
  * Intl.DateTimeFormat().resolvedOptions() are used.
- * @param {DateFormatterOptions | DateTimeFormatterOptions | TimeFormatterOptions} param0 
- * @returns 
+ * @param {DateFormatterOptions | DateTimeFormatterOptions | TimeFormatterOptions} param0
+ * @returns
  */
 export function extractLocaleOptions({
-  localeMatcher, 
-  calendar = getDefaultCalendar(), 
-  numberingSystem, 
-  hour12, 
-  hourCycle, 
-  timeZone = getDefaultTimeZone(), 
+  localeMatcher,
+  calendar = getDefaultCalendar(),
+  numberingSystem,
+  hour12,
+  hourCycle,
+  timeZone = getDefaultTimeZone(),
   ...formatOptions
-}: DateFormatterOptions | DateTimeFormatterOptions | TimeFormatterOptions) {
+}: StrictUnion<DateFormatterOptions | DateTimeFormatterOptions | TimeFormatterOptions>) {
   return {
-    localeMatcher, calendar, numberingSystem, hour12, hourCycle, timeZone, formatOptions
-  };
+    localeMatcher,
+    calendar,
+    numberingSystem,
+    hour12,
+    hourCycle,
+    timeZone,
+    formatOptions,
+  }
 }
