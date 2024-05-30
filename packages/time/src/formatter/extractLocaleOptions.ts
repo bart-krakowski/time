@@ -1,5 +1,5 @@
 import { getDefaultCalendar, getDefaultTimeZone } from "../utils/dateDefaults";
-import type { IDateFormatterOptions, IDateTimeFormatterOptions, ITimeFormatterOptions  } from "./shared";
+import type { DateFormatterOptions, DateTimeFormatterOptions, TimeFormatterOptions  } from "./shared";
 
 /**
  * @typedef {Object} IDateFormatterOptions
@@ -63,7 +63,7 @@ import type { IDateFormatterOptions, IDateTimeFormatterOptions, ITimeFormatterOp
  * 
  * If 'calender' or 'timeZone' are not provided, the default values provided by the
  * Intl.DateTimeFormat().resolvedOptions() are used.
- * @param {IDateFormatterOptions | IDateTimeFormatterOptions | ITimeFormatterOptions} param0 
+ * @param {DateFormatterOptions | DateTimeFormatterOptions | TimeFormatterOptions} param0 
  * @returns 
  */
 export function extractLocaleOptions({
@@ -74,7 +74,7 @@ export function extractLocaleOptions({
   hourCycle, 
   timeZone = getDefaultTimeZone(), 
   ...formatOptions
-}: IDateFormatterOptions | IDateTimeFormatterOptions | ITimeFormatterOptions) {
+}: DateFormatterOptions | DateTimeFormatterOptions | TimeFormatterOptions) {
   return {
     localeMatcher, calendar, numberingSystem, hour12, hourCycle, timeZone, formatOptions
   };

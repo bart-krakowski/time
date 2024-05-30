@@ -1,6 +1,6 @@
 import { getDefaultLocale } from "../utils/dateDefaults";
 import { extractLocaleOptions } from "./extractLocaleOptions";
-import type { ITimeFormatterBuildParams } from "./shared";
+import type { TimeFormatterBuildParams } from "./shared";
 
 /**
  * @typedef {Object} ITimeFormatterOptions
@@ -50,7 +50,7 @@ import type { ITimeFormatterBuildParams } from "./shared";
 export function buildTimeFormatter({
   locale = getDefaultLocale(), 
   options
-}: ITimeFormatterBuildParams): Intl.DateTimeFormat {
+}: TimeFormatterBuildParams): Intl.DateTimeFormat {
   const opts = (typeof options === 'string') ? { dateStyle: options } : options ?? {};
   const {formatOptions = {}, ...localeOptions} = extractLocaleOptions(opts);
   const { timeStyle, ...rest } = formatOptions;
