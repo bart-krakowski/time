@@ -62,6 +62,7 @@
     "react-dom": "^17.0.0 || ^18.0.0"
   },
   "dependencies": {
+    "@js-temporal/polyfill": "^0.4.4",
     "@tanstack/time": "workspace:*",
     "use-sync-external-store": "^1.2.0"
   },
