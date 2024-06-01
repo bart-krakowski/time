@@ -71,7 +71,7 @@ function parseDateTimeString(value: string): Date {
       `${year}-${month}-${day}T${hour}:${minute}:${second}.${millisecond}${timezone}`,
     );
   }
-  throw new Error(`"${value}" is an invalid RFC339 Internet Date Time string`);
+  throw new Error(`"${value}" is an invalid RFC3339 Internet Date Time string`);
 }
 
 /**

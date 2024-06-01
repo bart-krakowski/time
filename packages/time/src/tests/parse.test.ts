@@ -102,11 +102,11 @@ describe('parse', () => {
   });
 
   test('should throw an error for an invalid date string', () => {
-    expect(() => parse('2021-15-37')).toThrowError('"2021-15-37" is an invalid RFC339 Internet Date Time string');
+    expect(() => parse('2021-15-37')).toThrowError('"2021-15-37" is an invalid RFC3339 Internet Date Time string');
   });
 
   test('should throw an error for an invalid time string', () => {
-    expect(() => parse('27:62')).toThrowError('"27:62" is an invalid RFC339 Internet Date Time string');
+    expect(() => parse('27:62')).toThrowError('"27:62" is an invalid RFC3339 Internet Date Time string');
   });
 
   test('should throw an error for an invalid time string', () => {
@@ -123,7 +123,7 @@ describe('parse', () => {
   });
 
   test('should throw an error for an invalid date string', () => {
-    expect(() => parse('2021-01-01T00:00:00.000')).toThrowError('"2021-01-01T00:00:00.000" is an invalid RFC339 Internet Date Time string');
+    expect(() => parse('2021-01-01T00:00:00.000')).toThrowError('"2021-01-01T00:00:00.000" is an invalid RFC3339 Internet Date Time string');
   });
 
   test('should throw an error for an invalid time string', () => {
