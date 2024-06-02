@@ -63,3 +63,79 @@ export function useCalendar({
 - `getEventProps: (id: string) => { style: CSSProperties } | null`
   - This function is used to retrieve the style properties for a specific event based on its ID.
 
+
+#### Example Usage
+
+```tsx
+const CalendarComponent = ({ events }) => {
+  const {
+    firstDayOfPeriod,
+    currPeriod,
+    getPrev,
+    getNext,
+    getCurrent,
+    get,
+    changeViewMode,
+    chunks,
+    daysNames,
+    viewMode,
+    getEventProps,
+  } = useCalendar({
+    events,
+    viewMode: 'month',
+    locale: 'en-US',
+    onChangeViewMode: (newViewMode) => console.log('View mode changed:', newViewMode),
+  });
+
+  return (
+    <div className="calendar-container">
+      <div className="calendar-header">
+        <button onClick={getPrev}>Previous</button>
+        <button onClick={getCurrent}>Today</button>
+        <button onClick={getNext}>Next</button>
+      </div>
+      <div className="calendar-view-mode">
+        <button onClick={() => changeViewMode('month')}>Month View</button>
+        <button onClick={() => changeViewMode('week')}>Week View</button>
+        <button onClick={() => changeViewMode(3)}>3-Day View</button>
+        <button onClick={() => changeViewMode(1)}>1-Day View</button>
+      </div>
+      <div className="calendar-days">
+        {viewMode === 'month' && (
+          <div className="calendar-days-names">
+            {daysNames.map((dayName, index) => (
+              <div key={index} className="calendar-day-name">
+                {dayName}
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="calendar-chunks">
+          {chunks.map((week, weekIndex) => (
+            <div key={weekIndex} className="calendar-week">
+              {week.map((day) => (
+                <div key={day.date.toString()} className="calendar-day">
+                  <div className="calendar-date">
+                    {day.date.day}
+                  </div>
+                  <div className="calendar-events">
+                    {day.events.map((event) => (
+                      <div
+                        key={event.id}
+                        className="calendar-event"
+                        {...getEventProps(event.id)}
+                      >
+                        {event.title}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+```
