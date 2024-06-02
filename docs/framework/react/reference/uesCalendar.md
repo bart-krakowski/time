@@ -1,0 +1,65 @@
+---
+title: Use Calendar
+id: useCalendar
+---
+
+### `useCalendar`
+
+```tsx
+export function useCalendar({
+  weekStartsOn,
+  events,
+  viewMode,
+  locale,
+  onChangeViewMode,
+}: UseCalendarProps)
+```
+
+`useCalendar` is a hook that provides a comprehensive set of functionalities for managing calendar events, view modes, and period navigation.
+
+
+#### Parameters
+
+- `weekStartsOn?: number`
+  - This parameter is an optional number that specifies the day of the week that the calendar should start on. It defaults to 0, which is Sunday.
+- `events: Event[]`
+  - This parameter is an array of events that the calendar should display.
+- `viewMode: 'month' | 'week' | number`
+  - This parameter is a string that specifies the initial view mode of the calendar. It can be either 'month', 'week', or a number representing the number of days in a custom view mode.
+- `locale?: string`
+  - This parameter is an optional string that specifies the locale to use for formatting dates and times. It defaults to the system locale.
+- `onChangeViewMode?: (viewMode: 'month' | 'week' | number) => void`
+  - This parameter is an optional callback function that is called when the view mode of the calendar changes. It receives the new view mode as an argument.
+- `onChangeViewMode?: (viewMode: 'month' | 'week' | number) => void`
+  - This parameter is an optional callback function that is called when the view mode of the calendar changes. It receives the new view mode as an argument.
+
+
+#### Returns
+
+- `firstDayOfPeriod: Temporal.PlainDate`
+  - This value represents the first day of the current period displayed by the calendar.
+- `currPeriod: string`
+  - This value represents a string that describes the current period displayed by the calendar.
+- `getPrev: MouseEventHandler<HTMLButtonElement>`
+  - This function is a click event handler that navigates to the previous period.
+- `getNext: MouseEventHandler<HTMLButtonElement>`
+  - This function is a click event handler that navigates to the next period.
+- `getCurrent: MouseEventHandler<HTMLButtonElement>`
+  - This function is a click event handler that navigates to the current period.
+- `get: (date: Temporal.PlainDate) => void`
+  - This function is a callback function that is called when a date is selected in the calendar. It receives the selected date as an argument.
+- `chunks: Array<Array<{ date: Temporal.PlainDate; events: Event[] }>>`
+  - This value represents the calendar grid, where each cell contains the date and events for that day.
+- `daysNames: string[]`
+  - This value represents an array of strings that contain the names of the days of the week.
+- `viewMode: 'month' | 'week' | number`
+  - This value represents the current view mode of the calendar.
+- `changeViewMode: (newViewMode: 'month' | 'week' | number) => void`
+  - This function is used to change the view mode of the calendar.
+- `getEventProps: (id: string) => { style: CSSProperties } | null`
+  - This function is used to retrieve the style properties for a specific event based on its ID.
+- `getEventProps: (id: string) => { style: CSSProperties } | null`
+  - This function is used to retrieve the style properties for a specific event based on its ID.
+- `getEventProps: (id: string) => { style: CSSProperties } | null`
+  - This function is used to retrieve the style properties for a specific event based on its ID.
+
