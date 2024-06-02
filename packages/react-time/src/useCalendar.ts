@@ -244,7 +244,7 @@ export const useCalendar = ({
     (id: Event['id']): { style: CSSProperties } | null => {
       const event = [...eventMap.values()]
         .flat()
-        .find((event) => event.id === id)
+        .find((currEvent) => currEvent.id === id)
       if (!event) return null
 
       const eventStartDate = Temporal.PlainDateTime.from(event.startDate)

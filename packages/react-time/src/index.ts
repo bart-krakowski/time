@@ -1,3 +1,1 @@
-/**
- *  TanStack Time
- */
+export { useCalendar } from './useCalendar';
