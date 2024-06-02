@@ -153,16 +153,16 @@ export const useCalendar = ({
         const splitEvents = splitMultiDayEvents(event)
         splitEvents.forEach((splitEvent) => {
           const splitKey = splitEvent.startDate.toString().split('T')[0]
-          if (splitKey && !map.has(splitKey)) {
-            map.set(splitKey, [])
-            map.get(splitKey)?.push(splitEvent)
+          if (splitKey) {
+            if (!map.has(splitKey)) map.set(splitKey, [])
+              map.get(splitKey)?.push(splitEvent)
           }
         })
       } else {
         const eventKey = event.startDate.toString().split('T')[0]
-        if (eventKey && !map.has(eventKey)) {
-          map.set(eventKey, [])
-          map.get(eventKey)?.push(event)
+        if (eventKey) {
+          if (!map.has(eventKey)) map.set(eventKey, [])
+            map.get(eventKey)?.push(event)
         }
       }
     })
