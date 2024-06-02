@@ -41,12 +41,14 @@ describe('useCalendar', () => {
       result.current.getPrev(mockEvent)
     })
 
-    const expectedPreviousMonth = Temporal.Now.plainDateISO().subtract({
-      months: 1,
-    })
-    expect(result.current.currPeriod).toBe(
-      expectedPreviousMonth.toString({ calendarName: 'auto' }),
-    )
+    const expectedPreviousMonth = Temporal.Now.plainDateISO().subtract({ months: 1 });
+    const expectedFirstDayOfPreviousMonth = Temporal.PlainDate.from({
+      year: expectedPreviousMonth.year,
+      month: expectedPreviousMonth.month,
+      day: 1,
+    });
+
+    expect(result.current.firstDayOfPeriod).toEqual(expectedFirstDayOfPreviousMonth);
   })
 
   test('should navigate to the next period correctly', () => {
@@ -58,10 +60,14 @@ describe('useCalendar', () => {
       result.current.getNext(mockEvent)
     })
 
-    const expectedNextMonth = Temporal.Now.plainDateISO().add({ months: 1 })
-    expect(result.current.currPeriod).toBe(
-      expectedNextMonth.toString({ calendarName: 'auto' }),
-    )
+    const expectedNextMonth = Temporal.Now.plainDateISO().add({ months: 1 });
+    const expectedFirstDayOfNextMonth = Temporal.PlainDate.from({
+      year: expectedNextMonth.year,
+      month: expectedNextMonth.month,
+      day: 1,
+    });
+
+    expect(result.current.firstDayOfPeriod).toEqual(expectedFirstDayOfNextMonth);
   })
 
   test('should reset to the current period correctly', () => {
