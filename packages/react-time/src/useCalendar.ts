@@ -243,6 +243,9 @@ export const useCalendar = ({
 
   const getEventProps = useCallback(
     (id: Event['id']): { style: CSSProperties } | null => {
+      // TODO: Drag and drop events
+      // TODO: Change event duration by dragging
+
       const event = [...eventMap.values()]
         .flat()
         .find((currEvent) => currEvent.id === id)
