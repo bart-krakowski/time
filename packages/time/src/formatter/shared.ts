@@ -34,20 +34,14 @@ export interface TimeFormatterOptions extends LocaleFormatterOptions {
 
 export type DateTimeFormatterOptions = DateFormatterOptions & TimeFormatterOptions
 
-export interface DateFormatterBuildParams {
-  locale?: string | Intl.Locale | Array<string|Intl.Locale>;
-  options?: FormatStyle | DateFormatterOptions;
+interface FormatterBuildParams<TOptions> {
+  locale?: string | Intl.Locale | Array<string | Intl.Locale>;
+  options?: FormatStyle | TOptions;
 }
 
-export interface TimeFormatterBuildParams {
-  locale?: string | Intl.Locale | Array<string|Intl.Locale>;
-  options?: FormatStyle | TimeFormatterOptions;
-}
-
-export interface DateTimeFormatterBuildParams {
-  locale?: string | Intl.Locale | Array<string|Intl.Locale>;
-  options?: FormatStyle | DateTimeFormatterOptions;
-}
+export type DateFormatterBuildParams = FormatterBuildParams<DateFormatterOptions>;
+export type TimeFormatterBuildParams = FormatterBuildParams<TimeFormatterOptions>;
+export type DateTimeFormatterBuildParams = FormatterBuildParams<DateTimeFormatterOptions>;
 
 export type UnionKeys<T> = T extends T ? keyof T : never;
 export type StrictUnionHelper<T, TAll> = T extends any ? T & Partial<Record<Exclude<UnionKeys<TAll>, keyof T>, never>> : never;
