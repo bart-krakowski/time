@@ -82,6 +82,7 @@ const CalendarComponent = ({ events }) => {
     daysNames,
     viewMode,
     getEventProps,
+    getCurrentTimeMarkerProps,
   } = useCalendar({
     events,
     viewMode: 'month',
@@ -102,21 +103,23 @@ const CalendarComponent = ({ events }) => {
         <button onClick={() => changeViewMode(3)}>3-Day View</button>
         <button onClick={() => changeViewMode(1)}>1-Day View</button>
       </div>
-      <div className="calendar-days">
+      <table className="calendar-table">
         {viewMode === 'month' && (
-          <div className="calendar-days-names">
-            {daysNames.map((dayName, index) => (
-              <div key={index} className="calendar-day-name">
-                {dayName}
-              </div>
-            ))}
-          </div>
+          <thead>
+            <tr>
+              {daysNames.map((dayName, index) => (
+                <th key={index} className="calendar-day-name">
+                  {dayName}
+                </th>
+              ))}
+            </tr>
+          </thead>
         )}
-        <div className="calendar-chunks">
+        <tbody>
           {chunks.map((week, weekIndex) => (
-            <div key={weekIndex} className="calendar-week">
+            <tr key={weekIndex} className="calendar-week">
               {week.map((day) => (
-                <div key={day.date.toString()} className="calendar-day">
+                <td key={day.date.toString()} className="calendar-day">
                   <div className="calendar-date">
                     {day.date.day}
                   </div>
@@ -131,12 +134,13 @@ const CalendarComponent = ({ events }) => {
                       </div>
                     ))}
                   </div>
-                </div>
+                </td>
               ))}
-            </div>
+              <div className="current-time-marker" {...getCurrentTimeMarkerProps(}></div>
+            </tr>
           ))}
-        </div>
-      </div>
+        </tbody>
+      </table>
     </div>
   );
 };
