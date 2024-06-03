@@ -189,7 +189,7 @@ describe('useCalendar', () => {
       style: {
         position: 'absolute',
         top: '45.83333333333333%',
-        left: '0%',
+        left: 0,
       },
       currentTime: '11:00',
     })

@@ -1,12 +1,20 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { Temporal } from '@js-temporal/polyfill'
+import {
+  setCurrentPeriod,
+  setViewMode,
+  updateCurrentTime,
+} from './calendarActions'
+import { useCalendarReducer } from './useCalendarReducer'
+import type { Event } from './useCalendarState'
 import type { CSSProperties, MouseEventHandler } from 'react'
 
-export interface Event {
-  id: string
-  startDate: Temporal.PlainDateTime
-  endDate: Temporal.PlainDateTime
-  title: string
+interface UseCalendarProps {
+  weekStartsOn?: number
+  events: Event[]
+  viewMode: 'month' | 'week' | number
+  locale?: string
+  onChangeViewMode?: (viewMode: 'month' | 'week' | number) => void
 }
 
 const getFirstDayOfMonth = (currMonth: string) =>
@@ -69,14 +77,6 @@ const splitMultiDayEvents = (event: Event) => {
   return events
 }
 
-interface UseCalendarProps {
-  weekStartsOn?: number
-  events: Event[]
-  viewMode: 'month' | 'week' | number
-  locale?: string
-  onChangeViewMode?: (viewMode: 'month' | 'week' | number) => void
-}
-
 const generateDateRange = (
   start: Temporal.PlainDate,
   end: Temporal.PlainDate,
@@ -98,18 +98,21 @@ export const useCalendar = ({
   onChangeViewMode,
 }: UseCalendarProps) => {
   const today = Temporal.Now.plainDateISO()
-
-  const [currPeriod, setCurrPeriod] = useState(today)
-  const [viewMode, setViewMode] = useState(initialViewMode)
-  const [currentTime, setCurrentTime] = useState(Temporal.Now.plainDateTimeISO());
-
+  const [state, dispatch] = useCalendarReducer({
+    currPeriod: today,
+    viewMode: initialViewMode,
+    currentTime: Temporal.Now.plainDateTimeISO(),
+  })
   const firstDayOfMonth = getFirstDayOfMonth(
-    currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),
+    state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),
   )
-  const firstDayOfWeek = getFirstDayOfWeek(currPeriod.toString(), weekStartsOn)
+  const firstDayOfWeek = getFirstDayOfWeek(
+    state.currPeriod.toString(),
+    weekStartsOn,
+  )
 
   const days =
-    viewMode === 'month'
+    state.viewMode === 'month'
       ? Array.from(
           getChunks(
             generateDateRange(
@@ -119,7 +122,7 @@ export const useCalendar = ({
             7,
           ),
         )
-      : viewMode === 'week'
+      : state.viewMode === 'week'
         ? Array.from(
             getChunks(
               generateDateRange(
@@ -132,10 +135,10 @@ export const useCalendar = ({
         : Array.from(
             getChunks(
               generateDateRange(
-                currPeriod,
-                currPeriod.add({ days: viewMode - 1 }),
+                state.currPeriod,
+                state.currPeriod.add({ days: state.viewMode - 1 }),
               ),
-              viewMode,
+              state.viewMode,
             ),
           )
 
@@ -156,14 +159,14 @@ export const useCalendar = ({
           const splitKey = splitEvent.startDate.toString().split('T')[0]
           if (splitKey) {
             if (!map.has(splitKey)) map.set(splitKey, [])
-              map.get(splitKey)?.push(splitEvent)
+            map.get(splitKey)?.push(splitEvent)
           }
         })
       } else {
         const eventKey = event.startDate.toString().split('T')[0]
         if (eventKey) {
           if (!map.has(eventKey)) map.set(eventKey, [])
-            map.get(eventKey)?.push(event)
+          map.get(eventKey)?.push(event)
         }
       }
     })
@@ -184,68 +187,85 @@ export const useCalendar = ({
   })
 
   const getPrev = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
-    switch (viewMode) {
+    switch (state.viewMode) {
       case 'month': {
         const firstDayOfPrevMonth = firstDayOfMonth.subtract({ months: 1 })
-        setCurrPeriod(firstDayOfPrevMonth)
+        dispatch(setCurrentPeriod(firstDayOfPrevMonth))
         break
       }
       case 'week': {
         const firstDayOfPrevWeek = firstDayOfWeek.subtract({ weeks: 1 })
-        setCurrPeriod(firstDayOfPrevWeek)
+        dispatch(setCurrentPeriod(firstDayOfPrevWeek))
         break
       }
       default: {
-        const prevCustomStart = currPeriod.subtract({ days: viewMode })
-        setCurrPeriod(prevCustomStart)
+        const prevCustomStart = state.currPeriod.subtract({
+          days: state.viewMode,
+        })
+        dispatch(setCurrentPeriod(prevCustomStart))
         break
       }
     }
-  }, [viewMode, firstDayOfMonth, firstDayOfWeek, currPeriod])
+  }, [
+    state.viewMode,
+    state.currPeriod,
+    firstDayOfMonth,
+    dispatch,
+    firstDayOfWeek,
+  ])
 
   const getNext = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
-    switch (viewMode) {
+    switch (state.viewMode) {
       case 'month': {
         const firstDayOfNextMonth = firstDayOfMonth.add({ months: 1 })
-        setCurrPeriod(firstDayOfNextMonth)
+        dispatch(setCurrentPeriod(firstDayOfNextMonth))
         break
       }
       case 'week': {
         const firstDayOfNextWeek = firstDayOfWeek.add({ weeks: 1 })
-        setCurrPeriod(firstDayOfNextWeek)
+        dispatch(setCurrentPeriod(firstDayOfNextWeek))
         break
       }
       default: {
-        const nextCustomStart = currPeriod.add({ days: viewMode })
-        setCurrPeriod(nextCustomStart)
+        const nextCustomStart = state.currPeriod.add({ days: state.viewMode })
+        dispatch(setCurrentPeriod(nextCustomStart))
         break
       }
     }
-  }, [viewMode, firstDayOfMonth, firstDayOfWeek, currPeriod])
+  }, [
+    state.viewMode,
+    state.currPeriod,
+    firstDayOfMonth,
+    dispatch,
+    firstDayOfWeek,
+  ])
 
   const getCurrent = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
-    setCurrPeriod(today)
-  }, [today])
+    dispatch(setCurrentPeriod(Temporal.Now.plainDateISO()))
+  }, [dispatch])
 
-  const get = useCallback((date: Temporal.PlainDate) => {
-    setCurrPeriod(date)
-  }, [])
+  const get = useCallback(
+    (date: Temporal.PlainDate) => {
+      dispatch(setCurrentPeriod(date))
+    },
+    [dispatch],
+  )
 
   const chunks =
-    viewMode === 'month' ? [...getChunks(daysWithEvents, 7)] : [daysWithEvents]
+    state.viewMode === 'month'
+      ? [...getChunks(daysWithEvents, 7)]
+      : [daysWithEvents]
+
   const changeViewMode = useCallback(
     (newViewMode: 'month' | 'week' | number) => {
       onChangeViewMode?.(newViewMode)
-      setViewMode(newViewMode)
+      dispatch(setViewMode(newViewMode))
     },
-    [onChangeViewMode],
+    [dispatch, onChangeViewMode],
   )
 
   const getEventProps = useCallback(
     (id: Event['id']): { style: CSSProperties } | null => {
-      // TODO: Drag and drop events
-      // TODO: Change event duration by dragging
-
       const event = [...eventMap.values()]
         .flat()
         .find((currEvent) => currEvent.id === id)
@@ -313,7 +333,7 @@ export const useCalendar = ({
           : 100 - 2 * sidePadding
       const eventLeft = sidePadding + eventIndex * (eventWidth + innerPadding)
 
-      if (viewMode === 'week' || typeof viewMode === 'number') {
+      if (state.viewMode === 'week' || typeof state.viewMode === 'number') {
         return {
           style: {
             position: 'absolute',
@@ -328,21 +348,21 @@ export const useCalendar = ({
 
       return null
     },
-    [eventMap, viewMode],
+    [eventMap, state.viewMode],
   )
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setCurrentTime(Temporal.Now.plainDateTimeISO());
-    }, 60000);
-  
-    return () => clearInterval(intervalId);
-  }, []);
+      dispatch(updateCurrentTime(Temporal.Now.plainDateTimeISO()))
+    }, 60000)
+
+    return () => clearInterval(intervalId)
+  }, [dispatch])
 
   const getCurrentTimeMarkerProps = useCallback(() => {
-    const { hour, minute } = currentTime;
-    const currentTimeInMinutes = hour * 60 + minute;
-    const percentageOfDay = (currentTimeInMinutes / (24 * 60)) * 100;
+    const { hour, minute } = state.currentTime
+    const currentTimeInMinutes = hour * 60 + minute
+    const percentageOfDay = (currentTimeInMinutes / (24 * 60)) * 100
 
     return {
       style: {
@@ -350,18 +370,18 @@ export const useCalendar = ({
         top: `${percentageOfDay}%`,
         left: 0,
       },
-      currentTime: currentTime.toString().split('T')[1]?.substring(0, 5),
+      currentTime: state.currentTime.toString().split('T')[1]?.substring(0, 5),
     }
-  }, [currentTime]);
+  }, [state.currentTime])
 
   return {
     firstDayOfPeriod:
-      viewMode === 'month'
+      state.viewMode === 'month'
         ? firstDayOfMonth
-        : viewMode === 'week'
+        : state.viewMode === 'week'
           ? firstDayOfWeek
-          : currPeriod,
-    currPeriod: currPeriod.toString({ calendarName: 'auto' }),
+          : state.currPeriod,
+    currPeriod: state.currPeriod.toString({ calendarName: 'auto' }),
     getPrev,
     getNext,
     getCurrent,
@@ -370,7 +390,7 @@ export const useCalendar = ({
     daysNames: days
       .flat()
       .map((day) => day.toLocaleString(locale, { weekday: 'short' })),
-    viewMode,
+    viewMode: state.viewMode,
     changeViewMode,
     getEventProps,
     getCurrentTimeMarkerProps,
