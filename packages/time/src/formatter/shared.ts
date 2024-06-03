@@ -34,7 +34,7 @@ export interface TimeFormatterOptions extends LocaleFormatterOptions {
 
 export type DateTimeFormatterOptions = DateFormatterOptions & TimeFormatterOptions
 
-interface FormatterBuildParams<TOptions> {
+interface FormatterBuildParams<TOptions extends LocaleFormatterOptions> {
   locale?: string | Intl.Locale | Array<string | Intl.Locale>;
   options?: FormatStyle | TOptions;
 }
