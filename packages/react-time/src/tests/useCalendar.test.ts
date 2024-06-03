@@ -1,5 +1,5 @@
 import { Temporal } from '@js-temporal/polyfill'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { act, renderHook } from '@testing-library/react'
 import { useCalendar } from '../useCalendar'
 
@@ -174,5 +174,26 @@ describe('useCalendar', () => {
         height: '8.333333333333332%',
       },
     })
+  })
+
+  test('should return the correct props for the current time marker', () => {
+    vi.setSystemTime(new Date('2024-06-01T11:00:00'));
+
+    const { result } = renderHook(() =>
+      useCalendar({ events, viewMode: 'week' }),
+    )
+
+    const currentTimeMarkerProps = result.current.getCurrentTimeMarkerProps()
+
+    expect(currentTimeMarkerProps).toEqual({
+      style: {
+        position: 'absolute',
+        top: '45.83333333333333%',
+        left: '0%',
+      },
+      currentTime: '11:00',
+    })
+
+    vi.useRealTimers();
   })
 })

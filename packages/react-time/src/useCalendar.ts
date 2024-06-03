@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Temporal } from '@js-temporal/polyfill'
 import type { CSSProperties, MouseEventHandler } from 'react'
 
@@ -101,6 +101,7 @@ export const useCalendar = ({
 
   const [currPeriod, setCurrPeriod] = useState(today)
   const [viewMode, setViewMode] = useState(initialViewMode)
+  const [currentTime, setCurrentTime] = useState(Temporal.Now.plainDateTimeISO());
 
   const firstDayOfMonth = getFirstDayOfMonth(
     currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),
@@ -327,6 +328,29 @@ export const useCalendar = ({
     [eventMap, viewMode],
   )
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentTime(Temporal.Now.plainDateTimeISO());
+    }, 60000);
+  
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const getCurrentTimeMarkerProps = useCallback(() => {
+    const { hour, minute } = currentTime;
+    const currentTimeInMinutes = hour * 60 + minute;
+    const percentageOfDay = (currentTimeInMinutes / (24 * 60)) * 100;
+
+    return {
+      style: {
+        position: 'absolute',
+        top: `${percentageOfDay}%`,
+        left: 0,
+      },
+      currentTime: currentTime.toString().split('T')[1]?.substring(0, 5),
+    }
+  }, [currentTime]);
+
   return {
     firstDayOfPeriod:
       viewMode === 'month'
@@ -346,5 +370,6 @@ export const useCalendar = ({
     viewMode,
     changeViewMode,
     getEventProps,
+    getCurrentTimeMarkerProps,
   }
 }
