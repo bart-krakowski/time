@@ -13,7 +13,7 @@ interface UseCalendarProps<TEvent extends Event> {
   weekStartsOn?: number
   events: TEvent[]
   viewMode: 'month' | 'week' | number
-  locale?: string
+  locale?: Parameters<Temporal.PlainDate['toLocaleString']>['0']
   onChangeViewMode?: (viewMode: 'month' | 'week' | number) => void
 }
 
