@@ -32,6 +32,8 @@ interface UseDatePickerProps {
   maxDate?: Temporal.PlainDate | null
   onSelectDate?: (date: Temporal.PlainDate) => void
   locale?: string
+  // multiple: boolean
+  // range: boolean
 }
 
 export const useDatePicker = ({
@@ -79,12 +81,16 @@ export const useDatePicker = ({
   )
 
   const getPrev = useCallback(() => {
+    if (state.minDate && Temporal.PlainDate.compare(state.currPeriod.subtract({ months: 1 }), state.minDate) < 0) return
+
     dispatch(actions.setCurrentPeriod(state.currPeriod.subtract({ months: 1 })))
-  }, [dispatch, state.currPeriod])
+  }, [dispatch, state.currPeriod, state.minDate])
 
   const getNext = useCallback(() => {
+    if (state.maxDate && Temporal.PlainDate.compare(state.currPeriod.add({ months: 1 }), state.maxDate) > 0) return
+
     dispatch(actions.setCurrentPeriod(state.currPeriod.add({ months: 1 })))
-  }, [dispatch, state.currPeriod])
+  }, [dispatch, state.currPeriod, state.maxDate])
 
   const getCurrent = useCallback(() => {
     dispatch(actions.setCurrentPeriod(Temporal.Now.plainDateISO()))
