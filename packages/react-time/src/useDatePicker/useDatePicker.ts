@@ -27,27 +27,31 @@ const getFirstDayOfMonth = (currMonth: string) =>
 
 
 interface UseDatePickerProps {
-  initialDate?: Temporal.PlainDate | null
   minDate?: Temporal.PlainDate | null
   maxDate?: Temporal.PlainDate | null
   onSelectDate?: (date: Temporal.PlainDate) => void
   locale?: string
-  // multiple: boolean
-  // range: boolean
+  multiple?: boolean
+  range?: boolean
+  selectedDate?: Temporal.PlainDate | null
 }
 
 export const useDatePicker = ({
-  initialDate = null,
+  selectedDate = null,
   minDate = null,
   maxDate = null,
   onSelectDate,
   locale = 'en-US',
+  multiple = false,
+  range = false,
 }: UseDatePickerProps) => {
   const [state, dispatch] = useDatePickerReducer({
-    selectedDate: initialDate,
+    selectedDate: selectedDate,
     minDate,
     maxDate,
     currPeriod: Temporal.Now.plainDateISO(),
+    multiple,
+    range,
   })
 
   const firstDayOfMonth = getFirstDayOfMonth(
@@ -72,30 +76,28 @@ export const useDatePicker = ({
 
   const selectDate = useCallback(
     (date: Temporal.PlainDate) => {
-      if ((state.minDate && Temporal.PlainDate.compare(date, state.minDate) < 0) || (state.maxDate && Temporal.PlainDate.compare(date, state.maxDate) > 0))
-        return
+     
       dispatch(actions.setDate(date))
       if (onSelectDate) onSelectDate(date)
     },
-    [state.minDate, state.maxDate, dispatch, onSelectDate],
+    [dispatch, onSelectDate],
   )
 
   const getPrev = useCallback(() => {
-    dispatch(actions.setCurrentPeriod(state.currPeriod.subtract({ months: 1 })))
-  }, [dispatch, state.currPeriod])
+    dispatch(actions.setCurrentPeriod())
+  }, [dispatch])
 
   const getNext = useCallback(() => {
-    dispatch(actions.setCurrentPeriod(state.currPeriod.add({ months: 1 })))
-  }, [dispatch, state.currPeriod])
+    dispatch(actions.setCurrentPeriod())
+  }, [dispatch])
 
   const getCurrent = useCallback(() => {
-    dispatch(actions.setCurrentPeriod(Temporal.Now.plainDateISO()))
+    dispatch(actions.setCurrentPeriod())
   }, [dispatch])
 
   const get = useCallback(() => {
-    dispatch(actions.setCurrentPeriod(Temporal.Now.plainDateISO()))
+    dispatch(actions.setCurrentPeriod())
   }, [dispatch])
-  
 
   return {
     ...state,
