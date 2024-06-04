@@ -59,14 +59,18 @@ export const useDatePicker = ({
         firstDayOfMonth.add({ months: 1 }).subtract({ days: 1 }),
       ),
       7,
-    ),
+    )
+  ).map((week) =>
+    week.map((day) => ({
+      date: day,
+      isToday: Temporal.PlainDate.compare(day, Temporal.Now.plainDateISO()) === 0,
+      isSelected: state.selectedDate ? Temporal.PlainDate.compare(day, state.selectedDate) === 0 : false,
+    })),
   )
 
   const selectDate = useCallback(
     (date: Temporal.PlainDate) => {
-      if (state.minDate && Temporal.PlainDate.compare(date, state.minDate) < 0)
-        return
-      if (state.maxDate && Temporal.PlainDate.compare(date, state.maxDate) > 0)
+      if ((state.minDate && Temporal.PlainDate.compare(date, state.minDate) < 0) || (state.maxDate && Temporal.PlainDate.compare(date, state.maxDate) > 0))
         return
       dispatch(actions.setDate(date))
       if (onSelectDate) onSelectDate(date)
@@ -96,7 +100,7 @@ export const useDatePicker = ({
     days,
     daysNames: days
       .flat()
-      .map((day) => day.toLocaleString(locale, { weekday: 'short' })),
+      .map((day) => day.date.toLocaleString(locale, { weekday: 'short' })),
     selectDate,
     getPrev,
     getNext,

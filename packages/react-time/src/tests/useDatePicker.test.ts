@@ -74,7 +74,12 @@ describe('useDatePicker', () => {
 
     const days = result.current.days.flat()
     expect(days.length).toBeGreaterThan(0)
-    expect(days[0]?.toString()).toBe('2024-06-01')
-    expect(days[days.length - 1]?.toString()).toBe('2024-06-30')
+    expect(days[0]).toEqual({
+      date: Temporal.PlainDate.from('2024-05-26'),
+      isToday: false,
+      isSelected: true,
+    })
+
+    expect(days[days.length - 1]?.date.toString()).toBe('2024-06-30')
   })
 })
