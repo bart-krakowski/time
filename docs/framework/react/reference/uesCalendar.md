@@ -40,11 +40,11 @@ export function useCalendar({
   - This value represents the first day of the current period displayed by the calendar.
 - `currPeriod: string`
   - This value represents a string that describes the current period displayed by the calendar.
-- `getPrev: MouseEventHandler<HTMLButtonElement>`
+- `setPreviousPeriod: MouseEventHandler<HTMLButtonElement>`
   - This function is a click event handler that navigates to the previous period.
-- `getNext: MouseEventHandler<HTMLButtonElement>`
+- `setNextPeriod: MouseEventHandler<HTMLButtonElement>`
   - This function is a click event handler that navigates to the next period.
-- `getCurrent: MouseEventHandler<HTMLButtonElement>`
+- `getCurrentPeriod: MouseEventHandler<HTMLButtonElement>`
   - This function is a click event handler that navigates to the current period.
 - `get: (date: Temporal.PlainDate) => void`
   - This function is a callback function that is called when a date is selected in the calendar. It receives the selected date as an argument.
@@ -62,7 +62,7 @@ export function useCalendar({
   - This function is used to retrieve the style properties for a specific event based on its ID.
 - `getEventProps: (id: string) => { style: CSSProperties } | null`
   - This function is used to retrieve the style properties for a specific event based on its ID.
-- `getCurrentTimeMarkerProps: () => { style: CSSProperties, currentTime: Temporal.PlainTime }`
+- `getCurrentPeriodTimeMarkerProps: () => { style: CSSProperties, currentTime: Temporal.PlainTime }`
   - This function is used to retrieve the style properties and current time for the current time marker.
 
 
@@ -73,16 +73,16 @@ const CalendarComponent = ({ events }) => {
   const {
     firstDayOfPeriod,
     currPeriod,
-    getPrev,
-    getNext,
-    getCurrent,
+    setPreviousPeriod,
+    setNextPeriod,
+    getCurrentPeriod,
     get,
     changeViewMode,
     chunks,
     daysNames,
     viewMode,
     getEventProps,
-    getCurrentTimeMarkerProps,
+    getCurrentPeriodTimeMarkerProps,
   } = useCalendar({
     events,
     viewMode: 'month',
@@ -93,9 +93,9 @@ const CalendarComponent = ({ events }) => {
   return (
     <div className="calendar-container">
       <div className="calendar-header">
-        <button onClick={getPrev}>Previous</button>
-        <button onClick={getCurrent}>Today</button>
-        <button onClick={getNext}>Next</button>
+        <button onClick={setPreviousPeriod}>Previous</button>
+        <button onClick={getCurrentPeriod}>Today</button>
+        <button onClick={setNextPeriod}>Next</button>
       </div>
       <div className="calendar-view-mode">
         <button onClick={() => changeViewMode('month')}>Month View</button>
@@ -136,7 +136,7 @@ const CalendarComponent = ({ events }) => {
                   </div>
                 </td>
               ))}
-              <div className="current-time-marker" {...getCurrentTimeMarkerProps(}></div>
+              <div className="current-time-marker" {...getCurrentPeriodTimeMarkerProps(}></div>
             </tr>
           ))}
         </tbody>

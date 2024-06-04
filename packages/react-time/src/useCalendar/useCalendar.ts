@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { Temporal } from '@js-temporal/polyfill'
-import {
-  setCurrentPeriod,
-  setViewMode,
-  updateCurrentTime,
-} from './calendarActions'
+import { getFirstDayOfMonth, getFirstDayOfWeek } from "@tanstack/time";
+import { actions } from './calendarActions'
 import { useCalendarReducer } from './useCalendarReducer'
 import type { Event } from './useCalendarState'
 import type { CSSProperties, MouseEventHandler } from 'react'
@@ -15,14 +12,6 @@ interface UseCalendarProps<TEvent extends Event> {
   viewMode: 'month' | 'week' | number
   locale?: Parameters<Temporal.PlainDate['toLocaleString']>['0']
   onChangeViewMode?: (viewMode: 'month' | 'week' | number) => void
-}
-
-const getFirstDayOfMonth = (currMonth: string) =>
-  Temporal.PlainDate.from(`${currMonth}-01`)
-
-const getFirstDayOfWeek = (currWeek: string, weekStartsOn: number) => {
-  const date = Temporal.PlainDate.from(currWeek)
-  return date.subtract({ days: (date.dayOfWeek - weekStartsOn + 7) % 7 })
 }
 
 const getChunks = function* <T>(arr: T[], n: number) {
@@ -102,13 +91,16 @@ export const useCalendar = <TEvent extends Event>({
     currPeriod: today,
     viewMode: initialViewMode,
     currentTime: Temporal.Now.plainDateTimeISO(),
+    weekStartsOn,
   })
+  
   const firstDayOfMonth = getFirstDayOfMonth(
     state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),
   )
+
   const firstDayOfWeek = getFirstDayOfWeek(
     state.currPeriod.toString(),
-    weekStartsOn,
+    state.weekStartsOn,
   )
 
   const days =
@@ -186,67 +178,21 @@ export const useCalendar = <TEvent extends Event>({
     })
   })
 
-  const getPrev = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
-    switch (state.viewMode) {
-      case 'month': {
-        const firstDayOfPrevMonth = firstDayOfMonth.subtract({ months: 1 })
-        dispatch(setCurrentPeriod(firstDayOfPrevMonth))
-        break
-      }
-      case 'week': {
-        const firstDayOfPrevWeek = firstDayOfWeek.subtract({ weeks: 1 })
-        dispatch(setCurrentPeriod(firstDayOfPrevWeek))
-        break
-      }
-      default: {
-        const prevCustomStart = state.currPeriod.subtract({
-          days: state.viewMode,
-        })
-        dispatch(setCurrentPeriod(prevCustomStart))
-        break
-      }
-    }
-  }, [
-    state.viewMode,
-    state.currPeriod,
-    firstDayOfMonth,
-    dispatch,
-    firstDayOfWeek,
-  ])
+  const setPreviousPeriod = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
+    dispatch(actions.setPreviousPeriod)
+  }, [dispatch])
 
-  const getNext = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
-    switch (state.viewMode) {
-      case 'month': {
-        const firstDayOfNextMonth = firstDayOfMonth.add({ months: 1 })
-        dispatch(setCurrentPeriod(firstDayOfNextMonth))
-        break
-      }
-      case 'week': {
-        const firstDayOfNextWeek = firstDayOfWeek.add({ weeks: 1 })
-        dispatch(setCurrentPeriod(firstDayOfNextWeek))
-        break
-      }
-      default: {
-        const nextCustomStart = state.currPeriod.add({ days: state.viewMode })
-        dispatch(setCurrentPeriod(nextCustomStart))
-        break
-      }
-    }
-  }, [
-    state.viewMode,
-    state.currPeriod,
-    firstDayOfMonth,
-    dispatch,
-    firstDayOfWeek,
-  ])
+  const setNextPeriod = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
+    dispatch(actions.setNextPeriodPeriod)
+  }, [dispatch])
 
-  const getCurrent = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
-    dispatch(setCurrentPeriod(Temporal.Now.plainDateISO()))
+  const getCurrentPeriod = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
+    dispatch(actions.setCurrentPeriod(Temporal.Now.plainDateISO()))
   }, [dispatch])
 
   const get = useCallback(
     (date: Temporal.PlainDate) => {
-      dispatch(setCurrentPeriod(date))
+      dispatch(actions.setCurrentPeriod(date))
     },
     [dispatch],
   )
@@ -258,8 +204,8 @@ export const useCalendar = <TEvent extends Event>({
 
   const changeViewMode = useCallback(
     (newViewMode: 'month' | 'week' | number) => {
+      dispatch(actions.setViewMode(newViewMode))
       onChangeViewMode?.(newViewMode)
-      dispatch(setViewMode(newViewMode))
     },
     [dispatch, onChangeViewMode],
   )
@@ -359,7 +305,7 @@ export const useCalendar = <TEvent extends Event>({
     return () => clearInterval(intervalId)
   }, [dispatch])
 
-  const getCurrentTimeMarkerProps = useCallback(() => {
+  const getCurrentPeriodTimeMarkerProps = useCallback(() => {
     const { hour, minute } = state.currentTime
     const currentTimeInMinutes = hour * 60 + minute
     const percentageOfDay = (currentTimeInMinutes / (24 * 60)) * 100
@@ -382,9 +328,9 @@ export const useCalendar = <TEvent extends Event>({
           ? firstDayOfWeek
           : state.currPeriod,
     currPeriod: state.currPeriod.toString({ calendarName: 'auto' }),
-    getPrev,
-    getNext,
-    getCurrent,
+    setPreviousPeriod,
+    setNextPeriod,
+    getCurrentPeriod,
     get,
     chunks,
     daysNames: days
@@ -393,6 +339,6 @@ export const useCalendar = <TEvent extends Event>({
     viewMode: state.viewMode,
     changeViewMode,
     getEventProps,
-    getCurrentTimeMarkerProps,
+    getCurrentPeriodTimeMarkerProps,
   }
 }

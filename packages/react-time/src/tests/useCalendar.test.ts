@@ -37,7 +37,7 @@ describe('useCalendar', () => {
     )
 
     act(() => {
-      result.current.getPrev(mockEvent)
+      result.current.setPreviousPeriod(mockEvent)
     })
 
     const expectedPreviousMonth = Temporal.Now.plainDateISO().subtract({
@@ -60,7 +60,7 @@ describe('useCalendar', () => {
     )
 
     act(() => {
-      result.current.getNext(mockEvent)
+      result.current.setNextPeriod(mockEvent)
     })
 
     const expectedNextMonth = Temporal.Now.plainDateISO().add({ months: 1 })
@@ -79,8 +79,8 @@ describe('useCalendar', () => {
     )
 
     act(() => {
-      result.current.getNext(mockEvent)
-      result.current.getCurrent(mockEvent)
+      result.current.setNextPeriod(mockEvent)
+      result.current.getCurrentPeriod(mockEvent)
     })
 
     expect(result.current.currPeriod).toBe(
@@ -183,7 +183,7 @@ describe('useCalendar', () => {
       useCalendar({ events, viewMode: 'week' }),
     )
 
-    const currentTimeMarkerProps = result.current.getCurrentTimeMarkerProps()
+    const currentTimeMarkerProps = result.current.getCurrentPeriodTimeMarkerProps()
 
     expect(currentTimeMarkerProps).toEqual({
       style: {
