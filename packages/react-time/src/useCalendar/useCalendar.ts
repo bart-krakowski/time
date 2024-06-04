@@ -9,9 +9,9 @@ import { useCalendarReducer } from './useCalendarReducer'
 import type { Event } from './useCalendarState'
 import type { CSSProperties, MouseEventHandler } from 'react'
 
-interface UseCalendarProps {
+interface UseCalendarProps<TEvent extends Event> {
   weekStartsOn?: number
-  events: Event[]
+  events: TEvent[]
   viewMode: 'month' | 'week' | number
   locale?: string
   onChangeViewMode?: (viewMode: 'month' | 'week' | number) => void
@@ -31,10 +31,10 @@ const getChunks = function* <T>(arr: T[], n: number) {
   }
 }
 
-const splitMultiDayEvents = (event: Event) => {
+const splitMultiDayEvents = <TEvent extends Event>(event: TEvent): TEvent[] => {
   const startDate = Temporal.PlainDateTime.from(event.startDate)
   const endDate = Temporal.PlainDateTime.from(event.endDate)
-  const events: Event[] = []
+  const events: TEvent[] = []
 
   let currentDay = startDate
   while (
@@ -90,13 +90,13 @@ const generateDateRange = (
   return dates
 }
 
-export const useCalendar = ({
+export const useCalendar = <TEvent extends Event>({
   weekStartsOn = 1,
   events,
   viewMode: initialViewMode,
   locale,
   onChangeViewMode,
-}: UseCalendarProps) => {
+}: UseCalendarProps<TEvent>) => {
   const today = Temporal.Now.plainDateISO()
   const [state, dispatch] = useCalendarReducer({
     currPeriod: today,
@@ -143,7 +143,7 @@ export const useCalendar = ({
           )
 
   const eventMap = useMemo(() => {
-    const map = new Map<string, Event[]>()
+    const map = new Map<string, TEvent[]>()
 
     events.forEach((event) => {
       const eventStartDate = Temporal.PlainDateTime.from(event.startDate)
