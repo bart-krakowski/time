@@ -81,16 +81,12 @@ export const useDatePicker = ({
   )
 
   const getPrev = useCallback(() => {
-    if (state.minDate && Temporal.PlainDate.compare(state.currPeriod.subtract({ months: 1 }), state.minDate) < 0) return
-
     dispatch(actions.setCurrentPeriod(state.currPeriod.subtract({ months: 1 })))
-  }, [dispatch, state.currPeriod, state.minDate])
+  }, [dispatch, state.currPeriod])
 
   const getNext = useCallback(() => {
-    if (state.maxDate && Temporal.PlainDate.compare(state.currPeriod.add({ months: 1 }), state.maxDate) > 0) return
-
     dispatch(actions.setCurrentPeriod(state.currPeriod.add({ months: 1 })))
-  }, [dispatch, state.currPeriod, state.maxDate])
+  }, [dispatch, state.currPeriod])
 
   const getCurrent = useCallback(() => {
     dispatch(actions.setCurrentPeriod(Temporal.Now.plainDateISO()))
