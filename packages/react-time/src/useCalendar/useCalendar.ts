@@ -179,11 +179,11 @@ export const useCalendar = <TEvent extends Event>({
   })
 
   const setPreviousPeriod = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
-    dispatch(actions.setPreviousPeriod)
+    dispatch(actions.setPreviousPeriod())
   }, [dispatch])
 
   const setNextPeriod = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
-    dispatch(actions.setNextPeriodPeriod)
+    dispatch(actions.setNextPeriod());
   }, [dispatch])
 
   const getCurrentPeriod = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
@@ -299,7 +299,7 @@ export const useCalendar = <TEvent extends Event>({
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      dispatch(updateCurrentTime(Temporal.Now.plainDateTimeISO()))
+      dispatch(actions.updateCurrentTime(Temporal.Now.plainDateTimeISO()))
     }, 60000)
 
     return () => clearInterval(intervalId)

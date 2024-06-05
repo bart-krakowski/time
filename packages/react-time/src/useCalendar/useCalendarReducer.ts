@@ -2,11 +2,11 @@ import { useReducer } from 'react'
 import { createReducer } from 'typesafe-actions'
 
 import { getFirstDayOfMonth, getFirstDayOfWeek } from '@tanstack/time'
-import { type CalendarAction, actions } from './calendarActions'
+import { type UseCalendarAction, actions } from './calendarActions'
 import type { CalendarState } from './useCalendarState'
 
 const createCalendarReducer = (initialState: CalendarState) => {
-  return createReducer<CalendarState, CalendarAction>(initialState)
+  return createReducer<CalendarState, UseCalendarAction>(initialState)
     .handleAction(actions.setCurrentPeriod, (state, action) => ({
       ...state,
       currPeriod: action.payload,
@@ -54,7 +54,7 @@ const createCalendarReducer = (initialState: CalendarState) => {
         }
       }
     })
-    .handleAction(actions.setNextPeriodPeriod, (state, action) => {
+    .handleAction(actions.setNextPeriod, (state) => {
       const firstDayOfMonth = getFirstDayOfMonth(
         state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),
       )
