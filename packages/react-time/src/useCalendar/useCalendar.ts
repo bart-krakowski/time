@@ -311,7 +311,7 @@ export const useCalendar = <TEvent extends Event>({
     return () => clearInterval(intervalId)
   }, [dispatch])
 
-  const goToCurrentPeriodTimeMarkerProps = useCallback(() => {
+  const currentTimeMarkerProps = useCallback(() => {
     const { hour, minute } = state.currentTime
     const currentTimeInMinutes = hour * 60 + minute
     const percentageOfDay = (currentTimeInMinutes / (24 * 60)) * 100
@@ -351,6 +351,6 @@ export const useCalendar = <TEvent extends Event>({
     viewMode: state.viewMode,
     changeViewMode,
     getEventProps,
-    goToCurrentPeriodTimeMarkerProps,
+    currentTimeMarkerProps,
   }
 }

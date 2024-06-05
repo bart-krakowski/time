@@ -183,7 +183,7 @@ describe('useCalendar', () => {
       useCalendar({ events, viewMode: 'week' }),
     )
 
-    const currentTimeMarkerProps = result.current.goToCurrentPeriodTimeMarkerProps()
+    const currentTimeMarkerProps = result.current.currentTimeMarkerProps()
 
     expect(currentTimeMarkerProps).toEqual({
       style: {
