@@ -23,8 +23,6 @@ describe('useCalendar', () => {
     },
   ]
 
-  const mockEvent = {} as React.MouseEvent<HTMLButtonElement, MouseEvent>
-
   test('should initialize with the correct view mode and current period', () => {
     const { result } = renderHook(() =>
       useCalendar({ events, viewMode: 'month' }),
@@ -41,7 +39,7 @@ describe('useCalendar', () => {
     )
 
     act(() => {
-      result.current.goToPreviousPeriod(mockEvent)
+      result.current.goToPreviousPeriod()
     })
 
     const expectedPreviousMonth = Temporal.Now.plainDateISO().subtract({
@@ -64,7 +62,7 @@ describe('useCalendar', () => {
     )
 
     act(() => {
-      result.current.goToNextPeriod(mockEvent)
+      result.current.goToNextPeriod()
     })
 
     const expectedNextMonth = Temporal.Now.plainDateISO().add({ months: 1 })

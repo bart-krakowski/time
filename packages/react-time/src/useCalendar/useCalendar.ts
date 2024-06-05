@@ -3,7 +3,7 @@ import { Temporal } from '@js-temporal/polyfill'
 import { actions } from './calendarActions'
 import { useCalendarReducer } from './useCalendarReducer'
 import type { Event } from './useCalendarState'
-import type { CSSProperties, MouseEventHandler } from 'react'
+import type { CSSProperties } from 'react'
 
 export const getFirstDayOfWeek = (currWeek: string, weekStartsOn: number) => {
   const date = Temporal.PlainDate.from(currWeek)
