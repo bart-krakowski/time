@@ -62,7 +62,7 @@ export function useCalendar({
   - This function is used to retrieve the style properties for a specific event based on its ID.
 - `getEventProps: (id: string) => { style: CSSProperties } | null`
   - This function is used to retrieve the style properties for a specific event based on its ID.
-- `goToCurrentPeriodTimeMarkerProps: () => { style: CSSProperties, currentTime: Temporal.PlainTime }`
+- `currentTimeMarkerProps: () => { style: CSSProperties, currentTime: Temporal.PlainTime }`
   - This function is used to retrieve the style properties and current time for the current time marker.
 
 
@@ -82,7 +82,7 @@ const CalendarComponent = ({ events }) => {
     daysNames,
     viewMode,
     getEventProps,
-    goToCurrentPeriodTimeMarkerProps,
+    currentTimeMarkerProps,
   } = useCalendar({
     events,
     viewMode: 'month',
@@ -136,7 +136,7 @@ const CalendarComponent = ({ events }) => {
                   </div>
                 </td>
               ))}
-              <div className="current-time-marker" {...goToCurrentPeriodTimeMarkerProps()}></div>
+              <div className="current-time-marker" {...currentTimeMarkerProps()}></div>
             </tr>
           ))}
         </tbody>
