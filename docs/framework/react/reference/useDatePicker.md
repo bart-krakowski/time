@@ -29,7 +29,7 @@ export const useDatePicker = ({
 
 
 #### Returns
-- `selectedDate`: The currently selected date.
+- `selectedDates`: The currently selected date.
   - This value represents the currently selected date.
 - `minDate`: The minimum selectable date.
   - This value represents the minimum selectable date.
@@ -55,7 +55,7 @@ export const useDatePicker = ({
 ```tsx
 const DatePickerComponent = () => {
   const {
-    selectedDate,
+    selectedDates,
     minDate,
     maxDate,
     days,
@@ -65,7 +65,7 @@ const DatePickerComponent = () => {
     getCurrent,
     daysNames,
   } = useDatePicker({
-    initialDate: Temporal.PlainDate.from('2024-06-01'),
+    selectedDates: [Temporal.PlainDate.from('2024-06-01')],
     minDate: Temporal.PlainDate.from('2024-01-01'),
     maxDate: Temporal.PlainDate.from('2024-12-31'),
     onSelectDate: (date) => console.log('Date selected:', date),
@@ -91,11 +91,11 @@ const DatePickerComponent = () => {
             <tr key={weekIndex}>
               {week.map((day) => (
                 <td
-                  key={day.toString()}
-                  className={day.equals(selectedDate) ? 'selected' : ''}
-                  onClick={() => selectDate(day)}
+                  key={day.date.toString()}
+                  className={day.isSelected ? 'selected' : ''}
+                  onClick={() => selectDate(day.date)}
                 >
-                  {day.day}
+                  {day.date.day}
                 </td>
               ))}
             </tr>
