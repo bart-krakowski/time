@@ -106,7 +106,7 @@ describe('useCalendar', () => {
     )
 
     act(() => {
-      result.current.get(Temporal.PlainDate.from('2024-06-01'))
+      result.current.goToSpecificPeriod(Temporal.PlainDate.from('2024-06-01'))
     })
 
     expect(result.current.currPeriod).toBe('2024-06-01')
@@ -208,8 +208,24 @@ describe('useCalendar', () => {
     expect(weeks).toHaveLength(5);
     expect(weeks[0]).toHaveLength(7);
 
-    expect(weeks[0]?.[0]?.date.toString()).toBe('2024-06-01');
-    expect(weeks[weeks.length - 1]?.[0]?.date.toString()).toBe('2024-06-29');
+    expect(weeks[0]?.[0]?.date.toString()).toBe('2024-05-27');
+    expect(weeks[weeks.length - 1]?.[0]?.date.toString()).toBe('2024-06-24');
     expect(weeks.find((week) => week.some((day) => day.isToday))?.find((day) => day.isToday)?.date.toString()).toBe('2024-06-01');
   });
-})
+
+  test('should return the correct day names based on weekStartsOn', () => {
+    const { result } = renderHook(() =>
+      useCalendar({ events, viewMode: 'month', locale: 'en-US', weekStartsOn: 1 })
+    );
+
+    const { daysNames } = result.current;
+    expect(daysNames).toEqual(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+
+    const { result: resultSundayStart } = renderHook(() =>
+      useCalendar({ events, viewMode: 'month', locale: 'en-US', weekStartsOn: 7 })
+    );
+
+    const { daysNames: sundayDaysNames } = resultSundayStart.current;
+    expect(sundayDaysNames).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
+  });
+});

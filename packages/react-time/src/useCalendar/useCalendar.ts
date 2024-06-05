@@ -1,10 +1,17 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { Temporal } from '@js-temporal/polyfill'
-import { getFirstDayOfMonth, getFirstDayOfWeek } from "@tanstack/time";
 import { actions } from './calendarActions'
 import { useCalendarReducer } from './useCalendarReducer'
 import type { Event } from './useCalendarState'
 import type { CSSProperties, MouseEventHandler } from 'react'
+
+export const getFirstDayOfWeek = (currWeek: string, weekStartsOn: number) => {
+  const date = Temporal.PlainDate.from(currWeek)
+  return date.subtract({ days: (date.dayOfWeek - weekStartsOn + 7) % 7 })
+}
+
+export const getFirstDayOfMonth = (currMonth: string) =>
+  Temporal.PlainDate.from(`${currMonth}-01`)
 
 interface UseCalendarProps<TEvent extends Event> {
   weekStartsOn?: number
@@ -108,7 +115,7 @@ export const useCalendar = <TEvent extends Event>({
       ? Array.from(
           getChunks(
             generateDateRange(
-              firstDayOfMonth,
+              firstDayOfMonth.subtract({ days: (firstDayOfMonth.dayOfWeek - state.weekStartsOn + 7) % 7 }),
               firstDayOfMonth.add({ months: 1 }).subtract({ days: 1 }),
             ),
             7,
@@ -319,6 +326,14 @@ export const useCalendar = <TEvent extends Event>({
     }
   }, [state.currentTime])
 
+  const daysNames = useMemo(() => {
+    const baseDate = Temporal.PlainDate.from('2024-01-01')
+    return Array.from({ length: 7 }).map((_, i) => 
+      baseDate.add({ days: (i + weekStartsOn - 1) % 7 })
+        .toLocaleString(locale, { weekday: 'short' })
+    )
+  }, [locale, weekStartsOn])
+
   return {
     firstDayOfPeriod:
       state.viewMode === 'month'
@@ -332,9 +347,7 @@ export const useCalendar = <TEvent extends Event>({
     goToCurrentPeriod,
     goToSpecificPeriod,
     weeks,
-    daysNames: Array.from(getChunks(daysWithEvents, 7)).flat()
-      .slice(0, 7)
-      .map((day) => day.date.toLocaleString(locale, { weekday: 'short' })),
+    daysNames,
     viewMode: state.viewMode,
     changeViewMode,
     getEventProps,
