@@ -136,7 +136,7 @@ const CalendarComponent = ({ events }) => {
                   </div>
                 </td>
               ))}
-              <div className="current-time-marker" {...getCurrentPeriodTimeMarkerProps(}></div>
+              <div className="current-time-marker" {...getCurrentPeriodTimeMarkerProps()}></div>
             </tr>
           ))}
         </tbody>
