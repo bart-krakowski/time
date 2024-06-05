@@ -176,11 +176,13 @@ export const useCalendar = <TEvent extends Event>({
   const daysWithEvents = days.map((day) => {
     const dayKey = day.toString()
     const dailyEvents = eventMap.get(dayKey) ?? []
+    const isInCurrentPeriod = day.month === state.currPeriod.month
 
     return {
       date: day,
       events: dailyEvents,
       isToday: Temporal.PlainDate.compare(day, Temporal.Now.plainDateISO()) === 0,
+      isInCurrentPeriod,
     }
   })
 

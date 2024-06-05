@@ -1,9 +1,13 @@
 import { Temporal } from '@js-temporal/polyfill'
-import { describe, expect, test, vi } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import { act, renderHook } from '@testing-library/react'
 import { useCalendar } from '../useCalendar'
 
 describe('useCalendar', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   const events = [
     {
       id: '1',
@@ -193,8 +197,6 @@ describe('useCalendar', () => {
       },
       currentTime: '11:00',
     })
-
-    vi.useRealTimers();
   })
 
   test('should render array of days', () => {
@@ -227,5 +229,23 @@ describe('useCalendar', () => {
 
     const { daysNames: sundayDaysNames } = resultSundayStart.current;
     expect(sundayDaysNames).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
+  });
+
+  test('should correctly mark days as in current period', () => {
+    vi.setSystemTime(new Date('2024-06-01T11:00:00'));
+    const { result } = renderHook(() =>
+      useCalendar({ events, viewMode: 'month', locale: 'en-US' })
+    );
+
+    const { weeks } = result.current;
+    const daysInCurrentPeriod = weeks.flat().map(day => day.isInCurrentPeriod);
+
+    expect(daysInCurrentPeriod).toEqual([
+      false, false, false, false, false, true, true,
+      true, true, true, true, true, true, true,
+      true, true, true, true, true, true, true,
+      true, true, true, true, true, true, true,
+      true, true, true, true, true, true, true
+    ]);
   });
 });
