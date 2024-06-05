@@ -8,7 +8,7 @@ import type { CSSProperties, MouseEventHandler } from 'react'
 
 interface UseCalendarProps<TEvent extends Event> {
   weekStartsOn?: number
-  events: TEvent[]
+  events?: TEvent[]
   viewMode: 'month' | 'week' | number
   locale?: Parameters<Temporal.PlainDate['toLocaleString']>['0']
   onChangeViewMode?: (viewMode: 'month' | 'week' | number) => void
@@ -113,7 +113,7 @@ export const useCalendar = <TEvent extends Event>({
             ),
             7,
           ),
-        )
+        ).flat()
       : state.viewMode === 'week'
         ? Array.from(
             getChunks(
@@ -123,7 +123,7 @@ export const useCalendar = <TEvent extends Event>({
               ),
               7,
             ),
-          )
+          ).flat()
         : Array.from(
             getChunks(
               generateDateRange(
@@ -132,12 +132,12 @@ export const useCalendar = <TEvent extends Event>({
               ),
               state.viewMode,
             ),
-          )
+          ).flat()
 
   const eventMap = useMemo(() => {
     const map = new Map<string, TEvent[]>()
 
-    events.forEach((event) => {
+    events?.forEach((event) => {
       const eventStartDate = Temporal.PlainDateTime.from(event.startDate)
       const eventEndDate = Temporal.PlainDateTime.from(event.endDate)
       if (
@@ -166,18 +166,21 @@ export const useCalendar = <TEvent extends Event>({
     return map
   }, [events])
 
-  const daysWithEvents = days.map((dayChunk) => {
-    return dayChunk.map((day) => {
-      const dayKey = day.toString()
-      const dailyEvents = eventMap.get(dayKey) ?? []
+  const daysWithEvents = days.map((day) => {
+    const dayKey = day.toString()
+    const dailyEvents = eventMap.get(dayKey) ?? []
 
-      return {
-        date: day,
-        events: dailyEvents,
-        isToday: Temporal.PlainDate.compare(day, Temporal.Now.plainDateISO()) === 0,
-      }
-    })
+    return {
+      date: day,
+      events: dailyEvents,
+      isToday: Temporal.PlainDate.compare(day, Temporal.Now.plainDateISO()) === 0,
+    }
   })
+
+  const chunks =
+    state.viewMode === 'month'
+      ? [...getChunks(daysWithEvents, 7)]
+      : [daysWithEvents]
 
   const setPreviousPeriod = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
     dispatch(actions.setPreviousPeriod())
@@ -197,11 +200,6 @@ export const useCalendar = <TEvent extends Event>({
     },
     [dispatch],
   )
-
-  const chunks =
-    state.viewMode === 'month'
-      ? [...getChunks(daysWithEvents, 7)]
-      : [daysWithEvents]
 
   const changeViewMode = useCallback(
     (newViewMode: 'month' | 'week' | number) => {
@@ -334,9 +332,9 @@ export const useCalendar = <TEvent extends Event>({
     getCurrentPeriod,
     get,
     chunks,
-    daysNames: days
-      .flat()
-      .map((day) => day.toLocaleString(locale, { weekday: 'short' })),
+    daysNames: Array.from(getChunks(daysWithEvents, 7)).flat()
+      .slice(0, 7)
+      .map((day) => day.date.toLocaleString(locale, { weekday: 'short' })),
     viewMode: state.viewMode,
     changeViewMode,
     getEventProps,

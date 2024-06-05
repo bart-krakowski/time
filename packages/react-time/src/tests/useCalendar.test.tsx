@@ -196,4 +196,20 @@ describe('useCalendar', () => {
 
     vi.useRealTimers();
   })
+
+  test('should render array of days', () => {
+    vi.setSystemTime(new Date('2024-06-01T11:00:00'));
+
+    const { result } = renderHook(() =>
+      useCalendar({ events, viewMode: 'month', locale: 'en-US' })
+    );
+
+    const { chunks } = result.current;
+    expect(chunks).toHaveLength(5);
+    expect(chunks[0]).toHaveLength(7);
+
+    expect(chunks[0]?.[0]?.date.toString()).toBe('2024-06-01');
+    expect(chunks[chunks.length - 1]?.[0]?.date.toString()).toBe('2024-06-29');
+    expect(chunks[0]?.[0]?.isToday).toBe(true);
+  });
 })
