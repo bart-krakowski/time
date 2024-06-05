@@ -174,6 +174,7 @@ export const useCalendar = <TEvent extends Event>({
       return {
         date: day,
         events: dailyEvents,
+        isToday: Temporal.PlainDate.compare(day, Temporal.Now.plainDateISO()) === 0,
       }
     })
   })
