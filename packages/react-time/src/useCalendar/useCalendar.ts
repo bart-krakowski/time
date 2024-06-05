@@ -191,15 +191,15 @@ export const useCalendar = <TEvent extends Event>({
       ? [...getChunks(daysWithEvents, 7)]
       : [daysWithEvents]
 
-  const goToPreviousPeriod = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
+  const goToPreviousPeriod = useCallback(() => {
     dispatch(actions.goToPreviousPeriod())
   }, [dispatch])
 
-  const goToNextPeriod = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
+  const goToNextPeriod = useCallback(() => {
     dispatch(actions.goToNextPeriod());
   }, [dispatch])
 
-  const goToCurrentPeriod = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
+  const goToCurrentPeriod = useCallback(() => {
     dispatch(actions.setCurrentPeriod(Temporal.Now.plainDateISO()))
   }, [dispatch])
 
@@ -337,13 +337,13 @@ export const useCalendar = <TEvent extends Event>({
   }, [locale, weekStartsOn])
 
   return {
+    ...state,
     firstDayOfPeriod:
       state.viewMode === 'month'
         ? firstDayOfMonth
         : state.viewMode === 'week'
           ? firstDayOfWeek
           : state.currPeriod,
-    currPeriod: state.currPeriod.toString({ calendarName: 'auto' }),
     goToPreviousPeriod,
     goToNextPeriod,
     goToCurrentPeriod,

@@ -248,4 +248,60 @@ describe('useCalendar', () => {
       true, true, true, true, true, true, true
     ]);
   });
+
+  test('should navigate to a specific period correctly', () => {
+    const { result } = renderHook(() => useCalendar({ events, viewMode: 'month', locale: 'en-US' }))
+    const specificDate = Temporal.PlainDate.from('2024-05-15')
+
+    act(() => {
+      result.current.goToSpecificPeriod(specificDate)
+    })
+
+    expect(result.current.currPeriod).toEqual(specificDate)
+  })
+
+  test('should navigate to the previous period correctly', () => {
+    const { result } = renderHook(() =>
+      useCalendar({ events, viewMode: 'month', locale: 'en-US' })
+    )
+
+    act(() => {
+      result.current.goToPreviousPeriod()
+    })
+
+    const expectedPreviousMonth = Temporal.Now.plainDateISO().subtract({
+      months: 1,
+    })
+
+    expect(result.current.currPeriod).toEqual(expectedPreviousMonth)
+  })
+
+  test('should navigate to the next period correctly', () => {
+    const { result } = renderHook(() =>
+      useCalendar({ events, viewMode: 'month', locale: 'en-US' })
+    )
+
+    act(() => {
+      result.current.goToNextPeriod()
+    })
+
+    const expectedNextMonth = Temporal.Now.plainDateISO().add({ months: 1 })
+
+    expect(result.current.currPeriod).toEqual(expectedNextMonth)
+  })
+
+  test('should reset to the current period correctly', () => {
+    const { result } = renderHook(() =>
+      useCalendar({ events, viewMode: 'month', locale: 'en-US' })
+    )
+
+    act(() => {
+      result.current.goToNextPeriod()
+      result.current.goToCurrentPeriod()
+    })
+
+    expect(result.current.currPeriod).toEqual(
+      Temporal.Now.plainDateISO(),
+    )
+  })
 });
