@@ -1,22 +1,26 @@
 import { Temporal } from '@js-temporal/polyfill'
 import { act, renderHook } from '@testing-library/react'
-import { describe, expect, test, vi } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import { useDatePicker } from '../useDatePicker/useDatePicker'
 
 describe('useDatePicker', () => {
-  test('should initialize with the given initial date', () => {
-    const selectedDate = Temporal.PlainDate.from('2024-06-01')
-    const { result } = renderHook(() => useDatePicker({ selectedDate }))
+  afterEach(() => {
+    vi.useRealTimers()
+  })
 
-    expect(result.current.selectedDate).toEqual(selectedDate)
+  test('should initialize with the given initial date', () => {
+    const selectedDates = [Temporal.PlainDate.from('2024-06-01')]
+    const { result } = renderHook(() => useDatePicker({ selectedDates }))
+
+    expect(result.current.selectedDates).toEqual(selectedDates)
   })
 
   test('should allow selecting a date within the min and max range', () => {
-    const selectedDate = Temporal.PlainDate.from('2024-06-01')
+    const selectedDates = [Temporal.PlainDate.from('2024-06-01')]
     const minDate = Temporal.PlainDate.from('2024-05-01')
     const maxDate = Temporal.PlainDate.from('2024-07-01')
     const { result } = renderHook(() =>
-      useDatePicker({ selectedDate, minDate, maxDate }),
+      useDatePicker({ selectedDates, minDate, maxDate }),
     )
 
     const newDate = Temporal.PlainDate.from('2024-06-15')
@@ -24,40 +28,40 @@ describe('useDatePicker', () => {
       result.current.selectDate(newDate)
     })
 
-    expect(result.current.selectedDate).toEqual(newDate)
+    expect(result.current.selectedDates).toEqual([newDate])
   })
 
   test('should not allow selecting a date before the min date', () => {
-    const selectedDate = Temporal.PlainDate.from('2024-06-01')
+    const selectedDates = [Temporal.PlainDate.from('2024-06-01')]
     const minDate = Temporal.PlainDate.from('2024-05-01')
-    const { result } = renderHook(() => useDatePicker({ selectedDate, minDate }))
+    const { result } = renderHook(() => useDatePicker({ selectedDates, minDate }))
 
     const newDate = Temporal.PlainDate.from('2024-04-15')
     act(() => {
       result.current.selectDate(newDate)
     })
 
-    expect(result.current.selectedDate).toEqual(selectedDate)
+    expect(result.current.selectedDates).toEqual(selectedDates)
   })
 
   test('should not allow selecting a date after the max date', () => {
-    const selectedDate = Temporal.PlainDate.from('2024-06-01')
+    const selectedDates = [Temporal.PlainDate.from('2024-06-01')]
     const maxDate = Temporal.PlainDate.from('2024-07-01')
-    const { result } = renderHook(() => useDatePicker({ selectedDate, maxDate }))
+    const { result } = renderHook(() => useDatePicker({ selectedDates, maxDate }))
 
     const newDate = Temporal.PlainDate.from('2024-08-15')
     act(() => {
       result.current.selectDate(newDate)
     })
 
-    expect(result.current.selectedDate).toEqual(selectedDate)
+    expect(result.current.selectedDates).toEqual(selectedDates)
   })
 
   test('should call onSelectDate when a valid date is selected', () => {
-    const selectedDate = Temporal.PlainDate.from('2024-06-01')
+    const selectedDates = [Temporal.PlainDate.from('2024-06-01')]
     const onSelectDate = vi.fn()
     const { result } = renderHook(() =>
-      useDatePicker({ selectedDate, onSelectDate }),
+      useDatePicker({ selectedDates, onSelectDate }),
     )
 
     const newDate = Temporal.PlainDate.from('2024-06-15')
@@ -69,17 +73,67 @@ describe('useDatePicker', () => {
   })
 
   test('should render array of days', () => {
-    const selectedDate = Temporal.PlainDate.from('2024-06-01')
-    const { result } = renderHook(() => useDatePicker({ selectedDate }))
+    vi.setSystemTime('2024-06-01')
+    const selectedDates = [Temporal.PlainDate.from('2024-06-01')]
+    const { result } = renderHook(() => useDatePicker({ selectedDates }))
 
     const days = result.current.days.flat()
     expect(days.length).toBeGreaterThan(0)
     expect(days[0]).toEqual({
-      date: Temporal.PlainDate.from('2024-05-26'),
-      isToday: false,
+      date: Temporal.PlainDate.from('2024-06-01'),
+      isToday: true,
       isSelected: true,
     })
 
-    expect(days[days.length - 1]?.date.toString()).toBe('2024-06-30')
+    expect(days[days.length - 1]).toEqual({
+      date: Temporal.PlainDate.from('2024-06-30'),
+      isToday: false,
+      isSelected: false,
+    })
+
+    vi.useRealTimers()
+  })
+  
+  test('should allow selecting multiple dates', () => {
+    const selectedDates = [Temporal.PlainDate.from('2024-06-01')]
+    const { result } = renderHook(() => useDatePicker({ selectedDates, multiple: true }))
+
+    const newDate = Temporal.PlainDate.from('2024-06-15')
+    act(() => {
+      result.current.selectDate(newDate)
+    })
+
+    expect(result.current.selectedDates).toEqual([Temporal.PlainDate.from('2024-06-01'), newDate])
+  })
+
+  test('should allow deselecting a date', () => {
+    const selectedDates = [Temporal.PlainDate.from('2024-06-01'), Temporal.PlainDate.from('2024-06-15')]
+    const { result } = renderHook(() => useDatePicker({ selectedDates, multiple: true }))
+
+    const newDate = Temporal.PlainDate.from('2024-06-15')
+    act(() => {
+      result.current.selectDate(newDate)
+    })
+
+    expect(result.current.selectedDates).toEqual([Temporal.PlainDate.from('2024-06-01')])
+  })
+
+  test('should allow selecting a range of dates', () => {
+    const selectedDates = [Temporal.PlainDate.from('2024-06-01')]
+    const { result } = renderHook(() => useDatePicker({ selectedDates, range: true }))
+
+    const newDate = Temporal.PlainDate.from('2024-06-15')
+    act(() => {
+      result.current.selectDate(newDate)
+    })
+
+    expect(result.current.selectedDates).toEqual([Temporal.PlainDate.from('2024-06-01'), newDate])
+
+    const days = result.current.days.flat()
+    const selectedDatesIndex = days.findIndex((day) => day.date.equals(newDate))
+    const rangeDates = days.slice(0, selectedDatesIndex + 1)
+    rangeDates.forEach((day) => {
+      expect(day.isInRange).toBe(true)
+    })
   })
 })

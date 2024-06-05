@@ -25,7 +25,6 @@ const generateDateRange = (
 const getFirstDayOfMonth = (currMonth: string) =>
   Temporal.PlainDate.from(`${currMonth}-01`)
 
-
 interface UseDatePickerProps {
   minDate?: Temporal.PlainDate | null
   maxDate?: Temporal.PlainDate | null
@@ -33,11 +32,11 @@ interface UseDatePickerProps {
   locale?: string
   multiple?: boolean
   range?: boolean
-  selectedDate?: Temporal.PlainDate | null
+  selectedDates?: Temporal.PlainDate[] | null
 }
 
 export const useDatePicker = ({
-  selectedDate = null,
+  selectedDates = null,
   minDate = null,
   maxDate = null,
   onSelectDate,
@@ -46,7 +45,7 @@ export const useDatePicker = ({
   range = false,
 }: UseDatePickerProps) => {
   const [state, dispatch] = useDatePickerReducer({
-    selectedDate: selectedDate,
+    selectedDates: selectedDates,
     minDate,
     maxDate,
     currPeriod: Temporal.Now.plainDateISO(),
@@ -65,38 +64,54 @@ export const useDatePicker = ({
         firstDayOfMonth.add({ months: 1 }).subtract({ days: 1 }),
       ),
       7,
-    )
+    ),
   ).map((week) =>
-    week.map((day) => ({
-      date: day,
-      isToday: Temporal.PlainDate.compare(day, Temporal.Now.plainDateISO()) === 0,
-      isSelected: state.selectedDate ? Temporal.PlainDate.compare(day, state.selectedDate) === 0 : false,
-    })),
+    week.map((day) => {
+      const isSelected = state.selectedDates
+        ? state.selectedDates.some(
+            (selectedDate) =>
+              Temporal.PlainDate.compare(day, selectedDate) === 0,
+          )
+        : false
+
+      const isInRange = 
+        state.selectedDates?.[0] && state.selectedDates[1]
+          ? Temporal.PlainDate.compare(day, state.selectedDates[0]) >= 0 &&
+            Temporal.PlainDate.compare(day, state.selectedDates[1]) <= 0
+          : false
+
+      return {
+        date: day,
+        isToday:
+          Temporal.PlainDate.compare(day, Temporal.Now.plainDateISO()) === 0,
+        isSelected,
+        ...(range && { isInRange }),
+      }
+    }),
   )
 
   const selectDate = useCallback(
     (date: Temporal.PlainDate) => {
-     
       dispatch(actions.setDate(date))
-      if (onSelectDate) onSelectDate(date)
+      onSelectDate?.(date)
     },
     [dispatch, onSelectDate],
   )
 
   const getPrev = useCallback(() => {
-    dispatch(actions.setCurrentPeriod())
+    dispatch(actions.goToCurrentPeriod())
   }, [dispatch])
 
   const getNext = useCallback(() => {
-    dispatch(actions.setCurrentPeriod())
+    dispatch(actions.goToCurrentPeriod())
   }, [dispatch])
 
   const getCurrent = useCallback(() => {
-    dispatch(actions.setCurrentPeriod())
+    dispatch(actions.goToCurrentPeriod())
   }, [dispatch])
 
   const get = useCallback(() => {
-    dispatch(actions.setCurrentPeriod())
+    dispatch(actions.goToCurrentPeriod())
   }, [dispatch])
 
   return {

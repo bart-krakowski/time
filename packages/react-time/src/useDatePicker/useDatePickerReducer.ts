@@ -1,49 +1,101 @@
-import { useReducer } from 'react'
-import { createReducer } from 'typesafe-actions'
-import { Temporal } from '@js-temporal/polyfill'
-import { type UseDatePickerAction, actions } from './useDatePickerActions'
-import type { DatePickerState } from './useDatePickerState'
+import { useReducer } from "react";
+import { Temporal } from "@js-temporal/polyfill";
+import { createReducer } from "typesafe-actions";
+
+import { type UseDatePickerAction, actions } from "./useDatePickerActions";
+import type { DatePickerState } from "./useDatePickerState";
+
 
 const createDatePickerReducer = (initialState: DatePickerState) =>
   createReducer<DatePickerState, UseDatePickerAction>(initialState)
     .handleAction(actions.setDate, (state, action) => {
+      const selectedDate = action.payload;
+
       if (
         (state.minDate &&
-          Temporal.PlainDate.compare(action.payload, state.minDate) < 0) ||
+          Temporal.PlainDate.compare(selectedDate, state.minDate) < 0) ??
         (state.maxDate &&
-          Temporal.PlainDate.compare(action.payload, state.maxDate) > 0)
-      )
-        return state
+          Temporal.PlainDate.compare(selectedDate, state.maxDate) > 0)
+      ) {
+        return state;
+      }
+
+      if (state.multiple) {
+        const selectedDates = state.selectedDates ?? [];
+        const dateIndex = selectedDates.findIndex((date) =>
+          Temporal.PlainDate.compare(date, selectedDate) === 0
+        );
+
+        if (dateIndex > -1) {
+          return {
+            ...state,
+            selectedDates: [
+              ...selectedDates.slice(0, dateIndex),
+              ...selectedDates.slice(dateIndex + 1),
+            ],
+          };
+        } else {
+          return {
+            ...state,
+            selectedDates: [...selectedDates, selectedDate],
+          };
+        }
+      }
+
+      if (state.range) {
+        const selectedDates = state.selectedDates ?? [];
+
+        if (selectedDates.length === 0 || selectedDates.length === 2) {
+          return {
+            ...state,
+            selectedDates: [selectedDate],
+          };
+        } else if (selectedDates.length === 1) {
+          const startDate = selectedDates[0];
+
+          if (startDate && Temporal.PlainDate.compare(selectedDate, startDate) >= 0) {
+            return {
+              ...state,
+              selectedDates: [startDate, selectedDate],
+            };
+          } else {
+            return {
+              ...state,
+              selectedDates: [selectedDate],
+            };
+          }
+        }
+      }
 
       return {
         ...state,
-        selectedDate: action.payload,
-      }
+        selectedDate,
+      };
     })
-    .handleAction(actions.setCurrentPeriod, (state) => {
-      const now = Temporal.Now.plainDateISO()
+    .handleAction(actions.goToCurrentPeriod, (state) => {
+      const now = Temporal.Now.plainDateISO();
       if (
-        (state.minDate && Temporal.PlainDate.compare(now, state.minDate) < 0) ||
+        (state.minDate && Temporal.PlainDate.compare(now, state.minDate) < 0) ??
         (state.maxDate && Temporal.PlainDate.compare(now, state.maxDate) > 0)
       ) {
-        return state
+        return state;
       }
 
       return {
         ...state,
         currPeriod: now,
-      }
+      };
     })
-    .handleAction(actions.setNextPeriod, (state) => ({
+    .handleAction(actions.goToNextPeriod, (state) => ({
       ...state,
       currPeriod: state.currPeriod.add({ months: 1 }),
     }))
-    .handleAction(actions.setPreviousPeriod, (state) => ({
+    .handleAction(actions.goToPreviousPeriod, (state) => ({
       ...state,
       currPeriod: state.currPeriod.subtract({ months: 1 }),
-    }))
+    }));
 
 export const useDatePickerReducer = (initialState: DatePickerState) => {
-  const reducer = createDatePickerReducer(initialState)
-  return useReducer(reducer, initialState)
-}
+  const reducer = createDatePickerReducer(initialState);
+  return useReducer(reducer, initialState);
+};

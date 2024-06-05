@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { Temporal } from '@js-temporal/polyfill'
 import {
-  setCurrentPeriod,
+  goToCurrentPeriod,
   setViewMode,
   updateCurrentTime,
 } from './calendarActions'
@@ -190,19 +190,19 @@ export const useCalendar = ({
     switch (state.viewMode) {
       case 'month': {
         const firstDayOfPrevMonth = firstDayOfMonth.subtract({ months: 1 })
-        dispatch(setCurrentPeriod(firstDayOfPrevMonth))
+        dispatch(goToCurrentPeriod(firstDayOfPrevMonth))
         break
       }
       case 'week': {
         const firstDayOfPrevWeek = firstDayOfWeek.subtract({ weeks: 1 })
-        dispatch(setCurrentPeriod(firstDayOfPrevWeek))
+        dispatch(goToCurrentPeriod(firstDayOfPrevWeek))
         break
       }
       default: {
         const prevCustomStart = state.currPeriod.subtract({
           days: state.viewMode,
         })
-        dispatch(setCurrentPeriod(prevCustomStart))
+        dispatch(goToCurrentPeriod(prevCustomStart))
         break
       }
     }
@@ -218,17 +218,17 @@ export const useCalendar = ({
     switch (state.viewMode) {
       case 'month': {
         const firstDayOfNextMonth = firstDayOfMonth.add({ months: 1 })
-        dispatch(setCurrentPeriod(firstDayOfNextMonth))
+        dispatch(goToCurrentPeriod(firstDayOfNextMonth))
         break
       }
       case 'week': {
         const firstDayOfNextWeek = firstDayOfWeek.add({ weeks: 1 })
-        dispatch(setCurrentPeriod(firstDayOfNextWeek))
+        dispatch(goToCurrentPeriod(firstDayOfNextWeek))
         break
       }
       default: {
         const nextCustomStart = state.currPeriod.add({ days: state.viewMode })
-        dispatch(setCurrentPeriod(nextCustomStart))
+        dispatch(goToCurrentPeriod(nextCustomStart))
         break
       }
     }
@@ -241,12 +241,12 @@ export const useCalendar = ({
   ])
 
   const getCurrent = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
-    dispatch(setCurrentPeriod(Temporal.Now.plainDateISO()))
+    dispatch(goToCurrentPeriod(Temporal.Now.plainDateISO()))
   }, [dispatch])
 
   const get = useCallback(
     (date: Temporal.PlainDate) => {
-      dispatch(setCurrentPeriod(date))
+      dispatch(goToCurrentPeriod(date))
     },
     [dispatch],
   )
