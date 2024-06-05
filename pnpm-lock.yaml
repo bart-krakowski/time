@@ -189,7 +189,11 @@ importers:
         specifier: ^2.10.1
         version: 2.10.1(@testing-library/jest-dom@6.4.2)(solid-js@1.7.8)(vite@5.2.6)
 
-  packages/time: {}
+  packages/time:
+    dependencies:
+      '@js-temporal/polyfill':
+        specifier: ^0.4.4
+        version: 0.4.4
 
   packages/vue-time:
     dependencies:
