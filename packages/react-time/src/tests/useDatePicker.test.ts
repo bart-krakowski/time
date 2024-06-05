@@ -80,15 +80,24 @@ describe('useDatePicker', () => {
     const days = result.current.weeks.flat()
     expect(days.length).toBeGreaterThan(0)
     expect(days[0]).toEqual({
+      date: Temporal.PlainDate.from('2024-05-31'),
+      isToday: false,
+      isSelected: false,
+      isInCurrentPeriod: false,
+    })
+
+    expect(days[days.findIndex(day => day.date.equals(Temporal.PlainDate.from('2024-06-01')))]).toEqual({
       date: Temporal.PlainDate.from('2024-06-01'),
       isToday: true,
       isSelected: true,
+      isInCurrentPeriod: true,
     })
 
     expect(days[days.length - 1]).toEqual({
       date: Temporal.PlainDate.from('2024-06-30'),
       isToday: false,
       isSelected: false,
+      isInCurrentPeriod: true,
     })
 
     vi.useRealTimers()
@@ -135,5 +144,94 @@ describe('useDatePicker', () => {
     rangeDates.forEach((day) => {
       expect(day.isInRange).toBe(true)
     })
+  })
+
+  test('should correctly mark days as in current period', () => {
+    vi.setSystemTime('2024-06-01')
+    const selectedDates = [Temporal.PlainDate.from('2024-06-01')]
+    const { result } = renderHook(() => useDatePicker({ selectedDates, locale: 'en-US' }))
+
+    const { weeks } = result.current
+    const daysInCurrentPeriod = weeks.flat().map(day => day.isInCurrentPeriod)
+
+    expect(daysInCurrentPeriod).toEqual([
+      false, false, false, false, false, true, true,
+      true, true, true, true, true, true, true,
+      true, true, true, true, true, true, true,
+      true, true, true, true, true, true, true,
+      true, true, true, true, true, true, true,
+    ])
+  })
+
+  test('should return the correct day names based on weekStartsOn', () => {
+    const { result } = renderHook(() =>
+      useDatePicker({ selectedDates: [], locale: 'en-US', weekStartsOn: 1 })
+    )
+
+    const { daysNames } = result.current
+    expect(daysNames).toEqual(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])
+
+    const { result: resultSundayStart } = renderHook(() =>
+      useDatePicker({ selectedDates: [], locale: 'en-US', weekStartsOn: 7 })
+    )
+
+    const { daysNames: sundayDaysNames } = resultSundayStart.current
+    expect(sundayDaysNames).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
+  })
+
+  test('should navigate to a specific period correctly', () => {
+    const { result } = renderHook(() => useDatePicker({ selectedDates: [] }))
+    const specificDate = Temporal.PlainDate.from('2024-05-15')
+
+    act(() => {
+      result.current.goToSpecificPeriod(specificDate)
+    })
+
+    expect(result.current.currPeriod).toEqual(specificDate)
+  })
+
+  test('should navigate to the previous period correctly', () => {
+    const { result } = renderHook(() =>
+      useDatePicker({ selectedDates: [] }),
+    )
+
+    act(() => {
+      result.current.goToPreviousPeriod()
+    })
+
+    const expectedPreviousMonth = Temporal.Now.plainDateISO().subtract({
+      months: 1,
+    })
+
+    expect(result.current.currPeriod).toEqual(expectedPreviousMonth)
+  })
+
+  test('should navigate to the next period correctly', () => {
+    const { result } = renderHook(() =>
+      useDatePicker({ selectedDates: [] }),
+    )
+
+    act(() => {
+      result.current.goToNextPeriod()
+    })
+
+    const expectedNextMonth = Temporal.Now.plainDateISO().add({ months: 1 })
+
+    expect(result.current.currPeriod).toEqual(expectedNextMonth)
+  })
+
+  test('should reset to the current period correctly', () => {
+    const { result } = renderHook(() =>
+      useDatePicker({ selectedDates: [] }),
+    )
+
+    act(() => {
+      result.current.goToNextPeriod()
+      result.current.goToCurrentPeriod()
+    })
+
+    expect(result.current.currPeriod).toEqual(
+      Temporal.Now.plainDateISO(),
+    )
   })
 })

@@ -39,11 +39,11 @@ export const useDatePicker = ({
   - This value represents the calendar grid for the current month, where each cell contains a date.
 - `selectDate`: A function to select a date within the min and max range.
   - This function allows selecting a date within the min and max range.
-- `getPrev`: A function to navigate to the previous month.
+- `goToPreviousPeriod`: A function to navigate to the previous month.
   - This function navigates to the previous month.
-- `getNext`: A function to navigate to the next month.
+- `goToNextPeriod`: A function to navigate to the next month.
   - This function navigates to the next month.
-- `getCurrent`: A function to navigate to the current month.
+- `goToCurrentPeriod`: A function to navigate to the current month.
   - This function navigates to the current month.
 - `get`: A function to set the current period to a specified date.
   - This function sets the current period to a specified date.
@@ -60,9 +60,9 @@ const DatePickerComponent = () => {
     maxDate,
     days,
     selectDate,
-    getPrev,
-    getNext,
-    getCurrent,
+    goToPreviousPeriod,
+    goToNextPeriod,
+    goToCurrentPeriod,
     daysNames,
   } = useDatePicker({
     selectedDates: [Temporal.PlainDate.from('2024-06-01')],
@@ -74,9 +74,9 @@ const DatePickerComponent = () => {
   return (
     <div className="date-picker-container">
       <div className="date-picker-header">
-        <button onClick={getPrev}>Previous</button>
-        <button onClick={getCurrent}>Today</button>
-        <button onClick={getNext}>Next</button>
+        <button onClick={goToPreviousPeriod}>Previous</button>
+        <button onClick={goToCurrentPeriod}>Today</button>
+        <button onClick={goToNextPeriod}>Next</button>
       </div>
       <table className="date-picker-table">
         <thead>

@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Temporal } from '@js-temporal/polyfill'
 import { useDatePickerReducer } from './useDatePickerReducer'
 import { actions } from './useDatePickerActions'
@@ -33,6 +33,7 @@ interface UseDatePickerProps {
   multiple?: boolean
   range?: boolean
   selectedDates?: Temporal.PlainDate[] | null
+  weekStartsOn?: number
 }
 
 export const useDatePicker = ({
@@ -43,6 +44,7 @@ export const useDatePicker = ({
   locale = 'en-US',
   multiple = false,
   range = false,
+  weekStartsOn = 1,
 }: UseDatePickerProps) => {
   const [state, dispatch] = useDatePickerReducer({
     selectedDates: selectedDates,
@@ -57,37 +59,42 @@ export const useDatePicker = ({
     state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),
   )
 
-  const weeks = Array.from(
-    getChunks(
-      generateDateRange(
-        firstDayOfMonth,
-        firstDayOfMonth.add({ months: 1 }).subtract({ days: 1 }),
+  const weeks = useMemo(() => 
+    Array.from(
+      getChunks(
+        generateDateRange(
+          firstDayOfMonth.subtract({ days: (firstDayOfMonth.dayOfWeek - weekStartsOn + 7) % 7 }),
+          firstDayOfMonth.add({ months: 1 }).subtract({ days: 1 }),
+        ),
+        7,
       ),
-      7,
-    ),
-  ).map((week) =>
-    week.map((day) => {
-      const isSelected = state.selectedDates
-        ? state.selectedDates.some(
-            (selectedDate) =>
-              Temporal.PlainDate.compare(day, selectedDate) === 0,
-          )
-        : false
-
-      const isInRange = 
-        state.selectedDates?.[0] && state.selectedDates[1]
-          ? Temporal.PlainDate.compare(day, state.selectedDates[0]) >= 0 &&
-            Temporal.PlainDate.compare(day, state.selectedDates[1]) <= 0
+    ).map((week) =>
+      week.map((day) => {
+        const isSelected = state.selectedDates
+          ? state.selectedDates.some(
+              (selectedDate) =>
+                Temporal.PlainDate.compare(day, selectedDate) === 0,
+            )
           : false
 
-      return {
-        date: day,
-        isToday:
-          Temporal.PlainDate.compare(day, Temporal.Now.plainDateISO()) === 0,
-        isSelected,
-        ...(range && { isInRange }),
-      }
-    }),
+        const isInRange = 
+          state.selectedDates?.[0] && state.selectedDates[1]
+            ? Temporal.PlainDate.compare(day, state.selectedDates[0]) >= 0 &&
+              Temporal.PlainDate.compare(day, state.selectedDates[1]) <= 0
+            : false
+
+        const isInCurrentPeriod = day.month === state.currPeriod.month
+
+        return {
+          date: day,
+          isToday:
+            Temporal.PlainDate.compare(day, Temporal.Now.plainDateISO()) === 0,
+          isSelected,
+          isInCurrentPeriod,
+          ...(range && { isInRange }),
+        }
+      }),
+    ), [firstDayOfMonth, weekStartsOn, state.selectedDates, state.currPeriod.month, range]
   )
 
   const selectDate = useCallback(
@@ -98,32 +105,40 @@ export const useDatePicker = ({
     [dispatch, onSelectDate],
   )
 
-  const getPrev = useCallback(() => {
+  const goToPreviousPeriod = useCallback(() => {
+    dispatch(actions.goToPreviousPeriod())
+  }, [dispatch])
+
+  const goToNextPeriod = useCallback(() => {
+    dispatch(actions.goToNextPeriod())
+  }, [dispatch])
+
+  const goToCurrentPeriod = useCallback(() => {
     dispatch(actions.goToCurrentPeriod())
   }, [dispatch])
 
-  const getNext = useCallback(() => {
-    dispatch(actions.goToCurrentPeriod())
-  }, [dispatch])
+  const goToSpecificPeriod = useCallback((date: Temporal.PlainDate) => {
+      dispatch(actions.goToSpecificPeriod(date))
+    },
+    [dispatch],
+  )
 
-  const getCurrent = useCallback(() => {
-    dispatch(actions.goToCurrentPeriod())
-  }, [dispatch])
-
-  const get = useCallback(() => {
-    dispatch(actions.goToCurrentPeriod())
-  }, [dispatch])
+  const daysNames = useMemo(() => {
+    const baseDate = Temporal.PlainDate.from('2024-01-01')
+    return Array.from({ length: 7 }).map((_, i) => 
+      baseDate.add({ days: (i + weekStartsOn - 1) % 7 })
+        .toLocaleString(locale, { weekday: 'short' })
+    )
+  }, [locale, weekStartsOn])
 
   return {
     ...state,
     weeks,
-    daysNames: weeks
-      .flat()
-      .map((day) => day.date.toLocaleString(locale, { weekday: 'short' })),
+    daysNames,
     selectDate,
-    getPrev,
-    getNext,
-    getCurrent,
-    get,
+    goToPreviousPeriod,
+    goToNextPeriod,
+    goToCurrentPeriod,
+    goToSpecificPeriod,
   }
 }
