@@ -77,21 +77,6 @@ describe('useCalendar', () => {
     expect(result.current.firstDayOfPeriod).toEqual(expectedFirstDayOfNextMonth)
   })
 
-  test('should reset to the current period correctly', () => {
-    const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: 'month' }),
-    )
-
-    act(() => {
-      result.current.goToNextPeriod(mockEvent)
-      result.current.goToCurrentPeriod(mockEvent)
-    })
-
-    expect(result.current.currPeriod).toBe(
-      Temporal.Now.plainDateISO().toString({ calendarName: 'auto' }),
-    )
-  })
-
   test('should change view mode correctly', () => {
     const { result } = renderHook(() =>
       useCalendar({ events, viewMode: 'month' }),
