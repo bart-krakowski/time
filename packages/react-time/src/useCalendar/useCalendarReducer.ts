@@ -19,7 +19,7 @@ const createCalendarReducer = (initialState: CalendarState) => {
       ...state,
       currentTime: action.payload,
     }))
-    .handleAction(actions.setPreviousPeriod, (state) => {
+    .handleAction(actions.goToPreviousPeriod, (state) => {
       const firstDayOfMonth = getFirstDayOfMonth(
         state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),
       )
@@ -54,7 +54,7 @@ const createCalendarReducer = (initialState: CalendarState) => {
         }
       }
     })
-    .handleAction(actions.setNextPeriod, (state) => {
+    .handleAction(actions.goToNextPeriod, (state) => {
       const firstDayOfMonth = getFirstDayOfMonth(
         state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),
       )

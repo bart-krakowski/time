@@ -37,7 +37,7 @@ describe('useCalendar', () => {
     )
 
     act(() => {
-      result.current.setPreviousPeriod(mockEvent)
+      result.current.goToPreviousPeriod(mockEvent)
     })
 
     const expectedPreviousMonth = Temporal.Now.plainDateISO().subtract({
@@ -60,7 +60,7 @@ describe('useCalendar', () => {
     )
 
     act(() => {
-      result.current.setNextPeriod(mockEvent)
+      result.current.goToNextPeriod(mockEvent)
     })
 
     const expectedNextMonth = Temporal.Now.plainDateISO().add({ months: 1 })
@@ -79,8 +79,8 @@ describe('useCalendar', () => {
     )
 
     act(() => {
-      result.current.setNextPeriod(mockEvent)
-      result.current.getCurrentPeriod(mockEvent)
+      result.current.goToNextPeriod(mockEvent)
+      result.current.goToCurrentPeriod(mockEvent)
     })
 
     expect(result.current.currPeriod).toBe(
@@ -183,7 +183,7 @@ describe('useCalendar', () => {
       useCalendar({ events, viewMode: 'week' }),
     )
 
-    const currentTimeMarkerProps = result.current.getCurrentPeriodTimeMarkerProps()
+    const currentTimeMarkerProps = result.current.goToCurrentPeriodTimeMarkerProps()
 
     expect(currentTimeMarkerProps).toEqual({
       style: {
@@ -204,12 +204,12 @@ describe('useCalendar', () => {
       useCalendar({ events, viewMode: 'month', locale: 'en-US' })
     );
 
-    const { chunks } = result.current;
-    expect(chunks).toHaveLength(5);
-    expect(chunks[0]).toHaveLength(7);
+    const { weeks } = result.current;
+    expect(weeks).toHaveLength(5);
+    expect(weeks[0]).toHaveLength(7);
 
-    expect(chunks[0]?.[0]?.date.toString()).toBe('2024-06-01');
-    expect(chunks[chunks.length - 1]?.[0]?.date.toString()).toBe('2024-06-29');
-    expect(chunks.find((week) => week.some((day) => day.isToday))?.find((day) => day.isToday)?.date.toString()).toBe('2024-06-01');
+    expect(weeks[0]?.[0]?.date.toString()).toBe('2024-06-01');
+    expect(weeks[weeks.length - 1]?.[0]?.date.toString()).toBe('2024-06-29');
+    expect(weeks.find((week) => week.some((day) => day.isToday))?.find((day) => day.isToday)?.date.toString()).toBe('2024-06-01');
   });
 })

@@ -177,24 +177,24 @@ export const useCalendar = <TEvent extends Event>({
     }
   })
 
-  const chunks =
+  const weeks =
     state.viewMode === 'month'
       ? [...getChunks(daysWithEvents, 7)]
       : [daysWithEvents]
 
-  const setPreviousPeriod = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
-    dispatch(actions.setPreviousPeriod())
+  const goToPreviousPeriod = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
+    dispatch(actions.goToPreviousPeriod())
   }, [dispatch])
 
-  const setNextPeriod = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
-    dispatch(actions.setNextPeriod());
+  const goToNextPeriod = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
+    dispatch(actions.goToNextPeriod());
   }, [dispatch])
 
-  const getCurrentPeriod = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
+  const goToCurrentPeriod = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
     dispatch(actions.setCurrentPeriod(Temporal.Now.plainDateISO()))
   }, [dispatch])
 
-  const get = useCallback(
+  const goToSpecificPeriod = useCallback(
     (date: Temporal.PlainDate) => {
       dispatch(actions.setCurrentPeriod(date))
     },
@@ -304,7 +304,7 @@ export const useCalendar = <TEvent extends Event>({
     return () => clearInterval(intervalId)
   }, [dispatch])
 
-  const getCurrentPeriodTimeMarkerProps = useCallback(() => {
+  const goToCurrentPeriodTimeMarkerProps = useCallback(() => {
     const { hour, minute } = state.currentTime
     const currentTimeInMinutes = hour * 60 + minute
     const percentageOfDay = (currentTimeInMinutes / (24 * 60)) * 100
@@ -327,17 +327,17 @@ export const useCalendar = <TEvent extends Event>({
           ? firstDayOfWeek
           : state.currPeriod,
     currPeriod: state.currPeriod.toString({ calendarName: 'auto' }),
-    setPreviousPeriod,
-    setNextPeriod,
-    getCurrentPeriod,
-    get,
-    chunks,
+    goToPreviousPeriod,
+    goToNextPeriod,
+    goToCurrentPeriod,
+    goToSpecificPeriod,
+    weeks,
     daysNames: Array.from(getChunks(daysWithEvents, 7)).flat()
       .slice(0, 7)
       .map((day) => day.date.toLocaleString(locale, { weekday: 'short' })),
     viewMode: state.viewMode,
     changeViewMode,
     getEventProps,
-    getCurrentPeriodTimeMarkerProps,
+    goToCurrentPeriodTimeMarkerProps,
   }
 }

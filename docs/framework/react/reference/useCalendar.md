@@ -40,15 +40,15 @@ export function useCalendar({
   - This value represents the first day of the current period displayed by the calendar.
 - `currPeriod: string`
   - This value represents a string that describes the current period displayed by the calendar.
-- `setPreviousPeriod: MouseEventHandler<HTMLButtonElement>`
+- `goToPreviousPeriod: MouseEventHandler<HTMLButtonElement>`
   - This function is a click event handler that navigates to the previous period.
-- `setNextPeriod: MouseEventHandler<HTMLButtonElement>`
+- `goToNextPeriod: MouseEventHandler<HTMLButtonElement>`
   - This function is a click event handler that navigates to the next period.
-- `getCurrentPeriod: MouseEventHandler<HTMLButtonElement>`
+- `goToCurrentPeriod: MouseEventHandler<HTMLButtonElement>`
   - This function is a click event handler that navigates to the current period.
-- `get: (date: Temporal.PlainDate) => void`
+- `goToSpecificPeriod: (date: Temporal.PlainDate) => void`
   - This function is a callback function that is called when a date is selected in the calendar. It receives the selected date as an argument.
-- `chunks: Array<Array<{ date: Temporal.PlainDate; events: Event[] }>>`
+- `weeks: Array<Array<{ date: Temporal.PlainDate; events: Event[] }>>`
   - This value represents the calendar grid, where each cell contains the date and events for that day.
 - `daysNames: string[]`
   - This value represents an array of strings that contain the names of the days of the week.
@@ -62,7 +62,7 @@ export function useCalendar({
   - This function is used to retrieve the style properties for a specific event based on its ID.
 - `getEventProps: (id: string) => { style: CSSProperties } | null`
   - This function is used to retrieve the style properties for a specific event based on its ID.
-- `getCurrentPeriodTimeMarkerProps: () => { style: CSSProperties, currentTime: Temporal.PlainTime }`
+- `goToCurrentPeriodTimeMarkerProps: () => { style: CSSProperties, currentTime: Temporal.PlainTime }`
   - This function is used to retrieve the style properties and current time for the current time marker.
 
 
@@ -73,16 +73,16 @@ const CalendarComponent = ({ events }) => {
   const {
     firstDayOfPeriod,
     currPeriod,
-    setPreviousPeriod,
-    setNextPeriod,
-    getCurrentPeriod,
-    get,
+    goToPreviousPeriod,
+    goToNextPeriod,
+    goToCurrentPeriod,
+    goToSpecificPeriod,
     changeViewMode,
-    chunks,
+    weeks,
     daysNames,
     viewMode,
     getEventProps,
-    getCurrentPeriodTimeMarkerProps,
+    goToCurrentPeriodTimeMarkerProps,
   } = useCalendar({
     events,
     viewMode: 'month',
@@ -93,9 +93,9 @@ const CalendarComponent = ({ events }) => {
   return (
     <div className="calendar-container">
       <div className="calendar-header">
-        <button onClick={setPreviousPeriod}>Previous</button>
-        <button onClick={getCurrentPeriod}>Today</button>
-        <button onClick={setNextPeriod}>Next</button>
+        <button onClick={goToPreviousPeriod}>Previous</button>
+        <button onClick={goToCurrentPeriod}>Today</button>
+        <button onClick={goToNextPeriod}>Next</button>
       </div>
       <div className="calendar-view-mode">
         <button onClick={() => changeViewMode('month')}>Month View</button>
@@ -116,7 +116,7 @@ const CalendarComponent = ({ events }) => {
           </thead>
         )}
         <tbody>
-          {chunks.map((week, weekIndex) => (
+          {weeks.map((week, weekIndex) => (
             <tr key={weekIndex} className="calendar-week">
               {week.map((day) => (
                 <td key={day.date.toString()} className="calendar-day">
@@ -136,7 +136,7 @@ const CalendarComponent = ({ events }) => {
                   </div>
                 </td>
               ))}
-              <div className="current-time-marker" {...getCurrentPeriodTimeMarkerProps()}></div>
+              <div className="current-time-marker" {...goToCurrentPeriodTimeMarkerProps()}></div>
             </tr>
           ))}
         </tbody>
