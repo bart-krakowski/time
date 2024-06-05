@@ -119,7 +119,11 @@ const CalendarComponent = ({ events }) => {
           {weeks.map((week, weekIndex) => (
             <tr key={weekIndex} className="calendar-week">
               {week.map((day) => (
-                <td key={day.date.toString()} className="calendar-day">
+                <td key={day.date.toString()} className={`
+                  calendar-day
+                  ${day.isToday ? 'today' : ''}
+                  ${day.isInCurrentPeriod ? 'current' : ''}
+                `}>
                   <div className="calendar-date">
                     {day.date.day}
                   </div>
