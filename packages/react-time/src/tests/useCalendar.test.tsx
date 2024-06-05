@@ -210,6 +210,6 @@ describe('useCalendar', () => {
 
     expect(chunks[0]?.[0]?.date.toString()).toBe('2024-06-01');
     expect(chunks[chunks.length - 1]?.[0]?.date.toString()).toBe('2024-06-29');
-    expect(chunks[0]?.[0]?.isToday).toBe(true);
+    expect(chunks.find((week) => week.some((day) => day.isToday))?.find((day) => day.isToday)?.date.toString()).toBe('2024-06-01');
   });
 })
