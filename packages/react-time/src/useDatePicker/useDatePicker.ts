@@ -57,7 +57,7 @@ export const useDatePicker = ({
     state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),
   )
 
-  const days = Array.from(
+  const weeks = Array.from(
     getChunks(
       generateDateRange(
         firstDayOfMonth,
@@ -116,8 +116,8 @@ export const useDatePicker = ({
 
   return {
     ...state,
-    days,
-    daysNames: days
+    weeks,
+    daysNames: weeks
       .flat()
       .map((day) => day.date.toLocaleString(locale, { weekday: 'short' })),
     selectDate,

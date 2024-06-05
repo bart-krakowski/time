@@ -77,7 +77,7 @@ describe('useDatePicker', () => {
     const selectedDates = [Temporal.PlainDate.from('2024-06-01')]
     const { result } = renderHook(() => useDatePicker({ selectedDates }))
 
-    const days = result.current.days.flat()
+    const days = result.current.weeks.flat()
     expect(days.length).toBeGreaterThan(0)
     expect(days[0]).toEqual({
       date: Temporal.PlainDate.from('2024-06-01'),
@@ -129,7 +129,7 @@ describe('useDatePicker', () => {
 
     expect(result.current.selectedDates).toEqual([Temporal.PlainDate.from('2024-06-01'), newDate])
 
-    const days = result.current.days.flat()
+    const days = result.current.weeks.flat()
     const selectedDatesIndex = days.findIndex((day) => day.date.equals(newDate))
     const rangeDates = days.slice(0, selectedDatesIndex + 1)
     rangeDates.forEach((day) => {
