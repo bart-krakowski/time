@@ -15,11 +15,30 @@ export const getFirstDayOfMonth = (currMonth: string) =>
   Temporal.PlainDate.from(`${currMonth}-01`)
 
 interface UseCalendarProps<TEvent extends Event, TState extends UseCalendarState = UseCalendarState> {
+  /**
+   * The day of the week the calendar should start on (1 for Monday, 7 for Sunday).
+   * @default 1
+   */
   weekStartsOn?: number
+  /**
+   * An array of events that the calendar should display.
+   */
   events?: TEvent[]
+  /**
+   * The initial view mode of the calendar. It can be 'month', 'week', or a number representing the number of days in a custom view mode.
+   */
   viewMode: 'month' | 'week' | number
+  /**
+   * The locale to use for formatting dates and times.
+   */
   locale?: Parameters<Temporal.PlainDate['toLocaleString']>['0']
+  /**
+   * Callback function that is called when the view mode of the calendar changes. It receives the new view mode as an argument.
+   */
   onChangeViewMode?: (viewMode: 'month' | 'week' | number) => void
+  /**
+   * Custom reducer function to manage the state of the calendar.
+   */
   reducer?: <TAction extends UseCalendarAction = UseCalendarAction>(state: TState, action: TAction) => TState
 }
 
@@ -88,6 +107,31 @@ const generateDateRange = (
   return dates
 }
 
+/**
+ * Hook to manage the state and behavior of a calendar.
+ *
+ * @param {UseCalendarProps} props - The configuration properties for the calendar.
+ * @param {number} [props.weekStartsOn=1] - The day of the week the calendar should start on (1 for Monday, 7 for Sunday).
+ * @param {TEvent[]} [props.events] - An array of events that the calendar should display.
+ * @param {'month' | 'week' | number} props.viewMode - The initial view mode of the calendar. It can be 'month', 'week', or a number representing the number of days in a custom view mode.
+ * @param {Intl.LocalesArgument} [props.locale] - The locale to use for formatting dates and times.
+ * @param {Function} [props.onChangeViewMode] - Callback function that is called when the view mode of the calendar changes. It receives the new view mode as an argument.
+ * @param {Function} [props.reducer] - Custom reducer function to manage the state of the calendar.
+ *
+ * @returns {Object} calendarState - The state and functions for managing the calendar.
+ * @returns {Temporal.PlainDate} calendarState.firstDayOfPeriod - The first day of the current period displayed by the calendar.
+ * @returns {Temporal.PlainDate} calendarState.currPeriod - The current period displayed by the calendar.
+ * @returns {Function} calendarState.goToPreviousPeriod - Function to navigate to the previous period.
+ * @returns {Function} calendarState.goToNextPeriod - Function to navigate to the next period.
+ * @returns {Function} calendarState.goToCurrentPeriod - Function to navigate to the current period.
+ * @returns {Function} calendarState.goToSpecificPeriod - Function to navigate to a specific period.
+ * @returns {Array<Array<{ date: Temporal.PlainDate; events: TEvent[]; isToday: boolean; isInCurrentPeriod: boolean }>>} calendarState.weeks - The calendar grid, where each cell contains the date and events for that day.
+ * @returns {string[]} calendarState.daysNames - An array of day names based on the locale and week start day.
+ * @returns {'month' | 'week' | number} calendarState.viewMode - The current view mode of the calendar.
+ * @returns {Function} calendarState.changeViewMode - Function to change the view mode of the calendar.
+ * @returns {Function} calendarState.getEventProps - Function to retrieve the style properties for a specific event based on its ID.
+ * @returns {Function} calendarState.currentTimeMarkerProps - Function to retrieve the style properties and current time for the current time marker.
+ */
 export const useCalendar = <TEvent extends Event>({
   weekStartsOn = 1,
   events,
