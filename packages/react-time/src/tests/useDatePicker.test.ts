@@ -147,6 +147,26 @@ describe('useDatePicker', () => {
     ])
   })
 
+  test('should allow selecting a range of dates in reverse order', () => {
+    const { result } = renderHook(() => useDatePicker({ range: true }))
+  
+    const endDate = Temporal.PlainDate.from('2024-06-10')
+    const startDate = Temporal.PlainDate.from('2024-06-05')
+    act(() => {
+      result.current.selectDate(endDate)
+      result.current.selectDate(startDate)
+    })
+  
+    const { weeks } = result.current
+    const days = weeks.flat()
+    const daysInRange = days.filter(day => day.isInRange)
+  
+    expect(daysInRange.length).toBe(6)
+    expect(daysInRange.map(day => day.date.toString())).toEqual([
+      '2024-06-05', '2024-06-06', '2024-06-07', '2024-06-08', '2024-06-09', '2024-06-10'
+    ])
+  })
+
   test('should correctly mark days as in current period', () => {
     vi.setSystemTime('2024-06-01')
     const selectedDates = [Temporal.PlainDate.from('2024-06-01')]
@@ -241,5 +261,11 @@ describe('useDatePicker', () => {
       // @ts-expect-error
       renderHook(() => useDatePicker({ multiple: true, range: true }))
     }).toThrowError('The multiple and range props cannot be used together')
+  })
+
+  test('should throw an error when the min date is after the max date', () => {
+    expect(() => {
+      renderHook(() => useDatePicker({ minDate: Temporal.PlainDate.from('2024-06-15'), maxDate: Temporal.PlainDate.from('2024-06-01') }))
+    }).toThrowError('The min date cannot be after the max date')
   })
 })

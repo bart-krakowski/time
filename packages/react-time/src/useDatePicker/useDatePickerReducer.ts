@@ -53,10 +53,12 @@ const createDatePickerReducer = (initialState: DatePickerState) =>
         } else if (selectedDates.length === 1) {
           const startDate = selectedDates[0];
 
-          if (startDate && Temporal.PlainDate.compare(selectedDate, startDate) >= 0) {
+          if (startDate) {
             return {
               ...state,
-              selectedDates: [startDate, selectedDate],
+              selectedDates: [startDate, selectedDate].sort((a, b) =>
+                Temporal.PlainDate.compare(a, b)
+              ),
             };
           } else {
             return {
