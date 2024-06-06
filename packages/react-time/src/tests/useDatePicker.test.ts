@@ -236,7 +236,7 @@ describe('useDatePicker', () => {
     )
   })
 
-  test('should throw an error when multiple and range props are used together', () => {
+  test('should throw an type error when multiple and range props are used together', () => {
     expect(() => {
       // @ts-expect-error
       renderHook(() => useDatePicker({ multiple: true, range: true }))
