@@ -58,8 +58,6 @@ export const useDatePicker = ({
 const DatePickerComponent = () => {
   const {
     selectedDates,
-    minDate,
-    maxDate,
     days,
     selectDate,
     goToPreviousPeriod,
