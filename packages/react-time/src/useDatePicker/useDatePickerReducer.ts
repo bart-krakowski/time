@@ -9,13 +9,13 @@ import type { UseDatePickerState } from "./useDatePickerState";
 const createDatePickerReducer = (initialState: UseDatePickerState) =>
   createReducer<UseDatePickerState, UseDatePickerAction>(initialState)
     .handleAction(actions.setDate, (state, action) => {
-      const { date: selectedDate, multiple, range } = action.payload
+      const { date: selectedDate, multiple, range, minDate, maxDate } = action.payload
 
       if (
-        (state.minDate &&
-          Temporal.PlainDate.compare(selectedDate, state.minDate) < 0) ??
-        (state.maxDate &&
-          Temporal.PlainDate.compare(selectedDate, state.maxDate) > 0)
+        (minDate &&
+          Temporal.PlainDate.compare(selectedDate, minDate) < 0) ??
+        (maxDate &&
+          Temporal.PlainDate.compare(selectedDate, maxDate) > 0)
       ) {
         return state;
       }
@@ -74,11 +74,12 @@ const createDatePickerReducer = (initialState: UseDatePickerState) =>
         selectedDate,
       };
     })
-    .handleAction(actions.goToCurrentPeriod, (state) => {
+    .handleAction(actions.goToCurrentPeriod, (state, action) => {
+      const { minDate, maxDate } = action.payload;
       const now = Temporal.Now.plainDateISO();
       if (
-        (state.minDate && Temporal.PlainDate.compare(now, state.minDate) < 0) ??
-        (state.maxDate && Temporal.PlainDate.compare(now, state.maxDate) > 0)
+        (minDate && Temporal.PlainDate.compare(now, minDate) < 0) ??
+        (maxDate && Temporal.PlainDate.compare(now, maxDate) > 0)
       ) {
         return state;
       }

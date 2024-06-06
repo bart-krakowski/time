@@ -48,11 +48,11 @@ interface UseDatePickerBaseProps<TState extends UseDatePickerState = UseDatePick
   /**
    * The minimum selectable date in the date picker.
    */
-  minDate?: Temporal.PlainDate | null
+  minDate?: Temporal.PlainDate
   /**
    * The maximum selectable date in the date picker.
    */
-  maxDate?: Temporal.PlainDate | null
+  maxDate?: Temporal.PlainDate
   /**
    * Callback function that is called when a date is selected.
    */
@@ -85,8 +85,8 @@ type UseDatePickerProps =
  *
  * @param {UseDatePickerProps} props - The configuration properties for the date picker.
  * @param {Temporal.PlainDate[]} [props.selectedDates=null] - The initially selected dates.
- * @param {Temporal.PlainDate} [props.minDate=null] - The minimum selectable date.
- * @param {Temporal.PlainDate} [props.maxDate=null] - The maximum selectable date.
+ * @param {Temporal.PlainDate} [props.minDate] - The minimum selectable date.
+ * @param {Temporal.PlainDate} [props.maxDate] - The maximum selectable date.
  * @param {Function} [props.onSelectDate] - Callback function called when a date is selected.
  * @param {string} [props.locale='en-US'] - The locale for formatting dates.
  * @param {boolean} [props.multiple=false] - Whether multiple dates can be selected.
@@ -111,8 +111,8 @@ type UseDatePickerProps =
  */
 export const useDatePicker = ({
   selectedDates = null,
-  minDate = null,
-  maxDate = null,
+  minDate,
+  maxDate,
   onSelectDate,
   locale = 'en-US',
   multiple = false,
@@ -125,8 +125,6 @@ export const useDatePicker = ({
 
   const [state, dispatch] = useDatePickerReducer({
     selectedDates: selectedDates,
-    minDate,
-    maxDate,
     currPeriod: Temporal.Now.plainDateISO(),
   }, reducer)
 
@@ -174,10 +172,14 @@ export const useDatePicker = ({
 
   const selectDate = useCallback(
     (date: Temporal.PlainDate) => {
-      dispatch(actions.setDate({ date, multiple, range }))
+      dispatch(actions.setDate({
+        date, multiple, range,
+        minDate,
+        maxDate,
+      }))
       onSelectDate?.(date)
     },
-    [dispatch, multiple, onSelectDate, range],
+    [dispatch, maxDate, minDate, multiple, onSelectDate, range],
   )
 
   const goToPreviousPeriod = useCallback(() => {
@@ -189,8 +191,8 @@ export const useDatePicker = ({
   }, [dispatch])
 
   const goToCurrentPeriod = useCallback(() => {
-    dispatch(actions.goToCurrentPeriod())
-  }, [dispatch])
+    dispatch(actions.goToCurrentPeriod({ minDate, maxDate }))
+  }, [dispatch, maxDate, minDate])
 
   const goToSpecificPeriod = useCallback((date: Temporal.PlainDate) => {
       dispatch(actions.goToSpecificPeriod(date))
