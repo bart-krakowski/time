@@ -45,12 +45,34 @@ const getFirstDayOfMonth = (currMonth: string) =>
   Temporal.PlainDate.from(`${currMonth}-01`)
 
 interface UseDatePickerBaseProps<TState extends UseDatePickerState = UseDatePickerState> {
+  /**
+   * The minimum selectable date in the date picker.
+   */
   minDate?: Temporal.PlainDate | null
+  /**
+   * The maximum selectable date in the date picker.
+   */
   maxDate?: Temporal.PlainDate | null
+  /**
+   * Callback function that is called when a date is selected.
+   */
   onSelectDate?: (date: Temporal.PlainDate) => void
+  /**
+   * The locale for formatting dates.
+   */
   locale?: string
+  /**
+   * The initially selected dates.
+   */
   selectedDates?: Temporal.PlainDate[] | null
+  /**
+   * The first day of the week (1 for Monday, 7 for Sunday).
+   * @default 1
+   */
   weekStartsOn?: number
+  /**
+   * Custom reducer function to manage the state of the date picker.
+   */
   reducer?: <TAction extends UseDatePickerAction>(state: TState, action: TAction) => TState
 }
 
