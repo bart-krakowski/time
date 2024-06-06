@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { useDatePicker } from '../useDatePicker/useDatePicker'
 import { actions } from '../useDatePicker/useDatePickerActions'
-import type { UseDatePickerAction} from '../useDatePicker/useDatePickerActions';
+import type { UseDatePickerAction } from '../useDatePicker/useDatePickerActions'
 import type { UseDatePickerState } from '../useDatePicker/useDatePickerState'
 
 describe('useDatePicker', () => {
@@ -342,7 +342,10 @@ describe('useDatePicker', () => {
   })
 
   test(`should allow overriding the reducer`, () => {
-    const customReducer = (state: UseDatePickerState, action: UseDatePickerAction) => {
+    const customReducer = (
+      state: UseDatePickerState,
+      action: UseDatePickerAction,
+    ) => {
       if (action.type === actions.goToNextPeriod().type) {
         return {
           ...state,

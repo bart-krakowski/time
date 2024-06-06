@@ -1,8 +1,8 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useTransition } from 'react'
 import { Temporal } from '@js-temporal/polyfill'
 import { useDatePickerReducer } from './useDatePickerReducer'
 import { actions } from './useDatePickerActions'
-import type { UseDatePickerAction} from './useDatePickerActions';
+import type { UseDatePickerAction } from './useDatePickerActions'
 import type { UseDatePickerState } from './useDatePickerState'
 
 /**
@@ -44,7 +44,9 @@ const generateDateRange = (
 const getFirstDayOfMonth = (currMonth: string) =>
   Temporal.PlainDate.from(`${currMonth}-01`)
 
-interface UseDatePickerBaseProps<TState extends UseDatePickerState = UseDatePickerState> {
+interface UseDatePickerBaseProps<
+  TState extends UseDatePickerState = UseDatePickerState,
+> {
   /**
    * The minimum selectable date in the date picker.
    */
@@ -73,12 +75,15 @@ interface UseDatePickerBaseProps<TState extends UseDatePickerState = UseDatePick
   /**
    * Custom reducer function to manage the state of the date picker.
    */
-  reducer?: <TAction extends UseDatePickerAction>(state: TState, action: TAction) => TState
+  reducer?: <TAction extends UseDatePickerAction>(
+    state: TState,
+    action: TAction,
+  ) => TState
 }
 
-type UseDatePickerProps = 
-| (UseDatePickerBaseProps & { multiple?: boolean; range?: never | false })
-| (UseDatePickerBaseProps & { multiple?: never | false; range?: boolean })
+type UseDatePickerProps =
+  | (UseDatePickerBaseProps & { multiple?: boolean; range?: never | false })
+  | (UseDatePickerBaseProps & { multiple?: never | false; range?: boolean })
 
 /**
  * Hook to manage the state and behavior of a date picker.
@@ -120,64 +125,79 @@ export const useDatePicker = ({
   weekStartsOn = 1,
   reducer,
 }: UseDatePickerProps) => {
-  if (maxDate && minDate && Temporal.PlainDate.compare(minDate, maxDate) > 0) throw new Error('The min date cannot be after the max date')
-  if (range && multiple) throw new Error('The multiple and range props cannot be used together')
+  if (maxDate && minDate && Temporal.PlainDate.compare(minDate, maxDate) > 0)
+    throw new Error('The min date cannot be after the max date')
+  if (range && multiple)
+    throw new Error('The multiple and range props cannot be used together')
 
-  const [state, dispatch] = useDatePickerReducer({
-    selectedDates: selectedDates,
-    currPeriod: Temporal.Now.plainDateISO(),
-  }, reducer)
+  const [isPending, startTransition] = useTransition()
+  const [state, dispatch] = useDatePickerReducer(
+    {
+      selectedDates: selectedDates,
+      currPeriod: Temporal.Now.plainDateISO(),
+    },
+    reducer,
+  )
 
   const firstDayOfMonth = getFirstDayOfMonth(
     state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),
   )
 
-  const weeks = useMemo(() => 
-    Array.from(
-      getChunks(
-        generateDateRange(
-          firstDayOfMonth.subtract({ days: (firstDayOfMonth.dayOfWeek - weekStartsOn + 7) % 7 }),
-          firstDayOfMonth.add({ months: 1 }).subtract({ days: 1 }),
+  const weeks = useMemo(
+    () =>
+      Array.from(
+        getChunks(
+          generateDateRange(
+            firstDayOfMonth.subtract({
+              days: (firstDayOfMonth.dayOfWeek - weekStartsOn + 7) % 7,
+            }),
+            firstDayOfMonth.add({ months: 1 }).subtract({ days: 1 }),
+          ),
+          7,
         ),
-        7,
-      ),
-    ).map((week) =>
-      week.map((day) => {
-        const isSelected = state.selectedDates
-          ? state.selectedDates.some(
-              (selectedDate) =>
-                Temporal.PlainDate.compare(day, selectedDate) === 0,
-            )
-          : false
-
-        const isInRange = 
-          state.selectedDates?.[0] && state.selectedDates[1]
-            ? Temporal.PlainDate.compare(day, state.selectedDates[0]) >= 0 &&
-              Temporal.PlainDate.compare(day, state.selectedDates[1]) <= 0
+      ).map((week) =>
+        week.map((day) => {
+          const isSelected = state.selectedDates
+            ? state.selectedDates.some(
+                (selectedDate) =>
+                  Temporal.PlainDate.compare(day, selectedDate) === 0,
+              )
             : false
 
-        const isInCurrentPeriod = day.month === state.currPeriod.month
+          const isInRange =
+            state.selectedDates?.[0] && state.selectedDates[1]
+              ? Temporal.PlainDate.compare(day, state.selectedDates[0]) >= 0 &&
+                Temporal.PlainDate.compare(day, state.selectedDates[1]) <= 0
+              : false
 
-        return {
-          date: day,
-          isToday:
-            Temporal.PlainDate.compare(day, Temporal.Now.plainDateISO()) === 0,
-          isSelected,
-          isInCurrentPeriod,
-          ...(range && { isInRange }),
-        }
-      }),
-    ), [firstDayOfMonth, weekStartsOn, state.selectedDates, state.currPeriod.month, range]
+          const isInCurrentPeriod = day.month === state.currPeriod.month
+
+          return {
+            date: day,
+            isToday:
+              Temporal.PlainDate.compare(day, Temporal.Now.plainDateISO()) ===
+              0,
+            isSelected,
+            isInCurrentPeriod,
+            ...(range && { isInRange }),
+          }
+        }),
+      ),
+    [
+      firstDayOfMonth,
+      weekStartsOn,
+      state.selectedDates,
+      state.currPeriod.month,
+      range,
+    ],
   )
 
   const selectDate = useCallback(
     (date: Temporal.PlainDate) => {
-      dispatch(actions.setDate({
-        date, multiple, range,
-        minDate,
-        maxDate,
-      }))
-      onSelectDate?.(date)
+      startTransition(() => {
+        dispatch(actions.setDate({ date, multiple, range, minDate, maxDate }))
+        onSelectDate?.(date)
+      })
     },
     [dispatch, maxDate, minDate, multiple, onSelectDate, range],
   )
@@ -194,7 +214,8 @@ export const useDatePicker = ({
     dispatch(actions.goToCurrentPeriod({ minDate, maxDate }))
   }, [dispatch, maxDate, minDate])
 
-  const goToSpecificPeriod = useCallback((date: Temporal.PlainDate) => {
+  const goToSpecificPeriod = useCallback(
+    (date: Temporal.PlainDate) => {
       dispatch(actions.goToSpecificPeriod(date))
     },
     [dispatch],
@@ -202,9 +223,10 @@ export const useDatePicker = ({
 
   const daysNames = useMemo(() => {
     const baseDate = Temporal.PlainDate.from('2024-01-01')
-    return Array.from({ length: 7 }).map((_, i) => 
-      baseDate.add({ days: (i + weekStartsOn - 1) % 7 })
-        .toLocaleString(locale, { weekday: 'short' })
+    return Array.from({ length: 7 }).map((_, i) =>
+      baseDate
+        .add({ days: (i + weekStartsOn - 1) % 7 })
+        .toLocaleString(locale, { weekday: 'short' }),
     )
   }, [locale, weekStartsOn])
 
@@ -217,5 +239,6 @@ export const useDatePicker = ({
     goToNextPeriod,
     goToCurrentPeriod,
     goToSpecificPeriod,
+    isPending,
   }
 }
