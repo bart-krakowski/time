@@ -120,9 +120,8 @@ export const useDatePicker = ({
   weekStartsOn = 1,
   reducer,
 }: UseDatePickerProps) => {
-  if (maxDate && minDate && Temporal.PlainDate.compare(minDate, maxDate) > 0) {
-    throw new Error('The min date cannot be after the max date')
-  }
+  if (maxDate && minDate && Temporal.PlainDate.compare(minDate, maxDate) > 0) throw new Error('The min date cannot be after the max date')
+  if (range && multiple) throw new Error('The multiple and range props cannot be used together')
 
   const [state, dispatch] = useDatePickerReducer({
     selectedDates: selectedDates,
