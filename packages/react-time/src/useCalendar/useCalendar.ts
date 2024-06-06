@@ -145,7 +145,6 @@ export const useCalendar = <TEvent extends Event>({
     currPeriod: today,
     viewMode: initialViewMode,
     currentTime: Temporal.Now.plainDateTimeISO(),
-    weekStartsOn,
   }, reducer)
   
   const firstDayOfMonth = getFirstDayOfMonth(
@@ -154,7 +153,7 @@ export const useCalendar = <TEvent extends Event>({
 
   const firstDayOfWeek = getFirstDayOfWeek(
     state.currPeriod.toString(),
-    state.weekStartsOn,
+    weekStartsOn,
   )
 
   const days =
@@ -162,7 +161,7 @@ export const useCalendar = <TEvent extends Event>({
       ? Array.from(
           getChunks(
             generateDateRange(
-              firstDayOfMonth.subtract({ days: (firstDayOfMonth.dayOfWeek - state.weekStartsOn + 7) % 7 }),
+              firstDayOfMonth.subtract({ days: (firstDayOfMonth.dayOfWeek - weekStartsOn + 7) % 7 }),
               firstDayOfMonth.add({ months: 1 }).subtract({ days: 1 }),
             ),
             7,
@@ -239,12 +238,12 @@ export const useCalendar = <TEvent extends Event>({
       : [daysWithEvents]
 
   const goToPreviousPeriod = useCallback(() => {
-    dispatch(actions.goToPreviousPeriod())
-  }, [dispatch])
+    dispatch(actions.goToPreviousPeriod({ weekStartsOn }))
+  }, [dispatch, weekStartsOn])
 
   const goToNextPeriod = useCallback(() => {
-    dispatch(actions.goToNextPeriod());
-  }, [dispatch])
+    dispatch(actions.goToNextPeriod({ weekStartsOn }))
+  }, [dispatch, weekStartsOn])
 
   const goToCurrentPeriod = useCallback(() => {
     dispatch(actions.setCurrentPeriod(Temporal.Now.plainDateISO()))

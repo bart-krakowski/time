@@ -19,13 +19,13 @@ const createCalendarReducer = (initialState: UseCalendarState) => {
       ...state,
       currentTime: action.payload,
     }))
-    .handleAction(actions.goToPreviousPeriod, (state) => {
+    .handleAction(actions.goToPreviousPeriod, (state, action) => {
       const firstDayOfMonth = getFirstDayOfMonth(
         state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),
       )
       const firstDayOfWeek = getFirstDayOfWeek(
         state.currPeriod.toString(),
-        state.weekStartsOn,
+        action.payload.weekStartsOn,
       )
 
       switch (state.viewMode) {
@@ -54,13 +54,13 @@ const createCalendarReducer = (initialState: UseCalendarState) => {
         }
       }
     })
-    .handleAction(actions.goToNextPeriod, (state) => {
+    .handleAction(actions.goToNextPeriod, (state, action) => {
       const firstDayOfMonth = getFirstDayOfMonth(
         state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),
       )
       const firstDayOfWeek = getFirstDayOfWeek(
         state.currPeriod.toString(),
-        state.weekStartsOn,
+        action.payload.weekStartsOn,
       )
 
       switch (state.viewMode) {

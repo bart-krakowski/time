@@ -11,5 +11,4 @@ export interface UseCalendarState {
   currPeriod: Temporal.PlainDate;
   viewMode: 'month' | 'week' | number;
   currentTime: Temporal.PlainDateTime;
-  weekStartsOn: number;
 }
