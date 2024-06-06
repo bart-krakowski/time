@@ -5,12 +5,24 @@ import { actions } from './useDatePickerActions'
 import type { UseDatePickerAction} from './useDatePickerActions';
 import type { UseDatePickerState } from './useDatePickerState'
 
+/**
+ * Generates chunks of an array.
+ * @param arr - The array to chunk.
+ * @param n - The size of each chunk.
+ * @returns A generator that yields chunks of the array.
+ */
 const getChunks = function* <T>(arr: T[], n: number) {
   for (let i = 0; i < arr.length; i += n) {
     yield arr.slice(i, i + n)
   }
 }
 
+/**
+ * Generates a date range between the start and end dates.
+ * @param start - The start date.
+ * @param end - The end date.
+ * @returns An array of dates between the start and end dates.
+ */
 const generateDateRange = (
   start: Temporal.PlainDate,
   end: Temporal.PlainDate,
@@ -24,6 +36,11 @@ const generateDateRange = (
   return dates
 }
 
+/**
+ * Gets the first day of the month for a given month string.
+ * @param currMonth - The month string in 'YYYY-MM' format.
+ * @returns The first day of the month as a Temporal.PlainDate.
+ */
 const getFirstDayOfMonth = (currMonth: string) =>
   Temporal.PlainDate.from(`${currMonth}-01`)
 
@@ -41,6 +58,35 @@ type UseDatePickerProps =
 | (UseDatePickerBaseProps & { multiple?: boolean; range?: never | false })
 | (UseDatePickerBaseProps & { multiple?: never | false; range?: boolean })
 
+/**
+ * Hook to manage the state and behavior of a date picker.
+ *
+ * @param {UseDatePickerProps} props - The configuration properties for the date picker.
+ * @param {Temporal.PlainDate[]} [props.selectedDates=null] - The initially selected dates.
+ * @param {Temporal.PlainDate} [props.minDate=null] - The minimum selectable date.
+ * @param {Temporal.PlainDate} [props.maxDate=null] - The maximum selectable date.
+ * @param {Function} [props.onSelectDate] - Callback function called when a date is selected.
+ * @param {string} [props.locale='en-US'] - The locale for formatting dates.
+ * @param {boolean} [props.multiple=false] - Whether multiple dates can be selected.
+ * @param {boolean} [props.range=false] - Whether a range of dates can be selected.
+ * @param {number} [props.weekStartsOn=1] - The first day of the week (1 for Monday, 7 for Sunday).
+ * @param {Function} [props.reducer] - Custom reducer function to manage the state of the date picker.
+ *
+ * @returns {Object} datePickerState - The state and functions for managing the date picker.
+ * @returns {Temporal.PlainDate[]} datePickerState.selectedDates - The currently selected dates.
+ * @returns {Temporal.PlainDate} datePickerState.minDate - The minimum selectable date.
+ * @returns {Temporal.PlainDate} datePickerState.maxDate - The maximum selectable date.
+ * @returns {Temporal.PlainDate} datePickerState.currPeriod - The current displayed period (month).
+ * @returns {boolean} datePickerState.multiple - Whether multiple dates can be selected.
+ * @returns {boolean} datePickerState.range - Whether a range of dates can be selected.
+ * @returns {Array} datePickerState.weeks - An array representing the weeks in the current month, each containing day objects with various properties.
+ * @returns {Array} datePickerState.daysNames - An array of day names based on the locale and week start day.
+ * @returns {Function} datePickerState.selectDate - Function to select a date.
+ * @returns {Function} datePickerState.goToPreviousPeriod - Function to navigate to the previous period (month).
+ * @returns {Function} datePickerState.goToNextPeriod - Function to navigate to the next period (month).
+ * @returns {Function} datePickerState.goToCurrentPeriod - Function to navigate to the current period (month).
+ * @returns {Function} datePickerState.goToSpecificPeriod - Function to navigate to a specific period (month).
+ */
 export const useDatePicker = ({
   selectedDates = null,
   minDate = null,
