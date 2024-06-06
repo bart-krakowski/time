@@ -9,7 +9,7 @@ import type { UseDatePickerState } from "./useDatePickerState";
 const createDatePickerReducer = (initialState: UseDatePickerState) =>
   createReducer<UseDatePickerState, UseDatePickerAction>(initialState)
     .handleAction(actions.setDate, (state, action) => {
-      const selectedDate = action.payload;
+      const { date: selectedDate, multiple, range } = action.payload
 
       if (
         (state.minDate &&
@@ -20,7 +20,7 @@ const createDatePickerReducer = (initialState: UseDatePickerState) =>
         return state;
       }
 
-      if (state.multiple) {
+      if (multiple) {
         const selectedDates = state.selectedDates ?? [];
         const dateIndex = selectedDates.findIndex((date) =>
           Temporal.PlainDate.compare(date, selectedDate) === 0
@@ -42,7 +42,7 @@ const createDatePickerReducer = (initialState: UseDatePickerState) =>
         }
       }
 
-      if (state.range) {
+      if (range) {
         const selectedDates = state.selectedDates ?? [];
 
         if (selectedDates.length === 0 || selectedDates.length === 2) {

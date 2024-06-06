@@ -129,8 +129,6 @@ export const useDatePicker = ({
     minDate,
     maxDate,
     currPeriod: Temporal.Now.plainDateISO(),
-    multiple,
-    range,
   }, reducer)
 
   const firstDayOfMonth = getFirstDayOfMonth(
@@ -177,10 +175,10 @@ export const useDatePicker = ({
 
   const selectDate = useCallback(
     (date: Temporal.PlainDate) => {
-      dispatch(actions.setDate(date))
+      dispatch(actions.setDate({ date, multiple, range }))
       onSelectDate?.(date)
     },
-    [dispatch, onSelectDate],
+    [dispatch, multiple, onSelectDate, range],
   )
 
   const goToPreviousPeriod = useCallback(() => {

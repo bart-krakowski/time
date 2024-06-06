@@ -5,6 +5,4 @@ export interface UseDatePickerState {
   minDate: Temporal.PlainDate | null;
   maxDate: Temporal.PlainDate | null;
   currPeriod: Temporal.PlainDate;
-  multiple: boolean;
-  range: boolean;
 }
