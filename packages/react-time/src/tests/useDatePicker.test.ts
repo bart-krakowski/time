@@ -2,6 +2,9 @@ import { Temporal } from '@js-temporal/polyfill'
 import { act, renderHook } from '@testing-library/react'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { useDatePicker } from '../useDatePicker/useDatePicker'
+import { actions } from '../useDatePicker/useDatePickerActions'
+import type { UseDatePickerAction} from '../useDatePicker/useDatePickerActions';
+import type { UseDatePickerState } from '../useDatePicker/useDatePickerState'
 
 describe('useDatePicker', () => {
   afterEach(() => {
@@ -34,7 +37,9 @@ describe('useDatePicker', () => {
   test('should not allow selecting a date before the min date', () => {
     const selectedDates = [Temporal.PlainDate.from('2024-06-01')]
     const minDate = Temporal.PlainDate.from('2024-05-01')
-    const { result } = renderHook(() => useDatePicker({ selectedDates, minDate }))
+    const { result } = renderHook(() =>
+      useDatePicker({ selectedDates, minDate }),
+    )
 
     const newDate = Temporal.PlainDate.from('2024-04-15')
     act(() => {
@@ -47,7 +52,9 @@ describe('useDatePicker', () => {
   test('should not allow selecting a date after the max date', () => {
     const selectedDates = [Temporal.PlainDate.from('2024-06-01')]
     const maxDate = Temporal.PlainDate.from('2024-07-01')
-    const { result } = renderHook(() => useDatePicker({ selectedDates, maxDate }))
+    const { result } = renderHook(() =>
+      useDatePicker({ selectedDates, maxDate }),
+    )
 
     const newDate = Temporal.PlainDate.from('2024-08-15')
     act(() => {
@@ -86,7 +93,13 @@ describe('useDatePicker', () => {
       isInCurrentPeriod: false,
     })
 
-    expect(days[days.findIndex(day => day.date.equals(Temporal.PlainDate.from('2024-06-01')))]).toEqual({
+    expect(
+      days[
+        days.findIndex((day) =>
+          day.date.equals(Temporal.PlainDate.from('2024-06-01')),
+        )
+      ],
+    ).toEqual({
       date: Temporal.PlainDate.from('2024-06-01'),
       isToday: true,
       isSelected: true,
@@ -102,29 +115,41 @@ describe('useDatePicker', () => {
 
     vi.useRealTimers()
   })
-  
+
   test('should allow selecting multiple dates', () => {
     const selectedDates = [Temporal.PlainDate.from('2024-06-01')]
-    const { result } = renderHook(() => useDatePicker({ selectedDates, multiple: true }))
+    const { result } = renderHook(() =>
+      useDatePicker({ selectedDates, multiple: true }),
+    )
 
     const newDate = Temporal.PlainDate.from('2024-06-15')
     act(() => {
       result.current.selectDate(newDate)
     })
 
-    expect(result.current.selectedDates).toEqual([Temporal.PlainDate.from('2024-06-01'), newDate])
+    expect(result.current.selectedDates).toEqual([
+      Temporal.PlainDate.from('2024-06-01'),
+      newDate,
+    ])
   })
 
   test('should allow deselecting a date', () => {
-    const selectedDates = [Temporal.PlainDate.from('2024-06-01'), Temporal.PlainDate.from('2024-06-15')]
-    const { result } = renderHook(() => useDatePicker({ selectedDates, multiple: true }))
+    const selectedDates = [
+      Temporal.PlainDate.from('2024-06-01'),
+      Temporal.PlainDate.from('2024-06-15'),
+    ]
+    const { result } = renderHook(() =>
+      useDatePicker({ selectedDates, multiple: true }),
+    )
 
     const newDate = Temporal.PlainDate.from('2024-06-15')
     act(() => {
       result.current.selectDate(newDate)
     })
 
-    expect(result.current.selectedDates).toEqual([Temporal.PlainDate.from('2024-06-01')])
+    expect(result.current.selectedDates).toEqual([
+      Temporal.PlainDate.from('2024-06-01'),
+    ])
   })
 
   test('should allow selecting a range of dates', () => {
@@ -139,65 +164,115 @@ describe('useDatePicker', () => {
 
     const { weeks } = result.current
     const days = weeks.flat()
-    const daysInRange = days.filter(day => day.isInRange)
+    const daysInRange = days.filter((day) => day.isInRange)
 
     expect(daysInRange.length).toBe(6)
-    expect(daysInRange.map(day => day.date.toString())).toEqual([
-      '2024-06-05', '2024-06-06', '2024-06-07', '2024-06-08', '2024-06-09', '2024-06-10'
+    expect(daysInRange.map((day) => day.date.toString())).toEqual([
+      '2024-06-05',
+      '2024-06-06',
+      '2024-06-07',
+      '2024-06-08',
+      '2024-06-09',
+      '2024-06-10',
     ])
   })
 
   test('should allow selecting a range of dates in reverse order', () => {
     const { result } = renderHook(() => useDatePicker({ range: true }))
-  
+
     const endDate = Temporal.PlainDate.from('2024-06-10')
     const startDate = Temporal.PlainDate.from('2024-06-05')
     act(() => {
       result.current.selectDate(endDate)
       result.current.selectDate(startDate)
     })
-  
+
     const { weeks } = result.current
     const days = weeks.flat()
-    const daysInRange = days.filter(day => day.isInRange)
-  
+    const daysInRange = days.filter((day) => day.isInRange)
+
     expect(daysInRange.length).toBe(6)
-    expect(daysInRange.map(day => day.date.toString())).toEqual([
-      '2024-06-05', '2024-06-06', '2024-06-07', '2024-06-08', '2024-06-09', '2024-06-10'
+    expect(daysInRange.map((day) => day.date.toString())).toEqual([
+      '2024-06-05',
+      '2024-06-06',
+      '2024-06-07',
+      '2024-06-08',
+      '2024-06-09',
+      '2024-06-10',
     ])
   })
 
   test('should correctly mark days as in current period', () => {
     vi.setSystemTime('2024-06-01')
     const selectedDates = [Temporal.PlainDate.from('2024-06-01')]
-    const { result } = renderHook(() => useDatePicker({ selectedDates, locale: 'en-US' }))
+    const { result } = renderHook(() =>
+      useDatePicker({ selectedDates, locale: 'en-US' }),
+    )
 
     const { weeks } = result.current
-    const daysInCurrentPeriod = weeks.flat().map(day => day.isInCurrentPeriod)
+    const daysInCurrentPeriod = weeks.flat().map((day) => day.isInCurrentPeriod)
 
     expect(daysInCurrentPeriod).toEqual([
-      false, false, false, false, false, true, true,
-      true, true, true, true, true, true, true,
-      true, true, true, true, true, true, true,
-      true, true, true, true, true, true, true,
-      true, true, true, true, true, true, true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
     ])
   })
 
   test('should return the correct day names based on weekStartsOn', () => {
     const { result } = renderHook(() =>
-      useDatePicker({ selectedDates: [], locale: 'en-US', weekStartsOn: 1 })
+      useDatePicker({ selectedDates: [], locale: 'en-US', weekStartsOn: 1 }),
     )
 
     const { daysNames } = result.current
     expect(daysNames).toEqual(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])
 
     const { result: resultSundayStart } = renderHook(() =>
-      useDatePicker({ selectedDates: [], locale: 'en-US', weekStartsOn: 7 })
+      useDatePicker({ selectedDates: [], locale: 'en-US', weekStartsOn: 7 }),
     )
 
     const { daysNames: sundayDaysNames } = resultSundayStart.current
-    expect(sundayDaysNames).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
+    expect(sundayDaysNames).toEqual([
+      'Sun',
+      'Mon',
+      'Tue',
+      'Wed',
+      'Thu',
+      'Fri',
+      'Sat',
+    ])
   })
 
   test('should navigate to a specific period correctly', () => {
@@ -212,9 +287,7 @@ describe('useDatePicker', () => {
   })
 
   test('should navigate to the previous period correctly', () => {
-    const { result } = renderHook(() =>
-      useDatePicker({ selectedDates: [] }),
-    )
+    const { result } = renderHook(() => useDatePicker({ selectedDates: [] }))
 
     act(() => {
       result.current.goToPreviousPeriod()
@@ -228,9 +301,7 @@ describe('useDatePicker', () => {
   })
 
   test('should navigate to the next period correctly', () => {
-    const { result } = renderHook(() =>
-      useDatePicker({ selectedDates: [] }),
-    )
+    const { result } = renderHook(() => useDatePicker({ selectedDates: [] }))
 
     act(() => {
       result.current.goToNextPeriod()
@@ -242,18 +313,14 @@ describe('useDatePicker', () => {
   })
 
   test('should reset to the current period correctly', () => {
-    const { result } = renderHook(() =>
-      useDatePicker({ selectedDates: [] }),
-    )
+    const { result } = renderHook(() => useDatePicker({ selectedDates: [] }))
 
     act(() => {
       result.current.goToNextPeriod()
       result.current.goToCurrentPeriod()
     })
 
-    expect(result.current.currPeriod).toEqual(
-      Temporal.Now.plainDateISO(),
-    )
+    expect(result.current.currPeriod).toEqual(Temporal.Now.plainDateISO())
   })
 
   test('should throw an type error when multiple and range props are used together', () => {
@@ -265,7 +332,36 @@ describe('useDatePicker', () => {
 
   test('should throw an error when the min date is after the max date', () => {
     expect(() => {
-      renderHook(() => useDatePicker({ minDate: Temporal.PlainDate.from('2024-06-15'), maxDate: Temporal.PlainDate.from('2024-06-01') }))
+      renderHook(() =>
+        useDatePicker({
+          minDate: Temporal.PlainDate.from('2024-06-15'),
+          maxDate: Temporal.PlainDate.from('2024-06-01'),
+        }),
+      )
     }).toThrowError('The min date cannot be after the max date')
+  })
+
+  test(`should allow overriding the reducer`, () => {
+    const customReducer = (state: UseDatePickerState, action: UseDatePickerAction) => {
+      if (action.type === actions.goToNextPeriod().type) {
+        return {
+          ...state,
+          currPeriod: state.currPeriod.add({ months: 2 }),
+        }
+      }
+
+      return state
+    }
+
+    const { result } = renderHook(() =>
+      useDatePicker({ selectedDates: [], reducer: customReducer }),
+    )
+
+    act(() => {
+      result.current.goToNextPeriod()
+    })
+
+    const expectedNextMonth = Temporal.Now.plainDateISO().add({ months: 2 })
+    expect(result.current.currPeriod).toEqual(expectedNextMonth)
   })
 })

@@ -1,13 +1,13 @@
-import { useReducer } from "react";
+import { useMemo, useReducer } from "react";
 import { Temporal } from "@js-temporal/polyfill";
 import { createReducer } from "typesafe-actions";
 
 import { type UseDatePickerAction, actions } from "./useDatePickerActions";
-import type { DatePickerState } from "./useDatePickerState";
+import type { UseDatePickerState } from "./useDatePickerState";
 
 
-const createDatePickerReducer = (initialState: DatePickerState) =>
-  createReducer<DatePickerState, UseDatePickerAction>(initialState)
+const createDatePickerReducer = (initialState: UseDatePickerState) =>
+  createReducer<UseDatePickerState, UseDatePickerAction>(initialState)
     .handleAction(actions.setDate, (state, action) => {
       const selectedDate = action.payload;
 
@@ -97,7 +97,10 @@ const createDatePickerReducer = (initialState: DatePickerState) =>
       currPeriod: state.currPeriod.subtract({ months: 1 }),
     }));
 
-export const useDatePickerReducer = (initialState: DatePickerState) => {
-  const reducer = createDatePickerReducer(initialState);
+export const useDatePickerReducer = <TState extends UseDatePickerState = UseDatePickerState>(
+  initialState: TState,
+  extReducer?: (state: TState, action: UseDatePickerAction) => TState
+) => {
+  const reducer = useMemo(() => extReducer ?? createDatePickerReducer(initialState), [extReducer, initialState]);
   return useReducer(reducer, initialState);
 };

@@ -2,6 +2,8 @@ import { useCallback, useMemo } from 'react'
 import { Temporal } from '@js-temporal/polyfill'
 import { useDatePickerReducer } from './useDatePickerReducer'
 import { actions } from './useDatePickerActions'
+import type { UseDatePickerAction} from './useDatePickerActions';
+import type { UseDatePickerState } from './useDatePickerState'
 
 const getChunks = function* <T>(arr: T[], n: number) {
   for (let i = 0; i < arr.length; i += n) {
@@ -25,13 +27,14 @@ const generateDateRange = (
 const getFirstDayOfMonth = (currMonth: string) =>
   Temporal.PlainDate.from(`${currMonth}-01`)
 
-type UseDatePickerBaseProps = {
+interface UseDatePickerBaseProps<TState extends UseDatePickerState = UseDatePickerState> {
   minDate?: Temporal.PlainDate | null
   maxDate?: Temporal.PlainDate | null
   onSelectDate?: (date: Temporal.PlainDate) => void
   locale?: string
   selectedDates?: Temporal.PlainDate[] | null
   weekStartsOn?: number
+  reducer?: <TAction extends UseDatePickerAction>(state: TState, action: TAction) => TState
 }
 
 type UseDatePickerProps = 
@@ -47,6 +50,7 @@ export const useDatePicker = ({
   multiple = false,
   range = false,
   weekStartsOn = 1,
+  reducer,
 }: UseDatePickerProps) => {
   if (maxDate && minDate && Temporal.PlainDate.compare(minDate, maxDate) > 0) {
     throw new Error('The min date cannot be after the max date')
@@ -59,7 +63,7 @@ export const useDatePicker = ({
     currPeriod: Temporal.Now.plainDateISO(),
     multiple,
     range,
-  })
+  }, reducer)
 
   const firstDayOfMonth = getFirstDayOfMonth(
     state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),
