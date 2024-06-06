@@ -128,22 +128,23 @@ describe('useDatePicker', () => {
   })
 
   test('should allow selecting a range of dates', () => {
-    const selectedDates = [Temporal.PlainDate.from('2024-06-01')]
-    const { result } = renderHook(() => useDatePicker({ selectedDates, range: true }))
+    const { result } = renderHook(() => useDatePicker({ range: true }))
 
-    const newDate = Temporal.PlainDate.from('2024-06-15')
+    const startDate = Temporal.PlainDate.from('2024-06-05')
+    const endDate = Temporal.PlainDate.from('2024-06-10')
     act(() => {
-      result.current.selectDate(newDate)
+      result.current.selectDate(startDate)
+      result.current.selectDate(endDate)
     })
 
-    expect(result.current.selectedDates).toEqual([Temporal.PlainDate.from('2024-06-01'), newDate])
+    const { weeks } = result.current
+    const days = weeks.flat()
+    const daysInRange = days.filter(day => day.isInRange)
 
-    const days = result.current.weeks.flat()
-    const selectedDatesIndex = days.findIndex((day) => day.date.equals(newDate))
-    const rangeDates = days.slice(0, selectedDatesIndex + 1)
-    rangeDates.forEach((day) => {
-      expect(day.isInRange).toBe(true)
-    })
+    expect(daysInRange.length).toBe(6)
+    expect(daysInRange.map(day => day.date.toString())).toEqual([
+      '2024-06-05', '2024-06-06', '2024-06-07', '2024-06-08', '2024-06-09', '2024-06-10'
+    ])
   })
 
   test('should correctly mark days as in current period', () => {
