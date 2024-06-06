@@ -1,12 +1,12 @@
-import { useReducer } from 'react'
+import { useMemo, useReducer } from 'react'
 import { createReducer } from 'typesafe-actions'
 
 import { getFirstDayOfMonth, getFirstDayOfWeek } from '@tanstack/time'
 import { type UseCalendarAction, actions } from './calendarActions'
-import type { CalendarState } from './useCalendarState'
+import type { UseCalendarState } from './useCalendarState'
 
-const createCalendarReducer = (initialState: CalendarState) => {
-  return createReducer<CalendarState, UseCalendarAction>(initialState)
+const createCalendarReducer = (initialState: UseCalendarState) => {
+  return createReducer<UseCalendarState, UseCalendarAction>(initialState)
     .handleAction(actions.setCurrentPeriod, (state, action) => ({
       ...state,
       currPeriod: action.payload,
@@ -90,10 +90,11 @@ const createCalendarReducer = (initialState: CalendarState) => {
 }
 
 export const useCalendarReducer = <
-  TState extends CalendarState = CalendarState,
+  TState extends UseCalendarState = UseCalendarState,
 >(
   initialState: TState,
+  extReducer?: (state: TState, action: UseCalendarAction) => TState,
 ) => {
-  const reducer = createCalendarReducer(initialState)
+  const reducer = useMemo(() => extReducer ?? createCalendarReducer(initialState), [extReducer, initialState])
   return useReducer(reducer, initialState)
 }

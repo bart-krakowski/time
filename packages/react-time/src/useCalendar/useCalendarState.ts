@@ -7,7 +7,7 @@ export interface Event {
   title: string;
 }
 
-export interface CalendarState {
+export interface UseCalendarState {
   currPeriod: Temporal.PlainDate;
   viewMode: 'month' | 'week' | number;
   currentTime: Temporal.PlainDateTime;

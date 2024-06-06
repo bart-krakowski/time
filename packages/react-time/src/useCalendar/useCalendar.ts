@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { Temporal } from '@js-temporal/polyfill'
 import { actions } from './calendarActions'
 import { useCalendarReducer } from './useCalendarReducer'
-import type { Event } from './useCalendarState'
+import type { UseCalendarAction} from './calendarActions';
+import type { Event, UseCalendarState } from './useCalendarState'
 import type { CSSProperties } from 'react'
 
 export const getFirstDayOfWeek = (currWeek: string, weekStartsOn: number) => {
@@ -13,12 +14,13 @@ export const getFirstDayOfWeek = (currWeek: string, weekStartsOn: number) => {
 export const getFirstDayOfMonth = (currMonth: string) =>
   Temporal.PlainDate.from(`${currMonth}-01`)
 
-interface UseCalendarProps<TEvent extends Event> {
+interface UseCalendarProps<TEvent extends Event, TState extends UseCalendarState = UseCalendarState> {
   weekStartsOn?: number
   events?: TEvent[]
   viewMode: 'month' | 'week' | number
   locale?: Parameters<Temporal.PlainDate['toLocaleString']>['0']
   onChangeViewMode?: (viewMode: 'month' | 'week' | number) => void
+  reducer?: <TAction extends UseCalendarAction = UseCalendarAction>(state: TState, action: TAction) => TState
 }
 
 const getChunks = function* <T>(arr: T[], n: number) {
@@ -92,6 +94,7 @@ export const useCalendar = <TEvent extends Event>({
   viewMode: initialViewMode,
   locale,
   onChangeViewMode,
+  reducer,
 }: UseCalendarProps<TEvent>) => {
   const today = Temporal.Now.plainDateISO()
   const [state, dispatch] = useCalendarReducer({
@@ -99,7 +102,7 @@ export const useCalendar = <TEvent extends Event>({
     viewMode: initialViewMode,
     currentTime: Temporal.Now.plainDateTimeISO(),
     weekStartsOn,
-  })
+  }, reducer)
   
   const firstDayOfMonth = getFirstDayOfMonth(
     state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),

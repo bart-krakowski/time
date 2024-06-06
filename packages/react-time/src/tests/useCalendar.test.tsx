@@ -2,6 +2,9 @@ import { Temporal } from '@js-temporal/polyfill'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { act, renderHook } from '@testing-library/react'
 import { useCalendar } from '../useCalendar'
+import { actions } from '../useCalendar/calendarActions';
+import type { UseCalendarAction} from '../useCalendar/calendarActions';
+import type { UseCalendarState } from '../useCalendar/useCalendarState';
 
 describe('useCalendar', () => {
   afterEach(() => {
@@ -287,4 +290,28 @@ describe('useCalendar', () => {
       Temporal.Now.plainDateISO(),
     )
   })
+
+  test(`should allow overriding the reducer`, () => {
+    const customReducer = (state: UseCalendarState, action: UseCalendarAction) => {
+      if (action.type === actions.goToNextPeriod().type) {
+        return {
+          ...state,
+          currPeriod: state.currPeriod.add({ months: 2 }),
+        }
+      }
+
+      return state
+    }
+
+    const { result } = renderHook(() =>
+      useCalendar({ events, viewMode: 'month', reducer: customReducer })
+    )
+
+    act(() => {
+      result.current.goToNextPeriod()
+    })
+
+    const expectedNextMonth = Temporal.Now.plainDateISO().add({ months: 2 })
+    expect(result.current.currPeriod).toEqual(expectedNextMonth)
+  });
 });
