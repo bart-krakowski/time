@@ -66,6 +66,8 @@ export function useCalendar({
   - This function is used to retrieve the style properties for a specific event based on its ID.
 - `currentTimeMarkerProps: () => { style: CSSProperties, currentTime: Temporal.PlainTime }`
   - This function is used to retrieve the style properties and current time for the current time marker.
+- `isPending: boolean`
+  - This value represents whether the calendar is in a pending state.
 
 
 #### Example Usage
