@@ -20,13 +20,8 @@ const createCalendarReducer = (initialState: UseCalendarState) => {
       currentTime: action.payload,
     }))
     .handleAction(actions.goToPreviousPeriod, (state, action) => {
-      const firstDayOfMonth = getFirstDayOfMonth(
-        state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),
-      )
-      const firstDayOfWeek = getFirstDayOfWeek(
-        state.currPeriod.toString(),
-        action.payload.weekStartsOn,
-      )
+      const firstDayOfMonth = getFirstDayOfMonth(state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7))
+      const firstDayOfWeek = getFirstDayOfWeek(state.currPeriod.toString(), action.payload.weekStartsOn)
 
       switch (state.viewMode) {
         case 'month': {
@@ -44,9 +39,7 @@ const createCalendarReducer = (initialState: UseCalendarState) => {
           }
         }
         default: {
-          const prevCustomStart = state.currPeriod.subtract({
-            days: state.viewMode,
-          })
+          const prevCustomStart = state.currPeriod.subtract({ days: state.viewMode })
           return {
             ...state,
             currPeriod: prevCustomStart,
@@ -55,13 +48,8 @@ const createCalendarReducer = (initialState: UseCalendarState) => {
       }
     })
     .handleAction(actions.goToNextPeriod, (state, action) => {
-      const firstDayOfMonth = getFirstDayOfMonth(
-        state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),
-      )
-      const firstDayOfWeek = getFirstDayOfWeek(
-        state.currPeriod.toString(),
-        action.payload.weekStartsOn,
-      )
+      const firstDayOfMonth = getFirstDayOfMonth(state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7))
+      const firstDayOfWeek = getFirstDayOfWeek(state.currPeriod.toString(), action.payload.weekStartsOn)
 
       switch (state.viewMode) {
         case 'month': {
@@ -89,9 +77,7 @@ const createCalendarReducer = (initialState: UseCalendarState) => {
     })
 }
 
-export const useCalendarReducer = <
-  TState extends UseCalendarState = UseCalendarState,
->(
+export const useCalendarReducer = <TState extends UseCalendarState = UseCalendarState>(
   initialState: TState,
   extReducer?: (state: TState, action: UseCalendarAction) => TState,
 ) => {

@@ -2,7 +2,6 @@ import { Temporal } from '@js-temporal/polyfill'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { act, renderHook } from '@testing-library/react'
 import { useCalendar } from '../useCalendar'
-import { actions } from '../useCalendar/calendarActions';
 import type { UseCalendarAction} from '../useCalendar/calendarActions';
 import type { UseCalendarState } from '../useCalendar/useCalendarState';
 
@@ -31,8 +30,8 @@ describe('useCalendar', () => {
       useCalendar({ events, viewMode: 'month' }),
     )
     expect(result.current.viewMode).toBe('month')
-    expect(result.current.currPeriod).toBe(
-      Temporal.Now.plainDateISO().toString({ calendarName: 'auto' }),
+    expect(result.current.currPeriod.toString()).toBe(
+      Temporal.Now.plainDateISO().toString(),
     )
   })
 
@@ -99,7 +98,7 @@ describe('useCalendar', () => {
       result.current.goToSpecificPeriod(Temporal.PlainDate.from('2024-06-01'))
     })
 
-    expect(result.current.currPeriod).toBe('2024-06-01')
+    expect(result.current.currPeriod.toString()).toBe('2024-06-01')
   })
 
   test('should return the correct props for an event', () => {
@@ -293,7 +292,7 @@ describe('useCalendar', () => {
 
   test(`should allow overriding the reducer`, () => {
     const customReducer = (state: UseCalendarState, action: UseCalendarAction) => {
-      if (action.type === actions.goToNextPeriod().type) {
+      if (action.type === 'SET_NEXT_PERIOD') {
         return {
           ...state,
           currPeriod: state.currPeriod.add({ months: 2 }),
