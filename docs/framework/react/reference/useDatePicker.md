@@ -8,8 +8,8 @@ id: useDatePicker
 ```tsx
 export const useDatePicker = ({
   initialDate = null,
-  minDate = null,
-  maxDate = null,
+  minDate,
+  maxDate,
   onSelectDate,
 }: UseDatePickerProps)
 ```
@@ -21,13 +21,13 @@ export const useDatePicker = ({
 - `initialDate` (optional): The initial date to display in the date picker. If not provided, the current date will be used.
   - This optional parameter specifies the initial date selected in the date picker. It defaults to null.
 - `minDate` (optional): The minimum selectable date in the date picker. If not provided, there is no minimum date.
-  - This optional parameter specifies the minimum selectable date in the date picker. It defaults to null.
+  - This optional parameter specifies the minimum selectable date in the date picker.
 - `maxDate` (optional): The maximum selectable date in the date picker. If not provided, there is no maximum date.
-  - This optional parameter specifies the maximum selectable date in the date picker. It defaults to null.
+  - This optional parameter specifies the maximum selectable date in the date picker.
 - `onSelectDate` (optional): A callback function that is called when a date is selected.
-  - This optional parameter specifies a callback function that is called when a date is selected. It defaults to null.
+  - This optional parameter specifies a callback function that is called when a date is selected.
 - `reducer` (optional): A custom reducer function to manage the state of the date picker.
-  - This optional parameter specifies a custom reducer function to manage the state of the date picker. It defaults to null.
+  - This optional parameter specifies a custom reducer function to manage the state of the date picker.
 
 
 #### Returns
