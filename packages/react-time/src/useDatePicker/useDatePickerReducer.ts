@@ -5,11 +5,10 @@ import { createReducer } from "typesafe-actions";
 import { type UseDatePickerAction, actions } from "./useDatePickerActions";
 import type { UseDatePickerState } from "./useDatePickerState";
 
-
 const createDatePickerReducer = (initialState: UseDatePickerState) =>
   createReducer<UseDatePickerState, UseDatePickerAction>(initialState)
     .handleAction(actions.setDate, (state, action) => {
-      const { date: selectedDate, multiple, range, minDate, maxDate } = action.payload
+      const { date: selectedDate, multiple, range, minDate, maxDate } = action.payload;
 
       if (
         (minDate &&
@@ -21,57 +20,58 @@ const createDatePickerReducer = (initialState: UseDatePickerState) =>
       }
 
       if (multiple) {
-        const selectedDates = state.selectedDates ?? [];
-        const dateIndex = selectedDates.findIndex((date) =>
-          Temporal.PlainDate.compare(date, selectedDate) === 0
-        );
-
-        if (dateIndex > -1) {
-          return {
-            ...state,
-            selectedDates: [
-              ...selectedDates.slice(0, dateIndex),
-              ...selectedDates.slice(dateIndex + 1),
-            ],
-          };
+        const selectedDates = new Map(state.selectedDates);
+        const dateKey = selectedDate.toString();
+        if (selectedDates.has(dateKey)) {
+          selectedDates.delete(dateKey);
         } else {
-          return {
-            ...state,
-            selectedDates: [...selectedDates, selectedDate],
-          };
+          selectedDates.set(dateKey, selectedDate);
         }
+        return {
+          ...state,
+          selectedDates,
+        };
       }
 
       if (range) {
-        const selectedDates = state.selectedDates ?? [];
+        const selectedDates = new Map(state.selectedDates);
 
-        if (selectedDates.length === 0 || selectedDates.length === 2) {
+        if (selectedDates.size === 0 || selectedDates.size === 2) {
           return {
             ...state,
-            selectedDates: [selectedDate],
+            selectedDates: new Map([[selectedDate.toString(), selectedDate]]),
           };
-        } else if (selectedDates.length === 1) {
-          const startDate = selectedDates[0];
-
+        } else if (selectedDates.size === 1) {
+          const [startDate] = selectedDates.values();
           if (startDate) {
+            const newDates = [startDate, selectedDate].sort((a, b) =>
+              Temporal.PlainDate.compare(a, b)
+            );
             return {
               ...state,
-              selectedDates: [startDate, selectedDate].sort((a, b) =>
-                Temporal.PlainDate.compare(a, b)
-              ),
+              selectedDates: new Map(newDates.map(date => [date.toString(), date])),
             };
           } else {
             return {
               ...state,
-              selectedDates: [selectedDate],
+              selectedDates: new Map([[selectedDate.toString(), selectedDate]]),
             };
           }
         }
       }
 
+      const selectedDates = new Map(state.selectedDates);
+      const dateKey = selectedDate.toString();
+      if (selectedDates.has(dateKey)) {
+        selectedDates.delete(dateKey);
+      } else {
+        selectedDates.clear();
+        selectedDates.set(dateKey, selectedDate);
+      }
+
       return {
         ...state,
-        selectedDate,
+        selectedDates,
       };
     })
     .handleAction(actions.goToCurrentPeriod, (state, action) => {
