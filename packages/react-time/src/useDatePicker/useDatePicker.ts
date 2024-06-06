@@ -25,16 +25,18 @@ const generateDateRange = (
 const getFirstDayOfMonth = (currMonth: string) =>
   Temporal.PlainDate.from(`${currMonth}-01`)
 
-interface UseDatePickerProps {
+type UseDatePickerBaseProps = {
   minDate?: Temporal.PlainDate | null
   maxDate?: Temporal.PlainDate | null
   onSelectDate?: (date: Temporal.PlainDate) => void
   locale?: string
-  multiple?: boolean
-  range?: boolean
   selectedDates?: Temporal.PlainDate[] | null
   weekStartsOn?: number
 }
+
+type UseDatePickerProps = 
+| (UseDatePickerBaseProps & { multiple?: boolean; range?: never | false })
+| (UseDatePickerBaseProps & { multiple?: never | false; range?: boolean })
 
 export const useDatePicker = ({
   selectedDates = null,

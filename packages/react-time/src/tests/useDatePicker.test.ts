@@ -235,4 +235,11 @@ describe('useDatePicker', () => {
       Temporal.Now.plainDateISO(),
     )
   })
+
+  test('should throw an error when multiple and range props are used together', () => {
+    expect(() => {
+      // @ts-expect-error
+      renderHook(() => useDatePicker({ multiple: true, range: true }))
+    }).toThrowError('The multiple and range props cannot be used together')
+  })
 })
