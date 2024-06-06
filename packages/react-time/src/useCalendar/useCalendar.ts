@@ -397,7 +397,6 @@ export const useCalendar = <TEvent extends Event>({
     goToSpecificPeriod,
     weeks,
     daysNames,
-    viewMode: state.viewMode,
     changeViewMode,
     getEventProps,
     currentTimeMarkerProps,
