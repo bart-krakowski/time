@@ -26,6 +26,8 @@ export const useDatePicker = ({
   - This optional parameter specifies the maximum selectable date in the date picker. It defaults to null.
 - `onSelectDate` (optional): A callback function that is called when a date is selected.
   - This optional parameter specifies a callback function that is called when a date is selected. It defaults to null.
+- `reducer` (optional): A custom reducer function to manage the state of the date picker.
+  - This optional parameter specifies a custom reducer function to manage the state of the date picker. It defaults to null.
 
 
 #### Returns
