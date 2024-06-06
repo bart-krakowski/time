@@ -2,7 +2,8 @@ import { useMemo, useReducer } from "react";
 import { Temporal } from "@js-temporal/polyfill";
 import { createReducer } from "typesafe-actions";
 
-import { type UseDatePickerAction, actions } from "./useDatePickerActions";
+import { actions } from "./useDatePickerActions";
+import type { UseDatePickerAction } from "./useDatePickerActions";
 import type { UseDatePickerState } from "./useDatePickerState";
 
 const createDatePickerReducer = (initialState: UseDatePickerState) =>
@@ -19,54 +20,37 @@ const createDatePickerReducer = (initialState: UseDatePickerState) =>
         return state;
       }
 
+      const selectedDates = new Map(state.selectedDates);
+      const dateKey = selectedDate.toString();
+
       if (multiple) {
-        const selectedDates = new Map(state.selectedDates);
-        const dateKey = selectedDate.toString();
         if (selectedDates.has(dateKey)) {
           selectedDates.delete(dateKey);
         } else {
           selectedDates.set(dateKey, selectedDate);
         }
-        return {
-          ...state,
-          selectedDates,
-        };
-      }
-
-      if (range) {
-        const selectedDates = new Map(state.selectedDates);
-
+      } else if (range) {
         if (selectedDates.size === 0 || selectedDates.size === 2) {
-          return {
-            ...state,
-            selectedDates: new Map([[selectedDate.toString(), selectedDate]]),
-          };
+          selectedDates.clear();
+          selectedDates.set(dateKey, selectedDate);
         } else if (selectedDates.size === 1) {
           const [startDate] = selectedDates.values();
           if (startDate) {
-            const newDates = [startDate, selectedDate].sort((a, b) =>
+            selectedDates.set(dateKey, selectedDate);
+            const newDates = Array.from(selectedDates.values()).sort((a, b) =>
               Temporal.PlainDate.compare(a, b)
             );
-            return {
-              ...state,
-              selectedDates: new Map(newDates.map(date => [date.toString(), date])),
-            };
-          } else {
-            return {
-              ...state,
-              selectedDates: new Map([[selectedDate.toString(), selectedDate]]),
-            };
+            selectedDates.clear();
+            newDates.forEach(date => selectedDates.set(date.toString(), date));
           }
         }
-      }
-
-      const selectedDates = new Map(state.selectedDates);
-      const dateKey = selectedDate.toString();
-      if (selectedDates.has(dateKey)) {
-        selectedDates.delete(dateKey);
       } else {
-        selectedDates.clear();
-        selectedDates.set(dateKey, selectedDate);
+        if (selectedDates.has(dateKey)) {
+          selectedDates.delete(dateKey);
+        } else {
+          selectedDates.clear();
+          selectedDates.set(dateKey, selectedDate);
+        }
       }
 
       return {
