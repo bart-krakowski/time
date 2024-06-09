@@ -234,8 +234,6 @@ export const useCalendar = <TEvent extends Event>({
     const eventWidth = totalOverlaps > 0 ? availableWidth / totalOverlaps : 100 - 2 * sidePadding
     const eventLeft = sidePadding + eventIndex * (eventWidth + innerPadding)
 
-    console.log('state.viewMode.unit', state.viewMode.unit)
-  
     if (state.viewMode.unit === 'weeks' || state.viewMode.unit === 'days') {
       return {
         style: {
