@@ -1,10 +1,11 @@
+import type { CSSProperties } from 'react'
 import { useCallback, useEffect, useMemo, useTransition } from 'react'
 import { Temporal } from '@js-temporal/polyfill'
+
+import type { UseCalendarAction } from './calendarActions'
+import type { Event, UseCalendarState } from './useCalendarState'
 import { actions } from './calendarActions'
 import { useCalendarReducer } from './useCalendarReducer'
-import type { UseCalendarAction} from './calendarActions';
-import type { Event, UseCalendarState } from './useCalendarState'
-import type { CSSProperties } from 'react'
 
 export const getFirstDayOfWeek = (currWeek: string, weekStartsOn: number) => {
   const date = Temporal.PlainDate.from(currWeek)
@@ -14,7 +15,10 @@ export const getFirstDayOfWeek = (currWeek: string, weekStartsOn: number) => {
 export const getFirstDayOfMonth = (currMonth: string) =>
   Temporal.PlainDate.from(`${currMonth}-01`)
 
-interface UseCalendarProps<TEvent extends Event, TState extends UseCalendarState = UseCalendarState> {
+interface UseCalendarProps<
+  TEvent extends Event,
+  TState extends UseCalendarState = UseCalendarState,
+> {
   /**
    * The day of the week the calendar should start on (1 for Monday, 7 for Sunday).
    * @default 1
@@ -39,7 +43,10 @@ interface UseCalendarProps<TEvent extends Event, TState extends UseCalendarState
   /**
    * Custom reducer function to manage the state of the calendar.
    */
-  reducer?: <TAction extends UseCalendarAction = UseCalendarAction>(state: TState, action: TAction) => TState
+  reducer?: <TAction extends UseCalendarAction = UseCalendarAction>(
+    state: TState,
+    action: TAction,
+  ) => TState
 }
 
 const getChunks = function* <T>(arr: T[], n: number) {
@@ -54,12 +61,33 @@ const splitMultiDayEvents = <TEvent extends Event>(event: TEvent): TEvent[] => {
   const events: TEvent[] = []
 
   let currentDay = startDate
-  while (Temporal.PlainDate.compare(currentDay.toPlainDate(), endDate.toPlainDate()) < 0) {
-    const startOfCurrentDay = currentDay.with({ hour: 0, minute: 0, second: 0, millisecond: 0 })
-    const endOfCurrentDay = currentDay.with({ hour: 23, minute: 59, second: 59, millisecond: 999 })
+  while (
+    Temporal.PlainDate.compare(
+      currentDay.toPlainDate(),
+      endDate.toPlainDate(),
+    ) < 0
+  ) {
+    const startOfCurrentDay = currentDay.with({
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    })
+    const endOfCurrentDay = currentDay.with({
+      hour: 23,
+      minute: 59,
+      second: 59,
+      millisecond: 999,
+    })
 
-    const eventStart = Temporal.PlainDateTime.compare(currentDay, startDate) === 0 ? startDate : startOfCurrentDay
-    const eventEnd = Temporal.PlainDateTime.compare(endDate, endOfCurrentDay) <= 0 ? endDate : endOfCurrentDay
+    const eventStart =
+      Temporal.PlainDateTime.compare(currentDay, startDate) === 0
+        ? startDate
+        : startOfCurrentDay
+    const eventEnd =
+      Temporal.PlainDateTime.compare(endDate, endOfCurrentDay) <= 0
+        ? endDate
+        : endOfCurrentDay
 
     events.push({ ...event, startDate: eventStart, endDate: eventEnd })
 
@@ -69,7 +97,10 @@ const splitMultiDayEvents = <TEvent extends Event>(event: TEvent): TEvent[] => {
   return events
 }
 
-const generateDateRange = (start: Temporal.PlainDate, end: Temporal.PlainDate) => {
+const generateDateRange = (
+  start: Temporal.PlainDate,
+  end: Temporal.PlainDate,
+) => {
   const dates: Temporal.PlainDate[] = []
   let current = start
   while (Temporal.PlainDate.compare(current, end) <= 0) {
@@ -114,28 +145,62 @@ export const useCalendar = <TEvent extends Event>({
 }: UseCalendarProps<TEvent>) => {
   const today = Temporal.Now.plainDateISO()
   const [isPending, startTransition] = useTransition()
-  const [state, dispatch] = useCalendarReducer({
-    currPeriod: today,
-    viewMode: initialViewMode,
-    currentTime: Temporal.Now.plainDateTimeISO(),
-  }, reducer)
+  const [state, dispatch] = useCalendarReducer(
+    {
+      currPeriod: today,
+      viewMode: initialViewMode,
+      currentTime: Temporal.Now.plainDateTimeISO(),
+    },
+    reducer,
+  )
 
-  const firstDayOfMonth = useMemo(() => getFirstDayOfMonth(state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7)), [state.currPeriod])
+  const firstDayOfMonth = useMemo(
+    () =>
+      getFirstDayOfMonth(
+        state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7),
+      ),
+    [state.currPeriod],
+  )
 
-  const firstDayOfWeek = useMemo(() => getFirstDayOfWeek(state.currPeriod.toString(), weekStartsOn), [state.currPeriod, weekStartsOn])
+  const firstDayOfWeek = useMemo(
+    () => getFirstDayOfWeek(state.currPeriod.toString(), weekStartsOn),
+    [state.currPeriod, weekStartsOn],
+  )
 
   const days = useMemo(() => {
-    const start = state.viewMode.unit === 'months' ? firstDayOfMonth.subtract({ days: (firstDayOfMonth.dayOfWeek - weekStartsOn + 7) % 7 }) : firstDayOfWeek;
-    const end = state.viewMode.unit === 'months' ? firstDayOfMonth.add({ months: state.viewMode.value }).subtract({ days: 1 }) : firstDayOfWeek.add({ days: 6 });
-    return Array.from(getChunks(generateDateRange(start, end), 7)).flat();
-  }, [state.viewMode, firstDayOfMonth, firstDayOfWeek, weekStartsOn]);
+    const start =
+      state.viewMode.unit === 'months'
+        ? firstDayOfMonth.subtract({
+            days: (firstDayOfMonth.dayOfWeek - weekStartsOn + 7) % 7,
+          })
+        : firstDayOfWeek
+
+    let end
+    if (state.viewMode.unit === 'months') {
+      const lastDayOfMonth = firstDayOfMonth
+        .add({ months: state.viewMode.value })
+        .subtract({ days: 1 })
+      const lastDayOfMonthWeekDay =
+        (lastDayOfMonth.dayOfWeek - weekStartsOn + 7) % 7
+      end = lastDayOfMonth.add({ days: 6 - lastDayOfMonthWeekDay })
+    } else {
+      end = firstDayOfWeek.add({ days: 6 })
+    }
+
+    return Array.from(getChunks(generateDateRange(start, end), 7)).flat()
+  }, [state.viewMode, firstDayOfMonth, firstDayOfWeek, weekStartsOn])
 
   const eventMap = useMemo(() => {
     const map = new Map<string, TEvent[]>()
     events?.forEach((event) => {
       const eventStartDate = Temporal.PlainDateTime.from(event.startDate)
       const eventEndDate = Temporal.PlainDateTime.from(event.endDate)
-      if (Temporal.PlainDate.compare(eventStartDate.toPlainDate(), eventEndDate.toPlainDate()) !== 0) {
+      if (
+        Temporal.PlainDate.compare(
+          eventStartDate.toPlainDate(),
+          eventEndDate.toPlainDate(),
+        ) !== 0
+      ) {
         const splitEvents = splitMultiDayEvents(event)
         splitEvents.forEach((splitEvent) => {
           const splitKey = splitEvent.startDate.toString().split('T')[0]
@@ -155,103 +220,147 @@ export const useCalendar = <TEvent extends Event>({
     return map
   }, [events])
 
-  const daysWithEvents = useMemo(() => days.map((day) => {
-    const dayKey = day.toString()
-    const dailyEvents = eventMap.get(dayKey) ?? []
-    const isInCurrentPeriod = day.month === state.currPeriod.month
+  const daysWithEvents = useMemo(
+    () =>
+      days.map((day) => {
+        const dayKey = day.toString()
+        const dailyEvents = eventMap.get(dayKey) ?? []
+        const isInCurrentPeriod = day.month === state.currPeriod.month
     return { date: day, events: dailyEvents, isToday: Temporal.PlainDate.compare(day, Temporal.Now.plainDateISO()) === 0, isInCurrentPeriod }
   }), [days, eventMap, state.currPeriod])
 
   const weeks = useMemo(() => state.viewMode.unit === 'months' ? [...getChunks(daysWithEvents, 7)] : [daysWithEvents], [state.viewMode, daysWithEvents])
 
-  const goToPreviousPeriod = useCallback(() => startTransition(() => dispatch(actions.goToPreviousPeriod({ weekStartsOn }))), [dispatch, weekStartsOn])
+  const goToPreviousPeriod = useCallback(
+    () =>
+      startTransition(() =>
+        dispatch(actions.goToPreviousPeriod({ weekStartsOn })),
+      ),
+    [dispatch, weekStartsOn],
+  )
 
-  const goToNextPeriod = useCallback(() => startTransition(() => dispatch(actions.goToNextPeriod({ weekStartsOn }))), [dispatch, weekStartsOn])
+  const goToNextPeriod = useCallback(
+    () =>
+      startTransition(() => dispatch(actions.goToNextPeriod({ weekStartsOn }))),
+    [dispatch, weekStartsOn],
+  )
 
-  const goToCurrentPeriod = useCallback(() => startTransition(() => dispatch(actions.setCurrentPeriod(Temporal.Now.plainDateISO()))), [dispatch])
+  const goToCurrentPeriod = useCallback(
+    () =>
+      startTransition(() =>
+        dispatch(actions.setCurrentPeriod(Temporal.Now.plainDateISO())),
+      ),
+    [dispatch],
+  )
 
-  const goToSpecificPeriod = useCallback((date: Temporal.PlainDate) => startTransition(() => dispatch(actions.setCurrentPeriod(date))), [dispatch])
+  const goToSpecificPeriod = useCallback(
+    (date: Temporal.PlainDate) =>
+      startTransition(() => dispatch(actions.setCurrentPeriod(date))),
+    [dispatch],
+  )
 
-  const changeViewMode = useCallback((newViewMode: UseCalendarState['viewMode']) => {
-    startTransition(() => {
-      dispatch(actions.setViewMode(newViewMode));
-      onChangeViewMode?.(newViewMode);
-    });
-  }, [dispatch, onChangeViewMode]);
+  const changeViewMode = useCallback(
+    (newViewMode: { value: number; unit: 'months' | 'weeks' | 'days' }) => {
+      startTransition(() => {
+        dispatch(actions.setViewMode(newViewMode))
+        onChangeViewMode?.(newViewMode)
+      })
+    },
+    [dispatch, onChangeViewMode],
+  )
 
-  const getEventProps = useCallback((id: Event['id']): { style: CSSProperties } | null => {
-    const event = [...eventMap.values()].flat().find((currEvent) => currEvent.id === id)
-    if (!event) return null
+  const getEventProps = useCallback(
+    (id: Event['id']): { style: CSSProperties } | null => {
+      const event = [...eventMap.values()]
+        .flat()
+        .find((currEvent) => currEvent.id === id)
+      if (!event) return null
 
-    const eventStartDate = Temporal.PlainDateTime.from(event.startDate)
-    const eventEndDate = Temporal.PlainDateTime.from(event.endDate)
-    const isSplitEvent = Temporal.PlainDate.compare(eventStartDate.toPlainDate(), eventEndDate.toPlainDate()) !== 0
+      const eventStartDate = Temporal.PlainDateTime.from(event.startDate)
+      const eventEndDate = Temporal.PlainDateTime.from(event.endDate)
+      const isSplitEvent =
+        Temporal.PlainDate.compare(
+          eventStartDate.toPlainDate(),
+          eventEndDate.toPlainDate(),
+        ) !== 0
 
-    let percentageOfDay
-    let eventHeightInMinutes
+      let percentageOfDay
+      let eventHeightInMinutes
 
-    if (isSplitEvent) {
-      const isStartPart = eventStartDate.hour !== 0 || eventStartDate.minute !== 0
-      if (isStartPart) {
-        const eventTimeInMinutes = eventStartDate.hour * 60 + eventStartDate.minute
-        percentageOfDay = (eventTimeInMinutes / (24 * 60)) * 100
-        eventHeightInMinutes = 24 * 60 - eventTimeInMinutes
+      if (isSplitEvent) {
+        const isStartPart =
+          eventStartDate.hour !== 0 || eventStartDate.minute !== 0
+        if (isStartPart) {
+          const eventTimeInMinutes =
+            eventStartDate.hour * 60 + eventStartDate.minute
+          percentageOfDay = (eventTimeInMinutes / (24 * 60)) * 100
+          eventHeightInMinutes = 24 * 60 - eventTimeInMinutes
+        } else {
+          percentageOfDay = 0
+          eventHeightInMinutes = eventEndDate.hour * 60 + eventEndDate.minute
+        }
       } else {
-        percentageOfDay = 0
-        eventHeightInMinutes = eventEndDate.hour * 60 + eventEndDate.minute
+        const eventTimeInMinutes =
+          eventStartDate.hour * 60 + eventStartDate.minute
+        percentageOfDay = (eventTimeInMinutes / (24 * 60)) * 100
+        const endTimeInMinutes = eventEndDate.hour * 60 + eventEndDate.minute
+        eventHeightInMinutes = endTimeInMinutes - eventTimeInMinutes
       }
-    } else {
-      const eventTimeInMinutes = eventStartDate.hour * 60 + eventStartDate.minute
-      percentageOfDay = (eventTimeInMinutes / (24 * 60)) * 100
-      const endTimeInMinutes = eventEndDate.hour * 60 + eventEndDate.minute
-      eventHeightInMinutes = endTimeInMinutes - eventTimeInMinutes
-    }
 
-    const eventHeight = Math.min((eventHeightInMinutes / (24 * 60)) * 100, 20)
+      const eventHeight = Math.min((eventHeightInMinutes / (24 * 60)) * 100, 20)
 
-    const overlappingEvents = [...eventMap.values()].flat().filter((e) => {
-      const eStartDate = Temporal.PlainDateTime.from(e.startDate)
-      const eEndDate = Temporal.PlainDateTime.from(e.endDate)
-      return (
-        (e.id !== id &&
-          Temporal.PlainDateTime.compare(eventStartDate, eStartDate) >= 0 &&
-          Temporal.PlainDateTime.compare(eventStartDate, eEndDate) <= 0) ||
-        (Temporal.PlainDateTime.compare(eventEndDate, eStartDate) >= 0 &&
-          Temporal.PlainDateTime.compare(eventEndDate, eEndDate) <= 0) ||
-        (Temporal.PlainDateTime.compare(eStartDate, eventStartDate) >= 0 &&
-          Temporal.PlainDateTime.compare(eStartDate, eventEndDate) <= 0) ||
-        (Temporal.PlainDateTime.compare(eEndDate, eventStartDate) >= 0 &&
-          Temporal.PlainDateTime.compare(eEndDate, eventEndDate) <= 0)
-      )
-    })
+      const overlappingEvents = [...eventMap.values()].flat().filter((e) => {
+        const eStartDate = Temporal.PlainDateTime.from(e.startDate)
+        const eEndDate = Temporal.PlainDateTime.from(e.endDate)
+        return (
+          (e.id !== id &&
+            Temporal.PlainDateTime.compare(eventStartDate, eStartDate) >= 0 &&
+            Temporal.PlainDateTime.compare(eventStartDate, eEndDate) <= 0) ||
+          (Temporal.PlainDateTime.compare(eventEndDate, eStartDate) >= 0 &&
+            Temporal.PlainDateTime.compare(eventEndDate, eEndDate) <= 0) ||
+          (Temporal.PlainDateTime.compare(eStartDate, eventStartDate) >= 0 &&
+            Temporal.PlainDateTime.compare(eStartDate, eventEndDate) <= 0) ||
+          (Temporal.PlainDateTime.compare(eEndDate, eventStartDate) >= 0 &&
+            Temporal.PlainDateTime.compare(eEndDate, eventEndDate) <= 0)
+        )
+      })
 
-    const eventIndex = overlappingEvents.findIndex((e) => e.id === id)
-    const totalOverlaps = overlappingEvents.length
-    const sidePadding = 2
-    const innerPadding = 2
-    const totalInnerPadding = (totalOverlaps - 1) * innerPadding
-    const availableWidth = 100 - totalInnerPadding - 2 * sidePadding
-    const eventWidth = totalOverlaps > 0 ? availableWidth / totalOverlaps : 100 - 2 * sidePadding
-    const eventLeft = sidePadding + eventIndex * (eventWidth + innerPadding)
+      const eventIndex = overlappingEvents.findIndex((e) => e.id === id)
+      const totalOverlaps = overlappingEvents.length
+      const sidePadding = 2
+      const innerPadding = 2
+      const totalInnerPadding = (totalOverlaps - 1) * innerPadding
+      const availableWidth = 100 - totalInnerPadding - 2 * sidePadding
+      const eventWidth =
+        totalOverlaps > 0
+          ? availableWidth / totalOverlaps
+          : 100 - 2 * sidePadding
+      const eventLeft = sidePadding + eventIndex * (eventWidth + innerPadding)
 
-    if (state.viewMode.unit === 'weeks' || state.viewMode.unit === 'days') {
-      return {
-        style: {
-          position: 'absolute',
-          top: `min(${percentageOfDay}%, calc(100% - 55px))`,
-          left: `${eventLeft}%`,
-          width: `${eventWidth}%`,
-          margin: 0,
-          height: `${eventHeight}%`,
-        },
+      if (state.viewMode.unit === 'weeks' || state.viewMode.unit === 'days') {
+        return {
+          style: {
+            position: 'absolute',
+            top: `min(${percentageOfDay}%, calc(100% - 55px))`,
+            left: `${eventLeft}%`,
+            width: `${eventWidth}%`,
+            margin: 0,
+            height: `${eventHeight}%`,
+          },
+        }
       }
-    }
-    
-    return null    
-  }, [eventMap, state.viewMode])
+
+      return null
+    },
+    [eventMap, state.viewMode],
+  )
 
   useEffect(() => {
-    const intervalId = setInterval(() => dispatch(actions.updateCurrentTime(Temporal.Now.plainDateTimeISO())), 60000)
+    const intervalId = setInterval(
+      () =>
+        dispatch(actions.updateCurrentTime(Temporal.Now.plainDateTimeISO())),
+      60000,
+    )
     return () => clearInterval(intervalId)
   }, [dispatch])
 
@@ -273,14 +382,20 @@ export const useCalendar = <TEvent extends Event>({
   const daysNames = useMemo(() => {
     const baseDate = Temporal.PlainDate.from('2024-01-01')
     return Array.from({ length: 7 }).map((_, i) =>
-      baseDate.add({ days: (i + weekStartsOn - 1) % 7 })
-        .toLocaleString(locale, { weekday: 'short' })
+      baseDate
+        .add({ days: (i + weekStartsOn - 1) % 7 })
+        .toLocaleString(locale, { weekday: 'short' }),
     )
   }, [locale, weekStartsOn])
 
   return {
     ...state,
-    firstDayOfPeriod: state.viewMode.unit === 'months' ? firstDayOfMonth : state.viewMode.unit === 'weeks' ? firstDayOfWeek : state.currPeriod,
+    firstDayOfPeriod:
+      state.viewMode.unit === 'months'
+        ? firstDayOfMonth
+        : state.viewMode.unit === 'weeks'
+          ? firstDayOfWeek
+          : state.currPeriod,
     goToPreviousPeriod,
     goToNextPeriod,
     goToCurrentPeriod,
@@ -290,6 +405,6 @@ export const useCalendar = <TEvent extends Event>({
     changeViewMode,
     getEventProps,
     currentTimeMarkerProps,
-    isPending
+    isPending,
   }
 }
