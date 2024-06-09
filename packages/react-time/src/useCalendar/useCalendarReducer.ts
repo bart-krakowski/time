@@ -20,62 +20,66 @@ const createCalendarReducer = (initialState: UseCalendarState) => {
       currentTime: action.payload,
     }))
     .handleAction(actions.goToPreviousPeriod, (state, action) => {
-      const firstDayOfMonth = getFirstDayOfMonth(state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7))
-      const firstDayOfWeek = getFirstDayOfWeek(state.currPeriod.toString(), action.payload.weekStartsOn)
+      const firstDayOfMonth = getFirstDayOfMonth(state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7));
+      const firstDayOfWeek = getFirstDayOfWeek(state.currPeriod.toString(), action.payload.weekStartsOn);
 
-      switch (state.viewMode) {
-        case 'month': {
-          const firstDayOfPrevMonth = firstDayOfMonth.subtract({ months: 1 })
+      switch (state.viewMode.unit) {
+        case 'months': {
+          const firstDayOfPrevMonth = firstDayOfMonth.subtract({ months: state.viewMode.value });
           return {
             ...state,
             currPeriod: firstDayOfPrevMonth,
-          }
+          };
         }
-        case 'week': {
-          const firstDayOfPrevWeek = firstDayOfWeek.subtract({ weeks: 1 })
+        case 'weeks': {
+          const firstDayOfPrevWeek = firstDayOfWeek.subtract({ weeks: state.viewMode.value });
           return {
             ...state,
             currPeriod: firstDayOfPrevWeek,
-          }
+          };
         }
-        default: {
-          const prevCustomStart = state.currPeriod.subtract({ days: state.viewMode })
+        case 'days': {
+          const prevCustomStart = state.currPeriod.subtract({ days: state.viewMode.value });
           return {
             ...state,
             currPeriod: prevCustomStart,
-          }
+          };
         }
+        default:
+          return state;
       }
     })
     .handleAction(actions.goToNextPeriod, (state, action) => {
-      const firstDayOfMonth = getFirstDayOfMonth(state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7))
-      const firstDayOfWeek = getFirstDayOfWeek(state.currPeriod.toString(), action.payload.weekStartsOn)
+      const firstDayOfMonth = getFirstDayOfMonth(state.currPeriod.toString({ calendarName: 'auto' }).substring(0, 7));
+      const firstDayOfWeek = getFirstDayOfWeek(state.currPeriod.toString(), action.payload.weekStartsOn);
 
-      switch (state.viewMode) {
-        case 'month': {
-          const firstDayOfNextMonth = firstDayOfMonth.add({ months: 1 })
+      switch (state.viewMode.unit) {
+        case 'months': {
+          const firstDayOfNextMonth = firstDayOfMonth.add({ months: state.viewMode.value });
           return {
             ...state,
             currPeriod: firstDayOfNextMonth,
-          }
+          };
         }
-        case 'week': {
-          const firstDayOfNextWeek = firstDayOfWeek.add({ weeks: 1 })
+        case 'weeks': {
+          const firstDayOfNextWeek = firstDayOfWeek.add({ weeks: state.viewMode.value });
           return {
             ...state,
             currPeriod: firstDayOfNextWeek,
-          }
+          };
         }
-        default: {
-          const nextCustomStart = state.currPeriod.add({ days: state.viewMode })
+        case 'days': {
+          const nextCustomStart = state.currPeriod.add({ days: state.viewMode.value });
           return {
             ...state,
             currPeriod: nextCustomStart,
-          }
+          };
         }
+        default:
+          return state;
       }
-    })
-}
+    });
+};
 
 export const useCalendarReducer = <TState extends UseCalendarState = UseCalendarState>(
   initialState: TState,

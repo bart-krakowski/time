@@ -27,7 +27,7 @@ interface UseCalendarProps<TEvent extends Event, TState extends UseCalendarState
   /**
    * The initial view mode of the calendar. It can be 'month', 'week', or a number representing the number of days in a custom view mode.
    */
-  viewMode: 'month' | 'week' | number
+  viewMode: UseCalendarState['viewMode']
   /**
    * The locale to use for formatting dates and times.
    */
@@ -35,7 +35,7 @@ interface UseCalendarProps<TEvent extends Event, TState extends UseCalendarState
   /**
    * Callback function that is called when the view mode of the calendar changes. It receives the new view mode as an argument.
    */
-  onChangeViewMode?: (viewMode: 'month' | 'week' | number) => void
+  onChangeViewMode?: (viewMode: UseCalendarState['viewMode']) => void
   /**
    * Custom reducer function to manage the state of the calendar.
    */
@@ -113,6 +113,7 @@ export const useCalendar = <TEvent extends Event>({
   reducer,
 }: UseCalendarProps<TEvent>) => {
   const today = Temporal.Now.plainDateISO()
+  const [isPending, startTransition] = useTransition()
   const [state, dispatch] = useCalendarReducer({
     currPeriod: today,
     viewMode: initialViewMode,
@@ -124,10 +125,10 @@ export const useCalendar = <TEvent extends Event>({
   const firstDayOfWeek = useMemo(() => getFirstDayOfWeek(state.currPeriod.toString(), weekStartsOn), [state.currPeriod, weekStartsOn])
 
   const days = useMemo(() => {
-    const start = state.viewMode === 'month' ? firstDayOfMonth.subtract({ days: (firstDayOfMonth.dayOfWeek - weekStartsOn + 7) % 7 }) : firstDayOfWeek
-    const end = state.viewMode === 'month' ? firstDayOfMonth.add({ months: 1 }).subtract({ days: 1 }) : firstDayOfWeek.add({ days: 6 })
-    return Array.from(getChunks(generateDateRange(start, end), 7)).flat()
-  }, [state.viewMode, firstDayOfMonth, firstDayOfWeek, weekStartsOn])
+    const start = state.viewMode.unit === 'months' ? firstDayOfMonth.subtract({ days: (firstDayOfMonth.dayOfWeek - weekStartsOn + 7) % 7 }) : firstDayOfWeek;
+    const end = state.viewMode.unit === 'months' ? firstDayOfMonth.add({ months: state.viewMode.value }).subtract({ days: 1 }) : firstDayOfWeek.add({ days: 6 });
+    return Array.from(getChunks(generateDateRange(start, end), 7)).flat();
+  }, [state.viewMode, firstDayOfMonth, firstDayOfWeek, weekStartsOn]);
 
   const eventMap = useMemo(() => {
     const map = new Map<string, TEvent[]>()
@@ -161,9 +162,7 @@ export const useCalendar = <TEvent extends Event>({
     return { date: day, events: dailyEvents, isToday: Temporal.PlainDate.compare(day, Temporal.Now.plainDateISO()) === 0, isInCurrentPeriod }
   }), [days, eventMap, state.currPeriod])
 
-  const weeks = useMemo(() => state.viewMode === 'month' ? [...getChunks(daysWithEvents, 7)] : [daysWithEvents], [state.viewMode, daysWithEvents])
-
-  const [isPending, startTransition] = useTransition()
+  const weeks = useMemo(() => state.viewMode.unit === 'months' ? [...getChunks(daysWithEvents, 7)] : [daysWithEvents], [state.viewMode, daysWithEvents])
 
   const goToPreviousPeriod = useCallback(() => startTransition(() => dispatch(actions.goToPreviousPeriod({ weekStartsOn }))), [dispatch, weekStartsOn])
 
@@ -173,12 +172,12 @@ export const useCalendar = <TEvent extends Event>({
 
   const goToSpecificPeriod = useCallback((date: Temporal.PlainDate) => startTransition(() => dispatch(actions.setCurrentPeriod(date))), [dispatch])
 
-  const changeViewMode = useCallback((newViewMode: 'month' | 'week' | number) => {
+  const changeViewMode = useCallback((newViewMode: UseCalendarState['viewMode']) => {
     startTransition(() => {
-      dispatch(actions.setViewMode(newViewMode))
-      onChangeViewMode?.(newViewMode)
-    })
-  }, [dispatch, onChangeViewMode])
+      dispatch(actions.setViewMode(newViewMode));
+      onChangeViewMode?.(newViewMode);
+    });
+  }, [dispatch, onChangeViewMode]);
 
   const getEventProps = useCallback((id: Event['id']): { style: CSSProperties } | null => {
     const event = [...eventMap.values()].flat().find((currEvent) => currEvent.id === id)
@@ -235,7 +234,9 @@ export const useCalendar = <TEvent extends Event>({
     const eventWidth = totalOverlaps > 0 ? availableWidth / totalOverlaps : 100 - 2 * sidePadding
     const eventLeft = sidePadding + eventIndex * (eventWidth + innerPadding)
 
-    if (state.viewMode === 'week' || typeof state.viewMode === 'number') {
+    console.log('state.viewMode.unit', state.viewMode.unit)
+  
+    if (state.viewMode.unit === 'weeks' || state.viewMode.unit === 'days') {
       return {
         style: {
           position: 'absolute',
@@ -247,8 +248,8 @@ export const useCalendar = <TEvent extends Event>({
         },
       }
     }
-
-    return null
+    
+    return null    
   }, [eventMap, state.viewMode])
 
   useEffect(() => {
@@ -281,7 +282,7 @@ export const useCalendar = <TEvent extends Event>({
 
   return {
     ...state,
-    firstDayOfPeriod: state.viewMode === 'month' ? firstDayOfMonth : state.viewMode === 'week' ? firstDayOfWeek : state.currPeriod,
+    firstDayOfPeriod: state.viewMode.unit === 'months' ? firstDayOfMonth : state.viewMode.unit === 'weeks' ? firstDayOfWeek : state.currPeriod,
     goToPreviousPeriod,
     goToNextPeriod,
     goToCurrentPeriod,
