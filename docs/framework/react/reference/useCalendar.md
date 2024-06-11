@@ -68,8 +68,8 @@ export function useCalendar({
   - This function is used to retrieve the style properties and current time for the current time marker.
 - `isPending: boolean`
   - This value represents whether the calendar is in a pending state.
-- `groupDaysBy: (days: Day[], unit: 'day' | 'week' | 'month', fillMissingDays?: boolean) => Day[][]`
-  - This function is used to group the days in the current period by a specified unit.
+- `groupDaysBy: ({ days: Day[], unit: 'week' | 'month', fillMissingDays?: boolean }) => Day[][]`
+  - This function is used to group the days in the current period by a specified unit. The `fillMissingDays` parameter can be used to fill in missing days with previous or next month's days.
 
 #### Example Usage
 
