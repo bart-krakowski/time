@@ -30,9 +30,9 @@ describe('useCalendar', () => {
 
   test('should initialize with the correct view mode and current period', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'months' } }),
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' } }),
     )
-    expect(result.current.viewMode).toEqual({ value: 1, unit: 'months' })
+    expect(result.current.viewMode).toEqual({ value: 1, unit: 'month' })
     expect(result.current.currentPeriod.toString()).toBe(
       Temporal.Now.plainDateISO().toString(),
     )
@@ -40,7 +40,7 @@ describe('useCalendar', () => {
 
   test('should navigate to the previous period correctly', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'months' } }),
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' } }),
     )
 
     act(() => {
@@ -58,7 +58,7 @@ describe('useCalendar', () => {
 
   test('should navigate to the next period correctly', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'months' } }),
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' } }),
     )
 
     act(() => {
@@ -72,19 +72,19 @@ describe('useCalendar', () => {
 
   test('should change view mode correctly', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'months' } }),
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' } }),
     )
 
     act(() => {
-      result.current.changeViewMode({ value: 1, unit: 'weeks' })
+      result.current.changeViewMode({ value: 1, unit: 'week' })
     })
 
-    expect(result.current.viewMode).toEqual({ value: 1, unit: 'weeks' })
+    expect(result.current.viewMode).toEqual({ value: 1, unit: 'week' })
   })
 
   test('should select a day correctly', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'months' } }),
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' } }),
     )
 
     act(() => {
@@ -96,7 +96,7 @@ describe('useCalendar', () => {
 
   test('should return the correct props for an event', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'weeks' } }),
+      useCalendar({ events, viewMode: { value: 1, unit: 'week' } }),
     )
 
     const eventProps = result.current.getEventProps('1')
@@ -129,7 +129,7 @@ describe('useCalendar', () => {
       },
     ]
     const { result } = renderHook(() =>
-      useCalendar({ events: overlappingEvents, viewMode: { value: 1, unit: 'weeks' } }),
+      useCalendar({ events: overlappingEvents, viewMode: { value: 1, unit: 'week' } }),
     )
 
     const event1Props = result.current.getEventProps('1')
@@ -160,7 +160,7 @@ describe('useCalendar', () => {
 
   test('should return the correct props for the current time marker', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'weeks' } }),
+      useCalendar({ events, viewMode: { value: 1, unit: 'week' } }),
     )
 
     const currentTimeMarkerProps = result.current.currentTimeMarkerProps()
@@ -177,7 +177,7 @@ describe('useCalendar', () => {
 
   test('should render array of days', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'months' }, locale: 'en-US' }),
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' }, locale: 'en-US' }),
     );
 
     const { days } = result.current;
@@ -193,14 +193,14 @@ describe('useCalendar', () => {
 
   test('should return the correct day names based on weekStartsOn', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'months' }, locale: 'en-US', weekStartsOn: 1 })
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' }, locale: 'en-US', weekStartsOn: 1 })
     );
 
     const { daysNames } = result.current;
     expect(daysNames).toEqual(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
 
     const { result: resultSundayStart } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'months' }, locale: 'en-US', weekStartsOn: 7 })
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' }, locale: 'en-US', weekStartsOn: 7 })
     );
 
     const { daysNames: sundayDaysNames } = resultSundayStart.current;
@@ -209,7 +209,7 @@ describe('useCalendar', () => {
 
   test('should correctly mark days as in current period', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'months' }, locale: 'en-US' })
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' }, locale: 'en-US' })
     );
 
     const { days } = result.current;
@@ -226,7 +226,7 @@ describe('useCalendar', () => {
   });
 
   test('should navigate to a specific period correctly', () => {
-    const { result } = renderHook(() => useCalendar({ events, viewMode: { value: 1, unit: 'months' } }))
+    const { result } = renderHook(() => useCalendar({ events, viewMode: { value: 1, unit: 'month' } }))
     const specificDate = Temporal.PlainDate.from('2024-05-15')
 
     act(() => {
@@ -238,7 +238,7 @@ describe('useCalendar', () => {
 
   test('should navigate to the previous period correctly', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'months' }, locale: 'en-US' })
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' }, locale: 'en-US' })
     )
 
     act(() => {
@@ -254,7 +254,7 @@ describe('useCalendar', () => {
 
   test('should navigate to the next period correctly', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'months' }, locale: 'en-US' })
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' }, locale: 'en-US' })
     )
 
     act(() => {
@@ -268,7 +268,7 @@ describe('useCalendar', () => {
 
   test('should reset to the current period correctly', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'months' }, locale: 'en-US' })
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' }, locale: 'en-US' })
     )
 
     act(() => {
@@ -294,7 +294,7 @@ describe('useCalendar', () => {
     }
 
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'months' }, reducer: customReducer }),
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' }, reducer: customReducer }),
     )
 
     act(() => {
@@ -307,7 +307,7 @@ describe('useCalendar', () => {
 
   test('should group days by months correctly', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 2, unit: 'months' }, locale: 'en-US' })
+      useCalendar({ events, viewMode: { value: 2, unit: 'month' }, locale: 'en-US' })
     );
 
     const { days, groupDaysBy } = result.current;
@@ -320,7 +320,7 @@ describe('useCalendar', () => {
 
   test('should group days by weeks correctly', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'months' }, locale: 'en-US' })
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' }, locale: 'en-US' })
     );
 
     const { days, groupDaysBy } = result.current;
@@ -332,7 +332,7 @@ describe('useCalendar', () => {
 
   test('should group days by weeks correctly when weekStartsOn is Sunday', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'months' }, locale: 'en-US', weekStartsOn: 7 })
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' }, locale: 'en-US', weekStartsOn: 7 })
     );
 
     const { days, groupDaysBy } = result.current;
