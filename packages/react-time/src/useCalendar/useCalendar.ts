@@ -419,12 +419,7 @@ export const useCalendar = <
 
   const groupDaysBy = useCallback(
     (days: Day<TEvent>[], unit: 'months' | 'weeks') => {
-      const groups: {
-        date: Temporal.PlainDate
-        events: TEvent[]
-        isToday: boolean
-        isInCurrentPeriod: boolean
-      }[][] = []
+      const groups: Day[][] = []
 
       switch (unit) {
         case 'months': {

@@ -28,9 +28,9 @@ export function useCalendar({
   - This parameter is a string that specifies the initial view mode of the calendar. It can be either 'month', 'week', or a number representing the number of days in a custom view mode.
 - `locale?: string`
   - This parameter is an optional string that specifies the locale to use for formatting dates and times. It defaults to the system locale.
-- `onChangeViewMode?: (viewMode: 'month' | 'week' | number) => void`
+- `onChangeViewMode?: ({ value: number; unit: "month" | "week" | "day"; }) => void`
   - This parameter is an optional callback function that is called when the view mode of the calendar changes. It receives the new view mode as an argument.
-- `onChangeViewMode?: (viewMode: 'month' | 'week' | number) => void`
+- `onChangeViewMode?: (viewMode: value: number; unit: "month" | "week" | "day";) => void`
   - This parameter is an optional callback function that is called when the view mode of the calendar changes. It receives the new view mode as an argument.
 - `reducer?: (state: CalendarState, action: CalendarAction) => CalendarState`
   - This parameter is an optional custom reducer function that can be used to manage the state of the calendar.
