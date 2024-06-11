@@ -40,7 +40,7 @@ export function useCalendar({
 
 - `firstDayOfPeriod: Temporal.PlainDate`
   - This value represents the first day of the current period displayed by the calendar.
-- `currPeriod: string`
+- `currentPeriod: string`
   - This value represents a string that describes the current period displayed by the calendar.
 - `goToPreviousPeriod: MouseEventHandler<HTMLButtonElement>`
   - This function is a click event handler that navigates to the previous period.
@@ -69,14 +69,13 @@ export function useCalendar({
 - `isPending: boolean`
   - This value represents whether the calendar is in a pending state.
 
-
 #### Example Usage
 
 ```tsx
 const CalendarComponent = ({ events }) => {
   const {
     firstDayOfPeriod,
-    currPeriod,
+    currentPeriod,
     goToPreviousPeriod,
     goToNextPeriod,
     goToCurrentPeriod,
