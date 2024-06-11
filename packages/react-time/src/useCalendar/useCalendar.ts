@@ -24,7 +24,7 @@ interface UseCalendarProps<
   /**
    * The initial view mode of the calendar. It can be 'month', 'week', or a number representing the number of days in a custom view mode.
    */
-  viewMode: UseCalendarState['viewMode'];
+  viewMode: TState['viewMode'];
   /**
    * The locale to use for formatting dates and times.
    */
@@ -32,7 +32,7 @@ interface UseCalendarProps<
   /**
    * Callback function that is called when the view mode of the calendar changes. It receives the new view mode as an argument.
    */
-  onChangeViewMode?: (viewMode: UseCalendarState['viewMode']) => void;
+  onChangeViewMode?: (viewMode: TState['viewMode']) => void;
   /**
    * Custom reducer function to manage the state of the calendar.
    */
