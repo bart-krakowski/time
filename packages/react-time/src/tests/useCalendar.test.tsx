@@ -163,9 +163,9 @@ describe('useCalendar', () => {
       useCalendar({ events, viewMode: { value: 1, unit: 'week' } }),
     )
 
-    const currentTimeMarkerProps = result.current.currentTimeMarkerProps()
+    const getCurrentTimeMarkerProps = result.current.getCurrentTimeMarkerProps()
 
-    expect(currentTimeMarkerProps).toEqual({
+    expect(getCurrentTimeMarkerProps).toEqual({
       style: {
         position: 'absolute',
         top: '45.83333333333333%',

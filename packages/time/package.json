@@ -58,5 +58,8 @@
   ],
   "dependencies": {
     "@js-temporal/polyfill": "^0.4.4"
+  },
+  "devDependencies": {
+    "csstype": "^3.1.3"
   }
 }

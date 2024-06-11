@@ -1,23 +1,18 @@
 import { useCallback, useEffect, useMemo, useTransition } from 'react'
 import { Temporal } from '@js-temporal/polyfill'
 
-import { getFirstDayOfMonth, getFirstDayOfWeek } from '@tanstack/time'
+import { generateDateRange, getEventProps, getFirstDayOfMonth, getFirstDayOfWeek, groupDaysBy, splitMultiDayEvents } from '@tanstack/time'
 import { actions } from './calendarActions'
 import { useCalendarReducer } from './useCalendarReducer'
+import type { CalendarState, Event, GroupDaysByProps} from '@tanstack/time';
 import type { UseCalendarAction } from './calendarActions'
-import type { Event, UseCalendarState } from './useCalendarState'
 import type { CSSProperties } from 'react'
 
-type Day<TEvent extends Event = Event> = {
-  date: Temporal.PlainDate
-  events: TEvent[]
-  isToday: boolean
-  isInCurrentPeriod: boolean
-}
+
 
 interface UseCalendarProps<
   TEvent extends Event,
-  TState extends UseCalendarState = UseCalendarState,
+  TState extends CalendarState = CalendarState,
 > {
   /**
    * The day of the week the calendar should start on (0 for Sunday, 6 for Saturday).
@@ -49,61 +44,6 @@ interface UseCalendarProps<
   ) => TState
 }
 
-const splitMultiDayEvents = <TEvent extends Event>(event: TEvent): TEvent[] => {
-  const startDate = Temporal.PlainDateTime.from(event.startDate)
-  const endDate = Temporal.PlainDateTime.from(event.endDate)
-  const events: TEvent[] = []
-
-  let currentDay = startDate
-  while (
-    Temporal.PlainDate.compare(
-      currentDay.toPlainDate(),
-      endDate.toPlainDate(),
-    ) < 0
-  ) {
-    const startOfCurrentDay = currentDay.with({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-    })
-    const endOfCurrentDay = currentDay.with({
-      hour: 23,
-      minute: 59,
-      second: 59,
-      millisecond: 999,
-    })
-
-    const eventStart =
-      Temporal.PlainDateTime.compare(currentDay, startDate) === 0
-        ? startDate
-        : startOfCurrentDay
-    const eventEnd =
-      Temporal.PlainDateTime.compare(endDate, endOfCurrentDay) <= 0
-        ? endDate
-        : endOfCurrentDay
-
-    events.push({ ...event, startDate: eventStart, endDate: eventEnd })
-
-    currentDay = startOfCurrentDay.add({ days: 1 })
-  }
-
-  return events
-}
-
-const generateDateRange = (
-  start: Temporal.PlainDate,
-  end: Temporal.PlainDate,
-) => {
-  const dates: Temporal.PlainDate[] = []
-  let current = start
-  while (Temporal.PlainDate.compare(current, end) <= 0) {
-    dates.push(current)
-    current = current.add({ days: 1 })
-  }
-  return dates
-}
-
 /**
  * Hook to manage the state and behavior of a calendar.
  *
@@ -130,7 +70,7 @@ const generateDateRange = (
  */
 export const useCalendar = <
   TEvent extends Event,
-  TState extends UseCalendarState = UseCalendarState,
+  TState extends CalendarState = CalendarState,
 >({
   weekStartsOn = 1,
   events,
@@ -220,7 +160,7 @@ export const useCalendar = <
           eventEndDate.toPlainDate(),
         ) !== 0
       ) {
-        const splitEvents = splitMultiDayEvents(event)
+        const splitEvents = splitMultiDayEvents<TEvent>(event)
         splitEvents.forEach((splitEvent) => {
           const splitKey = splitEvent.startDate.toString().split('T')[0]
           if (splitKey) {
@@ -298,90 +238,9 @@ export const useCalendar = <
     [dispatch, onChangeViewMode],
   )
 
-  const getEventProps = useCallback(
-    (id: Event['id']): { style: CSSProperties } | null => {
-      const event = [...eventMap.values()]
-        .flat()
-        .find((currEvent) => currEvent.id === id)
-      if (!event) return null
-
-      const eventStartDate = Temporal.PlainDateTime.from(event.startDate)
-      const eventEndDate = Temporal.PlainDateTime.from(event.endDate)
-      const isSplitEvent =
-        Temporal.PlainDate.compare(
-          eventStartDate.toPlainDate(),
-          eventEndDate.toPlainDate(),
-        ) !== 0
-
-      let percentageOfDay
-      let eventHeightInMinutes
-
-      if (isSplitEvent) {
-        const isStartPart =
-          eventStartDate.hour !== 0 || eventStartDate.minute !== 0
-        if (isStartPart) {
-          const eventTimeInMinutes =
-            eventStartDate.hour * 60 + eventStartDate.minute
-          percentageOfDay = (eventTimeInMinutes / (24 * 60)) * 100
-          eventHeightInMinutes = 24 * 60 - eventTimeInMinutes
-        } else {
-          percentageOfDay = 0
-          eventHeightInMinutes = eventEndDate.hour * 60 + eventEndDate.minute
-        }
-      } else {
-        const eventTimeInMinutes =
-          eventStartDate.hour * 60 + eventStartDate.minute
-        percentageOfDay = (eventTimeInMinutes / (24 * 60)) * 100
-        const endTimeInMinutes = eventEndDate.hour * 60 + eventEndDate.minute
-        eventHeightInMinutes = endTimeInMinutes - eventTimeInMinutes
-      }
-
-      const eventHeight = Math.min((eventHeightInMinutes / (24 * 60)) * 100, 20)
-
-      const overlappingEvents = [...eventMap.values()].flat().filter((e) => {
-        const eStartDate = Temporal.PlainDateTime.from(e.startDate)
-        const eEndDate = Temporal.PlainDateTime.from(e.endDate)
-        return (
-          (e.id !== id &&
-            Temporal.PlainDateTime.compare(eventStartDate, eStartDate) >= 0 &&
-            Temporal.PlainDateTime.compare(eventStartDate, eEndDate) <= 0) ||
-          (Temporal.PlainDateTime.compare(eventEndDate, eStartDate) >= 0 &&
-            Temporal.PlainDateTime.compare(eventEndDate, eEndDate) <= 0) ||
-          (Temporal.PlainDateTime.compare(eStartDate, eventStartDate) >= 0 &&
-            Temporal.PlainDateTime.compare(eStartDate, eventEndDate) <= 0) ||
-          (Temporal.PlainDateTime.compare(eEndDate, eventStartDate) >= 0 &&
-            Temporal.PlainDateTime.compare(eEndDate, eventEndDate) <= 0)
-        )
-      })
-
-      const eventIndex = overlappingEvents.findIndex((e) => e.id === id)
-      const totalOverlaps = overlappingEvents.length
-      const sidePadding = 2
-      const innerPadding = 2
-      const totalInnerPadding = (totalOverlaps - 1) * innerPadding
-      const availableWidth = 100 - totalInnerPadding - 2 * sidePadding
-      const eventWidth =
-        totalOverlaps > 0
-          ? availableWidth / totalOverlaps
-          : 100 - 2 * sidePadding
-      const eventLeft = sidePadding + eventIndex * (eventWidth + innerPadding)
-
-      if (state.viewMode.unit === 'week' || state.viewMode.unit === 'day') {
-        return {
-          style: {
-            position: 'absolute',
-            top: `min(${percentageOfDay}%, calc(100% - 55px))`,
-            left: `${eventLeft}%`,
-            width: `${eventWidth}%`,
-            margin: 0,
-            height: `${eventHeight}%`,
-          },
-        }
-      }
-
-      return null
-    },
-    [eventMap, state.viewMode],
+  const getEventPropsCallback = useCallback(
+    (id: Event['id']): { style: CSSProperties } | null => getEventProps(eventMap, id, state),
+    [eventMap, state],
   )
 
   useEffect(() => {
@@ -393,7 +252,7 @@ export const useCalendar = <
     return () => clearInterval(intervalId)
   }, [dispatch])
 
-  const currentTimeMarkerProps = useCallback(() => {
+  const getCurrentTimeMarkerProps = useCallback(() => {
     const { hour, minute } = state.currentTime
     const currentTimeInMinutes = hour * 60 + minute
     const percentageOfDay = (currentTimeInMinutes / (24 * 60)) * 100
@@ -417,101 +276,12 @@ export const useCalendar = <
     )
   }, [locale, weekStartsOn])
 
-  const groupDaysBy = useCallback(
+  const groupDaysByCallback = useCallback(
     ({
       days,
       unit,
       fillMissingDays = true,
-    }:
-      | {
-          days: (Day<TEvent> | null)[]
-          unit: 'month'
-          fillMissingDays?: never
-        }
-      | {
-          days: (Day<TEvent> | null)[]
-          unit: 'week'
-          fillMissingDays?: boolean
-        }) => {
-      const groups: (Day | null)[][] = []
-
-      switch (unit) {
-        case 'month': {
-          let currentMonth: (Day<TEvent> | null)[] = []
-          days.forEach((day) => {
-            if (
-              currentMonth.length > 0 &&
-              day?.date.month !== currentMonth[0]?.date.month
-            ) {
-              groups.push(currentMonth)
-              currentMonth = []
-            }
-            currentMonth.push(day)
-          })
-          if (currentMonth.length > 0) {
-            groups.push(currentMonth)
-          }
-          break
-        }
-
-        case 'week': {
-          const weeks: (Day | null)[][] = []
-          let currentWeek: (Day | null)[] = []
-
-          days.forEach((day) => {
-            if (
-              currentWeek.length === 0 &&
-              day?.date.dayOfWeek !== weekStartsOn
-            ) {
-              if (day) {
-                const dayOfWeek = (day.date.dayOfWeek - weekStartsOn + 7) % 7
-                for (let i = 0; i < dayOfWeek; i++) {
-                  currentWeek.push(
-                    fillMissingDays
-                      ? {
-                          date: day.date.subtract({ days: dayOfWeek - i }),
-                          events: [],
-                          isToday: false,
-                          isInCurrentPeriod: false,
-                        }
-                      : null,
-                  )
-                }
-              }
-            }
-            currentWeek.push(day)
-            if (currentWeek.length === 7) {
-              weeks.push(currentWeek)
-              currentWeek = []
-            }
-          })
-
-          if (currentWeek.length > 0) {
-            while (currentWeek.length < 7) {
-              const lastDate =
-                currentWeek[currentWeek.length - 1]?.date ??
-                Temporal.PlainDate.from('2024-01-01')
-              currentWeek.push(
-                fillMissingDays
-                  ? {
-                      date: lastDate.add({ days: 1 }),
-                      events: [],
-                      isToday: false,
-                      isInCurrentPeriod: false,
-                    }
-                  : null,
-              )
-            }
-            weeks.push(currentWeek)
-          }
-
-          return weeks
-        }
-        default:
-          break
-      }
-      return groups
-    },
+    }: Omit<GroupDaysByProps<TEvent>, 'weekStartsOn'>) => groupDaysBy({ days, unit, fillMissingDays, weekStartsOn } as GroupDaysByProps<TEvent>),
     [weekStartsOn],
   )
 
@@ -524,9 +294,9 @@ export const useCalendar = <
     days: daysWithEvents,
     daysNames,
     changeViewMode,
-    getEventProps,
-    currentTimeMarkerProps,
+    getEventProps: getEventPropsCallback,
+    getCurrentTimeMarkerProps,
     isPending,
-    groupDaysBy,
+    groupDaysBy: groupDaysByCallback,
   }
 }
