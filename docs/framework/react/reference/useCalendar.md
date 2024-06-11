@@ -50,8 +50,8 @@ export function useCalendar({
   - This function is a click event handler that navigates to the current period.
 - `goToSpecificPeriod: (date: Temporal.PlainDate) => void`
   - This function is a callback function that is called when a date is selected in the calendar. It receives the selected date as an argument.
-- `weeks: Array<Array<{ date: Temporal.PlainDate; events: Event[] }>>`
-  - This value represents the calendar grid, where each cell contains the date and events for that day.
+- `days: Day[]`
+  - This value represents an array of days in the current period displayed by the calendar.
 - `daysNames: string[]`
   - This value represents an array of strings that contain the names of the days of the week.
 - `viewMode: 'month' | 'week' | number`
@@ -68,6 +68,8 @@ export function useCalendar({
   - This function is used to retrieve the style properties and current time for the current time marker.
 - `isPending: boolean`
   - This value represents whether the calendar is in a pending state.
+- `groupDaysBy: (days: Day[], unit: 'day' | 'week' | 'month') => Day[][]`
+  - This function is used to group days into units of days, weeks, or months.
 
 #### Example Usage
 
@@ -81,14 +83,15 @@ const CalendarComponent = ({ events }) => {
     goToCurrentPeriod,
     goToSpecificPeriod,
     changeViewMode,
-    weeks,
+    days,
     daysNames,
     viewMode,
     getEventProps,
     currentTimeMarkerProps,
+    groupDaysBy,
   } = useCalendar({
-    events,
-    viewMode: 'month',
+    weekStartsOn: 1,
+    viewMode: { value: 1, unit: 'month' },
     locale: 'en-US',
     onChangeViewMode: (newViewMode) => console.log('View mode changed:', newViewMode),
   });
@@ -101,14 +104,58 @@ const CalendarComponent = ({ events }) => {
         <button onClick={goToNextPeriod}>Next</button>
       </div>
       <div className="calendar-view-mode">
-        <button onClick={() => changeViewMode('month')}>Month View</button>
-        <button onClick={() => changeViewMode('week')}>Week View</button>
-        <button onClick={() => changeViewMode(3)}>3-Day View</button>
-        <button onClick={() => changeViewMode(1)}>1-Day View</button>
+        <button onClick={() => changeViewMode({ value: 1, unit: 'month' })}>Month View</button>
+        <button onClick={() => changeViewMode({ value: 1, unit: 'week' })}>Week View</button>
+        <button onClick={() => changeViewMode({ value: 3, unit: 'day' })}>3-Day View</button>
+        <button onClick={() => changeViewMode({ value: 1, unit: 'day' })}>1-Day View</button>
       </div>
       <table className="calendar-table">
-        {viewMode === 'month' && (
-          <thead>
+        {viewMode.unit === 'month' && (
+          groupDaysBy(days, 'months').map((month, monthIndex) => (
+            <tbody key={monthIndex} className="calendar-month">
+              <tr>
+                <th colSpan={7} className="calendar-month-name">
+                  {month[0]?.date.toLocaleString('default', { month: 'long' })}{' '}
+                  {month[0]?.date.year}
+                </th>
+              </tr>
+              <tr>
+                {daysNames.map((dayName, index) => (
+                  <th key={index} className="calendar-day-name">
+                    {dayName}
+                  </th>
+                ))}
+              </tr>
+              {groupDaysBy(month, 'weeks').map((week, weekIndex) => (
+                <tr key={weekIndex} className="calendar-week">
+                  {week.map((day) => (
+                    <td
+                      key={day.date.toString()}
+                      className={`calendar-day ${day.isToday ? 'today' : ''
+                        } ${day.isInCurrentPeriod ? 'current' : 'not-current'}`}
+                    >
+                      <div className="calendar-date">{day.date.day}</div>
+                      <div className="calendar-events">
+                        {day.events.map((event) => (
+                          <div
+                            key={event.id}
+                            className="calendar-event"
+                            style={getEventProps(event.id)?.style}
+                          >
+                            {event.title}
+                          </div>
+                        ))}
+                      </div>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          ))
+        )}
+
+        {viewMode.unit === 'week' && (
+          <tbody className="calendar-week">
             <tr>
               {daysNames.map((dayName, index) => (
                 <th key={index} className="calendar-day-name">
@@ -116,26 +163,56 @@ const CalendarComponent = ({ events }) => {
                 </th>
               ))}
             </tr>
-          </thead>
+            {groupDaysBy(days, 'weeks').map((week, weekIndex) => (
+              <tr key={weekIndex}>
+                {week.map((day) => (
+                  <td
+                    key={day.date.toString()}
+                    className={`calendar-day ${day.isToday ? 'today' : ''
+                      } ${day.isInCurrentPeriod ? 'current' : 'not-current'}`}
+                  >
+                    <div className="calendar-date">{day.date.day}</div>
+                    <div className="calendar-events">
+                      {day.events.map((event) => (
+                        <div
+                          key={event.id}
+                          className="calendar-event"
+                          style={getEventProps(event.id)?.style}
+                        >
+                          {event.title}
+                        </div>
+                      ))}
+                    </div>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
         )}
-        <tbody>
-          {weeks.map((week, weekIndex) => (
-            <tr key={weekIndex} className="calendar-week">
-              {week.map((day) => (
-                <td key={day.date.toString()} className={`
-                  calendar-day
-                  ${day.isToday ? 'today' : ''}
-                  ${day.isInCurrentPeriod ? 'current' : ''}
-                `}>
-                  <div className="calendar-date">
-                    {day.date.day}
-                  </div>
+
+        {viewMode.unit === 'day' && (
+          <tbody className="calendar-day">
+            <tr>
+              {daysNames.map((dayName, index) => (
+                <th key={index} className="calendar-day-name">
+                  {dayName}
+                </th>
+              ))}
+            </tr>
+            <tr>
+              {days.map((day) => (
+                <td
+                  key={day.date.toString()}
+                  className={`calendar-day ${day.isToday ? 'today' : ''
+                    } ${day.isInCurrentPeriod ? 'current' : 'not-current'}`}
+                >
+                  <div className="calendar-date">{day.date.day}</div>
                   <div className="calendar-events">
                     {day.events.map((event) => (
                       <div
                         key={event.id}
                         className="calendar-event"
-                        {...getEventProps(event.id)}
+                        style={getEventProps(event.id)?.style}
                       >
                         {event.title}
                       </div>
@@ -143,10 +220,9 @@ const CalendarComponent = ({ events }) => {
                   </div>
                 </td>
               ))}
-              <div className="current-time-marker" {...currentTimeMarkerProps()}></div>
             </tr>
-          ))}
-        </tbody>
+          </tbody>
+        )}
       </table>
     </div>
   );
