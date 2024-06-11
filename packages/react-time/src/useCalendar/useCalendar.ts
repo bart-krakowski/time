@@ -418,88 +418,81 @@ export const useCalendar = <
   }, [locale, weekStartsOn])
 
   const groupDaysBy = useCallback(
-    (days: Day<TEvent>[], unit: 'months' | 'weeks') => {
-      const groups: Day[][] = []
-
+    (
+      days: (Day<TEvent> | null)[],
+      unit: "months" | "weeks",
+      fillMissingDays = true
+    ) => {
+      const groups: (Day | null)[][] = [];
+  
       switch (unit) {
-        case 'months': {
-          let currentMonth: Day<TEvent>[] = []
+        case "months": {
+          let currentMonth: (Day<TEvent> | null)[] = [];
           days.forEach((day) => {
             if (
               currentMonth.length > 0 &&
-              day.date.month !== currentMonth[0]?.date.month
+              day?.date.month !== currentMonth[0]?.date.month
             ) {
-              groups.push(currentMonth)
-              currentMonth = []
+              groups.push(currentMonth);
+              currentMonth = [];
             }
-            currentMonth.push(day)
-          })
+            currentMonth.push(day);
+          });
           if (currentMonth.length > 0) {
-            groups.push(currentMonth)
+            groups.push(currentMonth);
           }
-          break
+          break;
         }
-
+  
         case 'weeks': {
-          const weeks: {
-            date: Temporal.PlainDate
-            events: TEvent[]
-            isToday: boolean
-            isInCurrentPeriod: boolean
-          }[][] = []
-          let currentWeek: {
-            date: Temporal.PlainDate
-            events: TEvent[]
-            isToday: boolean
-            isInCurrentPeriod: boolean
-          }[] = []
-
+          const weeks: (Day | null)[][] = [];
+          let currentWeek: (Day | null)[] = [];
+    
           days.forEach((day) => {
-            if (
-              currentWeek.length === 0 &&
-              day.date.dayOfWeek !== weekStartsOn
-            ) {
-              const dayOfWeek = (day.date.dayOfWeek - weekStartsOn + 7) % 7
+            if (currentWeek.length === 0 && day?.date.dayOfWeek !== weekStartsOn) {
+              if (day) {
+              const dayOfWeek = (day.date.dayOfWeek - weekStartsOn + 7) % 7;
               for (let i = 0; i < dayOfWeek; i++) {
-                currentWeek.push({
-                  date: day.date.subtract({ days: dayOfWeek - i }),
-                  events: [],
-                  isToday: false,
-                  isInCurrentPeriod: false,
-                })
+                  currentWeek.push(fillMissingDays ? {
+                    date: day.date.subtract({ days: dayOfWeek - i }),
+                    events: [],
+                    isToday: false,
+                    isInCurrentPeriod: false,
+                  } : null);
+                }
               }
             }
-            currentWeek.push(day)
+            currentWeek.push(day);
             if (currentWeek.length === 7) {
-              weeks.push(currentWeek)
-              currentWeek = []
+              weeks.push(currentWeek);
+              currentWeek = [];
             }
-          })
-
+          });
+    
           if (currentWeek.length > 0) {
             while (currentWeek.length < 7) {
               const lastDate =
                 currentWeek[currentWeek.length - 1]?.date ??
-                Temporal.PlainDate.from('2024-01-01')
-              currentWeek.push({
+                Temporal.PlainDate.from("2024-01-01");
+              currentWeek.push(fillMissingDays ? {
                 date: lastDate.add({ days: 1 }),
                 events: [],
                 isToday: false,
                 isInCurrentPeriod: false,
-              })
+              } : null);
             }
-            weeks.push(currentWeek)
+            weeks.push(currentWeek);
           }
-
-          return weeks
+    
+          return weeks;
         }
-        default:
-          break
+        default: break
       }
-      return groups
+      return groups;
     },
     [weekStartsOn],
-  )
+  );
+  
 
   return {
     ...state,

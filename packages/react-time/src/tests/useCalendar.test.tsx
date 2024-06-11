@@ -188,7 +188,7 @@ describe('useCalendar', () => {
 
     expect(weeks[0]?.[0]?.date.toString()).toBe('2024-05-27');
     expect(weeks[weeks.length - 1]?.[0]?.date.toString()).toBe('2024-06-24');
-    expect(weeks.find((week) => week.some((day) => day.isToday))?.find((day) => day.isToday)?.date.toString()).toBe('2024-06-01');
+    expect(weeks.find((week) => week.some((day) => day?.isToday))?.find((day) => day?.isToday)?.date.toString()).toBe('2024-06-01');
   });
 
   test('should return the correct day names based on weekStartsOn', () => {
@@ -214,7 +214,7 @@ describe('useCalendar', () => {
 
     const { days } = result.current;
     const weeks = result.current.groupDaysBy(days, 'weeks');
-    const daysInCurrentPeriod = weeks.flat().map(day => day.isInCurrentPeriod);
+    const daysInCurrentPeriod = weeks.flat().map(day => day?.isInCurrentPeriod);
 
     expect(daysInCurrentPeriod).toEqual([
       false, false, false, false, false, true, true,
