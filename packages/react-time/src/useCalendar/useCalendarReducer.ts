@@ -24,21 +24,21 @@ const createCalendarReducer = (initialState: UseCalendarState) => {
       const firstDayOfWeek = getFirstDayOfWeek(state.currentPeriod.toString(), action.payload.weekStartsOn);
 
       switch (state.viewMode.unit) {
-        case 'months': {
+        case 'month': {
           const firstDayOfPrevMonth = firstDayOfMonth.subtract({ months: state.viewMode.value });
           return {
             ...state,
             currentPeriod: firstDayOfPrevMonth,
           };
         }
-        case 'weeks': {
+        case 'week': {
           const firstDayOfPrevWeek = firstDayOfWeek.subtract({ weeks: state.viewMode.value });
           return {
             ...state,
             currentPeriod: firstDayOfPrevWeek,
           };
         }
-        case 'days': {
+        case 'day': {
           const prevCustomStart = state.currentPeriod.subtract({ days: state.viewMode.value });
           return {
             ...state,
@@ -54,21 +54,21 @@ const createCalendarReducer = (initialState: UseCalendarState) => {
       const firstDayOfWeek = getFirstDayOfWeek(state.currentPeriod.toString(), action.payload.weekStartsOn);
 
       switch (state.viewMode.unit) {
-        case 'months': {
+        case 'month': {
           const firstDayOfNextMonth = firstDayOfMonth.add({ months: state.viewMode.value });
           return {
             ...state,
             currentPeriod: firstDayOfNextMonth,
           };
         }
-        case 'weeks': {
+        case 'week': {
           const firstDayOfNextWeek = firstDayOfWeek.add({ weeks: state.viewMode.value });
           return {
             ...state,
             currentPeriod: firstDayOfNextWeek,
           };
         }
-        case 'days': {
+        case 'day': {
           const nextCustomStart = state.currentPeriod.add({ days: state.viewMode.value });
           return {
             ...state,

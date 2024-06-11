@@ -11,7 +11,7 @@ export interface UseCalendarState {
   currentPeriod: Temporal.PlainDate
   viewMode: {
     value: number
-    unit: 'months' | 'weeks' | 'days'
+    unit: 'month' | 'week' | 'day'
   }
   currentTime: Temporal.PlainDateTime
 }

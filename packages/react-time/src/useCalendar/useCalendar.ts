@@ -155,7 +155,7 @@ export const useCalendar = <TEvent extends Event, TState extends UseCalendarStat
 
   const calendarDays = useMemo(() => {
     const start =
-      state.viewMode.unit === "months"
+      state.viewMode.unit === "month"
         ? firstDayOfMonth.subtract({
             days: (firstDayOfMonth.dayOfWeek - weekStartsOn + 7) % 7,
           })
@@ -163,7 +163,7 @@ export const useCalendar = <TEvent extends Event, TState extends UseCalendarStat
 
     let end;
     switch (state.viewMode.unit) {
-      case "months": {
+      case "month": {
         const lastDayOfMonth = firstDayOfMonth
           .add({ months: state.viewMode.value })
           .subtract({ days: 1 });
@@ -172,11 +172,11 @@ export const useCalendar = <TEvent extends Event, TState extends UseCalendarStat
         end = lastDayOfMonth.add({ days: 6 - lastDayOfMonthWeekDay });
         break;
       }
-      case "weeks": {
+      case "week": {
         end = firstDayOfWeek.add({ days: 7 * state.viewMode.value - 1 });
         break;
       }
-      case "days": {
+      case "day": {
         end = state.currentPeriod.add({ days: state.viewMode.value - 1 });
         break;
       }
@@ -279,7 +279,7 @@ export const useCalendar = <TEvent extends Event, TState extends UseCalendarStat
   );
 
   const changeViewMode = useCallback(
-    (newViewMode: { value: number; unit: "months" | "weeks" | "days" }) => {
+    (newViewMode: TState["viewMode"]) => {
       startTransition(() => {
         dispatch(actions.setViewMode(newViewMode));
         onChangeViewMode?.(newViewMode);
@@ -359,7 +359,7 @@ export const useCalendar = <TEvent extends Event, TState extends UseCalendarStat
           : 100 - 2 * sidePadding;
       const eventLeft = sidePadding + eventIndex * (eventWidth + innerPadding);
 
-      if (state.viewMode.unit === "weeks" || state.viewMode.unit === "days") {
+      if (state.viewMode.unit === "week" || state.viewMode.unit === "day") {
         return {
           style: {
             position: "absolute",
