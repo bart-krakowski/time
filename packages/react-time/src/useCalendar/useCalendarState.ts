@@ -8,7 +8,7 @@ export interface Event {
 }
 
 export interface UseCalendarState {
-  currPeriod: Temporal.PlainDate
+  currentPeriod: Temporal.PlainDate
   viewMode: {
     value: number
     unit: 'months' | 'weeks' | 'days'

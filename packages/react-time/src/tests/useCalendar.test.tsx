@@ -1,11 +1,14 @@
 import { Temporal } from '@js-temporal/polyfill'
-import { afterEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { act, renderHook } from '@testing-library/react'
 import { useCalendar } from '../useCalendar'
-import type { UseCalendarAction} from '../useCalendar/calendarActions';
+import type { UseCalendarAction } from '../useCalendar/calendarActions';
 import type { UseCalendarState } from '../useCalendar/useCalendarState';
 
 describe('useCalendar', () => {
+  beforeEach(() => {
+    vi.setSystemTime(new Date('2024-06-01T11:00:00'));
+  });
   afterEach(() => {
     vi.useRealTimers();
   });
@@ -30,7 +33,7 @@ describe('useCalendar', () => {
       useCalendar({ events, viewMode: { value: 1, unit: 'months' } }),
     )
     expect(result.current.viewMode).toEqual({ value: 1, unit: 'months' })
-    expect(result.current.currPeriod.toString()).toBe(
+    expect(result.current.currentPeriod.toString()).toBe(
       Temporal.Now.plainDateISO().toString(),
     )
   })
@@ -47,14 +50,9 @@ describe('useCalendar', () => {
     const expectedPreviousMonth = Temporal.Now.plainDateISO().subtract({
       months: 1,
     })
-    const expectedFirstDayOfPreviousMonth = Temporal.PlainDate.from({
-      year: expectedPreviousMonth.year,
-      month: expectedPreviousMonth.month,
-      day: 1,
-    })
 
-    expect(result.current.firstDayOfPeriod).toEqual(
-      expectedFirstDayOfPreviousMonth,
+    expect(result.current.currentPeriod).toEqual(
+      expectedPreviousMonth,
     )
   })
 
@@ -68,13 +66,8 @@ describe('useCalendar', () => {
     })
 
     const expectedNextMonth = Temporal.Now.plainDateISO().add({ months: 1 })
-    const expectedFirstDayOfNextMonth = Temporal.PlainDate.from({
-      year: expectedNextMonth.year,
-      month: expectedNextMonth.month,
-      day: 1,
-    })
 
-    expect(result.current.firstDayOfPeriod).toEqual(expectedFirstDayOfNextMonth)
+    expect(result.current.currentPeriod).toEqual(expectedNextMonth)
   })
 
   test('should change view mode correctly', () => {
@@ -98,7 +91,7 @@ describe('useCalendar', () => {
       result.current.goToSpecificPeriod(Temporal.PlainDate.from('2024-06-01'))
     })
 
-    expect(result.current.currPeriod.toString()).toBe('2024-06-01')
+    expect(result.current.currentPeriod.toString()).toBe('2024-06-01')
   })
 
   test('should return the correct props for an event', () => {
@@ -166,8 +159,6 @@ describe('useCalendar', () => {
   })
 
   test('should return the correct props for the current time marker', () => {
-    vi.setSystemTime(new Date('2024-06-01T11:00:00'));
-
     const { result } = renderHook(() =>
       useCalendar({ events, viewMode: { value: 1, unit: 'weeks' } }),
     )
@@ -185,13 +176,13 @@ describe('useCalendar', () => {
   })
 
   test('should render array of days', () => {
-    vi.setSystemTime(new Date('2024-06-01T11:00:00'));
-
     const { result } = renderHook(() =>
       useCalendar({ events, viewMode: { value: 1, unit: 'months' }, locale: 'en-US' }),
     );
 
-    const { weeks } = result.current;
+    const { days } = result.current;
+    const weeks = result.current.groupDaysBy(days, 'weeks');
+
     expect(weeks).toHaveLength(5);
     expect(weeks[0]).toHaveLength(7);
 
@@ -217,12 +208,12 @@ describe('useCalendar', () => {
   });
 
   test('should correctly mark days as in current period', () => {
-    vi.setSystemTime(new Date('2024-06-01T11:00:00'));
     const { result } = renderHook(() =>
       useCalendar({ events, viewMode: { value: 1, unit: 'months' }, locale: 'en-US' })
     );
 
-    const { weeks } = result.current;
+    const { days } = result.current;
+    const weeks = result.current.groupDaysBy(days, 'weeks');
     const daysInCurrentPeriod = weeks.flat().map(day => day.isInCurrentPeriod);
 
     expect(daysInCurrentPeriod).toEqual([
@@ -242,7 +233,7 @@ describe('useCalendar', () => {
       result.current.goToSpecificPeriod(specificDate)
     })
 
-    expect(result.current.currPeriod).toEqual(specificDate)
+    expect(result.current.currentPeriod).toEqual(specificDate)
   })
 
   test('should navigate to the previous period correctly', () => {
@@ -258,7 +249,7 @@ describe('useCalendar', () => {
       months: 1,
     })
 
-    expect(result.current.currPeriod).toEqual(expectedPreviousMonth)
+    expect(result.current.currentPeriod).toEqual(expectedPreviousMonth)
   })
 
   test('should navigate to the next period correctly', () => {
@@ -272,7 +263,7 @@ describe('useCalendar', () => {
 
     const expectedNextMonth = Temporal.Now.plainDateISO().add({ months: 1 })
 
-    expect(result.current.currPeriod).toEqual(expectedNextMonth)
+    expect(result.current.currentPeriod).toEqual(expectedNextMonth)
   })
 
   test('should reset to the current period correctly', () => {
@@ -285,7 +276,7 @@ describe('useCalendar', () => {
       result.current.goToCurrentPeriod()
     })
 
-    expect(result.current.currPeriod).toEqual(
+    expect(result.current.currentPeriod).toEqual(
       Temporal.Now.plainDateISO(),
     )
   })
@@ -295,7 +286,7 @@ describe('useCalendar', () => {
       if (action.type === 'SET_NEXT_PERIOD') {
         return {
           ...state,
-          currPeriod: state.currPeriod.add({ months: 2 }),
+          currentPeriod: state.currentPeriod.add({ months: 2 }),
         }
       }
 
@@ -311,6 +302,44 @@ describe('useCalendar', () => {
     })
 
     const expectedNextMonth = Temporal.Now.plainDateISO().add({ months: 2 })
-    expect(result.current.currPeriod).toEqual(expectedNextMonth)
+    expect(result.current.currentPeriod).toEqual(expectedNextMonth)
+  });
+
+  test('should group days by months correctly', () => {
+    const { result } = renderHook(() =>
+      useCalendar({ events, viewMode: { value: 2, unit: 'months' }, locale: 'en-US' })
+    );
+
+    const { days, groupDaysBy } = result.current;
+    const months = groupDaysBy(days, 'months');
+
+    expect(months).toHaveLength(2);
+    expect(months[0]?.[0]?.date.toString()).toBe('2024-06-01');
+    expect(months[1]?.[0]?.date.toString()).toBe('2024-07-01');
+  });
+
+  test('should group days by weeks correctly', () => {
+    const { result } = renderHook(() =>
+      useCalendar({ events, viewMode: { value: 1, unit: 'months' }, locale: 'en-US' })
+    );
+
+    const { days, groupDaysBy } = result.current;
+    const weeks = groupDaysBy(days, 'weeks');
+    expect(weeks).toHaveLength(5);
+    expect(weeks[0]?.[0]?.date.toString()).toBe('2024-05-27');
+    expect(weeks[4]?.[6]?.date.toString()).toBe('2024-06-30');
+  });
+
+  test('should group days by weeks correctly when weekStartsOn is Sunday', () => {
+    const { result } = renderHook(() =>
+      useCalendar({ events, viewMode: { value: 1, unit: 'months' }, locale: 'en-US', weekStartsOn: 7 })
+    );
+
+    const { days, groupDaysBy } = result.current;
+    const weeks = groupDaysBy(days, 'weeks');
+
+    expect(weeks).toHaveLength(6);
+    expect(weeks[0]?.[0]?.date.toString()).toBe('2024-05-26');
+    expect(weeks[4]?.[6]?.date.toString()).toBe('2024-06-29');
   });
 });
