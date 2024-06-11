@@ -121,14 +121,14 @@ const generateDateRange = (
  * @returns {Function} calendarState.getEventProps - Function to retrieve the style properties for a specific event based on its ID.
  * @returns {Function} calendarState.currentTimeMarkerProps - Function to retrieve the style properties and current time for the current time marker.
  */
-export const useCalendar = <TEvent extends Event>({
+export const useCalendar = <TEvent extends Event, TState extends UseCalendarState = UseCalendarState>({
   weekStartsOn = 1,
   events,
   viewMode: initialViewMode,
   locale,
   onChangeViewMode,
   reducer,
-}: UseCalendarProps<TEvent>) => {
+}: UseCalendarProps<TEvent, TState>) => {
   const today = Temporal.Now.plainDateISO();
   const [isPending, startTransition] = useTransition();
   const [state, dispatch] = useCalendarReducer(
@@ -136,7 +136,7 @@ export const useCalendar = <TEvent extends Event>({
       currentPeriod: today,
       viewMode: initialViewMode,
       currentTime: Temporal.Now.plainDateTimeISO(),
-    },
+    } as TState,
     reducer,
   );
 
