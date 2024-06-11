@@ -181,7 +181,7 @@ describe('useCalendar', () => {
     );
 
     const { days } = result.current;
-    const weeks = result.current.groupDaysBy(days, 'weeks');
+    const weeks = result.current.groupDaysBy({ days, unit: 'week' });
 
     expect(weeks).toHaveLength(5);
     expect(weeks[0]).toHaveLength(7);
@@ -213,7 +213,7 @@ describe('useCalendar', () => {
     );
 
     const { days } = result.current;
-    const weeks = result.current.groupDaysBy(days, 'weeks');
+    const weeks = result.current.groupDaysBy({ days, unit: 'week' });
     const daysInCurrentPeriod = weeks.flat().map(day => day?.isInCurrentPeriod);
 
     expect(daysInCurrentPeriod).toEqual([
@@ -311,7 +311,7 @@ describe('useCalendar', () => {
     );
 
     const { days, groupDaysBy } = result.current;
-    const months = groupDaysBy(days, 'months');
+    const months = groupDaysBy({ days, unit: 'month' });
 
     expect(months).toHaveLength(2);
     expect(months[0]?.[0]?.date.toString()).toBe('2024-06-01');
@@ -324,7 +324,7 @@ describe('useCalendar', () => {
     );
 
     const { days, groupDaysBy } = result.current;
-    const weeks = groupDaysBy(days, 'weeks');
+    const weeks = groupDaysBy({ days, unit: 'week' });
     expect(weeks).toHaveLength(5);
     expect(weeks[0]?.[0]?.date.toString()).toBe('2024-05-27');
     expect(weeks[4]?.[6]?.date.toString()).toBe('2024-06-30');
@@ -336,7 +336,7 @@ describe('useCalendar', () => {
     );
 
     const { days, groupDaysBy } = result.current;
-    const weeks = groupDaysBy(days, 'weeks');
+    const weeks = groupDaysBy({ days, unit: 'week' });
 
     expect(weeks).toHaveLength(6);
     expect(weeks[0]?.[0]?.date.toString()).toBe('2024-05-26');
