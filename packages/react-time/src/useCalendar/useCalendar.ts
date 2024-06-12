@@ -243,14 +243,22 @@ export const useCalendar = <
     [eventMap, state],
   )
 
+  const updateCurrentTime = useCallback(() => dispatch(actions.updateCurrentTime(Temporal.Now.plainDateTimeISO())), [dispatch])
+
   useEffect(() => {
-    const intervalId = setInterval(
-      () =>
-        dispatch(actions.updateCurrentTime(Temporal.Now.plainDateTimeISO())),
-      60000,
-    )
-    return () => clearInterval(intervalId)
-  }, [dispatch])
+    const now = Temporal.Now.plainDateTimeISO();
+    const msToNextMinute = (60 - now.second) * 1000 - now.millisecond;
+  
+    const timeoutId = setTimeout(() => {
+      updateCurrentTime();
+      const intervalId = setInterval(updateCurrentTime, 60000);
+  
+      return () => clearInterval(intervalId);
+    }, msToNextMinute);
+  
+    return () => clearTimeout(timeoutId);
+  }, [dispatch, updateCurrentTime]);
+  
 
   const getCurrentTimeMarkerProps = useCallback(() => {
     const { hour, minute } = state.currentTime

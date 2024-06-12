@@ -1,18 +1,11 @@
 import { Temporal } from '@js-temporal/polyfill'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { act, renderHook } from '@testing-library/react'
 import { useCalendar } from '../useCalendar'
 import type { UseCalendarAction } from '../useCalendar/calendarActions';
 import type { UseCalendarState } from '../useCalendar/useCalendarState';
 
 describe('useCalendar', () => {
-  beforeEach(() => {
-    vi.setSystemTime(new Date('2024-06-01T11:00:00'));
-  });
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
   const events = [
     {
       id: '1',
@@ -159,11 +152,13 @@ describe('useCalendar', () => {
   })
 
   test('should return the correct props for the current time marker', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2024-06-01T11:00:00'));
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'week' } }),
-    )
+      useCalendar({ viewMode: { value: 1, unit: 'week' } }),
+    );
 
-    const getCurrentTimeMarkerProps = result.current.getCurrentTimeMarkerProps()
+    const getCurrentTimeMarkerProps = result.current.getCurrentTimeMarkerProps();
 
     expect(getCurrentTimeMarkerProps).toEqual({
       style: {
@@ -172,8 +167,65 @@ describe('useCalendar', () => {
         left: 0,
       },
       currentTime: '11:00',
+    });
+  });
+
+  test('should update the current time marker props after time passes', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2024-06-01T11:00:00'));
+    const { result } = renderHook(() =>
+      useCalendar({ viewMode: { value: 1, unit: 'week' } }),
+    );
+
+    let currentTimeMarkerProps = result.current.getCurrentTimeMarkerProps();
+
+    expect(currentTimeMarkerProps).toEqual({
+      style: {
+        position: 'absolute',
+        top: '45.83333333333333%',
+        left: 0,
+      },
+      currentTime: '11:00',
+    });
+
+    act(() => {
+      vi.useFakeTimers();
+      vi.advanceTimersByTime(60000);
+    });
+
+    currentTimeMarkerProps = result.current.getCurrentTimeMarkerProps();
+
+    expect(currentTimeMarkerProps).toEqual({
+      style: {
+        position: 'absolute',
+        top: '45.90277777777778%',
+        left: 0,
+      },
+      currentTime: '11:01',
+    });
+  });
+
+  test('should update the current time marker props after time passes when the next minute is in less than a minute', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2024-06-01T11:00:55'));
+
+    const { result } = renderHook(() => useCalendar({ viewMode: { value: 1, unit: 'week' } }));
+
+    act(() => {
+      vi.advanceTimersByTime(5000);
     })
-  })
+
+    const currentTimeMarkerProps = result.current.getCurrentTimeMarkerProps();
+
+    expect(currentTimeMarkerProps).toEqual({
+      style: {
+        position: 'absolute',
+        top: '45.90277777777778%',
+        left: 0,
+      },
+      currentTime: '11:01',
+    });
+  });
 
   test('should render array of days', () => {
     const { result } = renderHook(() =>
