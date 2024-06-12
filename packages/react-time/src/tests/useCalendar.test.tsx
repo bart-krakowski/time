@@ -1,6 +1,6 @@
 import { Temporal } from '@js-temporal/polyfill'
 import { describe, expect, test, vi } from 'vitest'
-import { act, renderHook } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { useCalendar } from '../useCalendar'
 import type { UseCalendarAction } from '../useCalendar/calendarActions';
 import type { UseCalendarState } from '../useCalendar/useCalendarState';
@@ -177,7 +177,7 @@ describe('useCalendar', () => {
       useCalendar({ viewMode: { value: 1, unit: 'week' } }),
     );
 
-    let currentTimeMarkerProps = result.current.getCurrentTimeMarkerProps();
+    const currentTimeMarkerProps = result.current.getCurrentTimeMarkerProps();
 
     expect(currentTimeMarkerProps).toEqual({
       style: {
@@ -189,19 +189,18 @@ describe('useCalendar', () => {
     });
 
     act(() => {
-      vi.useFakeTimers();
       vi.advanceTimersByTime(60000);
     });
 
-    currentTimeMarkerProps = result.current.getCurrentTimeMarkerProps();
-
-    expect(currentTimeMarkerProps).toEqual({
-      style: {
-        position: 'absolute',
-        top: '45.90277777777778%',
-        left: 0,
-      },
-      currentTime: '11:01',
+    waitFor(() => {
+      expect(currentTimeMarkerProps).toEqual({
+        style: {
+          position: 'absolute',
+          top: '45.90277777777778%',
+          left: 0,
+        },
+        currentTime: '11:01',
+      });
     });
   });
 
