@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useTransition } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useTransition } from 'react'
 import { Temporal } from '@js-temporal/polyfill'
 
 import { generateDateRange, getEventProps, getFirstDayOfMonth, getFirstDayOfWeek, groupDaysBy, splitMultiDayEvents } from '@tanstack/time'
@@ -81,6 +81,7 @@ export const useCalendar = <
 }: UseCalendarProps<TEvent, TState>) => {
   const today = Temporal.Now.plainDateISO()
   const [isPending, startTransition] = useTransition()
+  const currentTimeInterval = useRef<NodeJS.Timeout>()
   const [state, dispatch] = useCalendarReducer(
     {
       currentPeriod: today,
@@ -246,17 +247,17 @@ export const useCalendar = <
   const updateCurrentTime = useCallback(() => dispatch(actions.updateCurrentTime(Temporal.Now.plainDateTimeISO())), [dispatch])
 
   useEffect(() => {
+    if (currentTimeInterval.current) clearTimeout(currentTimeInterval.current);
+
     const now = Temporal.Now.plainDateTimeISO();
     const msToNextMinute = (60 - now.second) * 1000 - now.millisecond;
-  
-    const timeoutId = setTimeout(() => {
+
+    currentTimeInterval.current = setTimeout(() => {
       updateCurrentTime();
-      const intervalId = setInterval(updateCurrentTime, 60000);
-  
-      return () => clearInterval(intervalId);
+      currentTimeInterval.current = setInterval(updateCurrentTime, 60000);
     }, msToNextMinute);
-  
-    return () => clearTimeout(timeoutId);
+
+    return () => clearTimeout(currentTimeInterval.current);
   }, [dispatch, updateCurrentTime]);
   
 
