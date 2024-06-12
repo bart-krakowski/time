@@ -57,16 +57,16 @@ interface UseCalendarProps<
  *
  * @returns {Object} calendarState - The state and functions for managing the calendar.
  * @returns {Temporal.PlainDate} calendarState.currentPeriod - The current period displayed by the calendar.
- * @returns {Function} calendarState.goToPreviousPeriod - Function to navigate to the previous period.
- * @returns {Function} calendarState.goToNextPeriod - Function to navigate to the next period.
- * @returns {Function} calendarState.goToCurrentPeriod - Function to navigate to the current period.
- * @returns {Function} calendarState.goToSpecificPeriod - Function to navigate to a specific period.
- * @returns {Array<Array<{ date: Temporal.PlainDate; events: TEvent[]; isToday: boolean; isInCurrentPeriod: boolean }>>} calendarState.days - The calendar grid, where each cell contains the date and events for that day.
- * @returns {string[]} calendarState.daysNames - An array of day names based on the locale and week start day.
  * @returns {'month' | 'week' | number} calendarState.viewMode - The current view mode of the calendar.
- * @returns {Function} calendarState.changeViewMode - Function to change the view mode of the calendar.
- * @returns {Function} calendarState.getEventProps - Function to retrieve the style properties for a specific event based on its ID.
- * @returns {Function} calendarState.currentTimeMarkerProps - Function to retrieve the style properties and current time for the current time marker.
+ * @returns {Function} goToPreviousPeriod - Function to navigate to the previous period.
+ * @returns {Function} goToNextPeriod - Function to navigate to the next period.
+ * @returns {Function} goToCurrentPeriod - Function to navigate to the current period.
+ * @returns {Function} goToSpecificPeriod - Function to navigate to a specific period.
+ * @returns {Array<Array<{ date: Temporal.PlainDate; events: TEvent[]; isToday: boolean; isInCurrentPeriod: boolean }>>} days - The calendar grid, where each cell contains the date and events for that day.
+ * @returns {string[]} daysNames - An array of day names based on the locale and week start day.
+ * @returns {Function} changeViewMode - Function to change the view mode of the calendar.
+ * @returns {Function} getEventProps - Function to retrieve the style properties for a specific event based on its ID.
+ * @returns {Function} currentTimeMarkerProps - Function to retrieve the style properties and current time for the current time marker.
  */
 export const useCalendar = <
   TEvent extends Event,
