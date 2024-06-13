@@ -5,36 +5,41 @@ import { generateDateRange } from './calendar/generateDateRange';
 import { splitMultiDayEvents } from './calendar/splitMultiDayEvents';
 import { getEventProps } from './calendar/getEventProps';
 import { groupDaysBy } from './calendar/groupDaysBy';
-import type { GroupDaysByProps} from './calendar/groupDaysBy';
+import type { Properties as CSSProperties } from 'csstype';
+import type { GroupDaysByProps } from './calendar/groupDaysBy';
+import type { CalendarState, Day, Event } from './calendar/types';
 
-export interface Event {
-  id: string
-  startDate: Temporal.PlainDateTime
-  endDate: Temporal.PlainDateTime
-  title: string
-}
+export type { CalendarState, Event, Day } from './calendar/types';
 
-export interface CalendarState {
-  currentPeriod: Temporal.PlainDate
-  viewMode: {
-    value: number
-    unit: 'month' | 'week' | 'day'
-  }
-  currentTime: Temporal.PlainDateTime
-}
-
-export type Day<TEvent extends Event = Event> = {
-  date: Temporal.PlainDate
-  events: TEvent[]
-  isToday: boolean
-  isInCurrentPeriod: boolean
+export interface ViewMode {
+  value: number;
+  unit: 'month' | 'week' | 'day';
 }
 
 export interface CalendarCoreOptions<TEvent extends Event> {
-  weekStartsOn: number;
+  weekStartsOn?: number;
   events?: TEvent[];
   viewMode: CalendarState['viewMode'];
   locale?: Parameters<Temporal.PlainDate['toLocaleString']>['0'];
+}
+
+export interface CalendarApi<TEvent extends Event> {
+  currentPeriod: CalendarState['currentPeriod'];
+  viewMode: CalendarState['viewMode'];
+  currentTime: CalendarState['currentTime'];
+  days: Array<Day<TEvent>>;
+  daysNames: string[];
+  goToPreviousPeriod: () => void;
+  goToNextPeriod: () => void;
+  goToCurrentPeriod: () => void;
+  goToSpecificPeriod: (date: Temporal.PlainDate) => void;
+  changeViewMode: (newViewMode: CalendarState['viewMode']) => void;
+  getEventProps: (id: Event['id']) => { style: CSSProperties } | null;
+  getCurrentTimeMarkerProps: () => {
+    style: CSSProperties;
+    currentTime: string | undefined;
+  };
+  groupDaysBy: (props: Omit<GroupDaysByProps<TEvent>, 'weekStartsOn'>) => (Day<TEvent> | null)[][];
 }
 
 export class CalendarCore<TEvent extends Event> {
@@ -57,14 +62,14 @@ export class CalendarCore<TEvent extends Event> {
   }
 
   private getFirstDayOfWeek() {
-    return getFirstDayOfWeek(this.store.state.currentPeriod.toString(), this.options.weekStartsOn || 1);
+    return getFirstDayOfWeek(this.store.state.currentPeriod.toString(), this.options.weekStartsOn ?? 1);
   }
 
   private getCalendarDays() {
     const start =
       this.store.state.viewMode.unit === 'month'
         ? this.getFirstDayOfMonth().subtract({
-            days: (this.getFirstDayOfMonth().dayOfWeek - (this.options.weekStartsOn || 1) + 7) % 7,
+            days: (this.getFirstDayOfMonth().dayOfWeek - (this.options.weekStartsOn ?? 1) + 7) % 7,
           })
         : this.store.state.currentPeriod;
 
@@ -75,7 +80,7 @@ export class CalendarCore<TEvent extends Event> {
           .add({ months: this.store.state.viewMode.value })
           .subtract({ days: 1 });
         const lastDayOfMonthWeekDay =
-          (lastDayOfMonth.dayOfWeek - (this.options.weekStartsOn || 1) + 7) % 7;
+          (lastDayOfMonth.dayOfWeek - (this.options.weekStartsOn ?? 1) + 7) % 7;
         end = lastDayOfMonth.add({ days: 6 - lastDayOfMonthWeekDay });
         break;
       }
@@ -155,7 +160,7 @@ export class CalendarCore<TEvent extends Event> {
     const baseDate = Temporal.PlainDate.from('2024-01-01');
     return Array.from({ length: 7 }).map((_, i) =>
       baseDate
-        .add({ days: (i + (this.options.weekStartsOn || 1) - 1) % 7 })
+        .add({ days: (i + (this.options.weekStartsOn ?? 1) - 1) % 7 })
         .toLocaleString(this.options.locale, { weekday: 'short' }),
     );
   }
@@ -260,7 +265,7 @@ export class CalendarCore<TEvent extends Event> {
     return getEventProps(this.getEventMap(), id, this.store.state);
   }
 
-  getCurrentTimeMarkerProps() {
+  getCurrentTimeMarkerProps(): { style: CSSProperties; currentTime: string | undefined } {
     const { hour, minute } = this.store.state.currentTime;
     const currentTimeInMinutes = hour * 60 + minute;
     const percentageOfDay = (currentTimeInMinutes / (24 * 60)) * 100;
@@ -276,6 +281,6 @@ export class CalendarCore<TEvent extends Event> {
   }
 
   groupDaysBy({ days, unit, fillMissingDays = true }: Omit<GroupDaysByProps<TEvent>, 'weekStartsOn'>) {
-    return groupDaysBy({ days, unit, fillMissingDays, weekStartsOn: this.options.weekStartsOn } as GroupDaysByProps<TEvent>);
+    return groupDaysBy({ days, unit, fillMissingDays, weekStartsOn: this.options.weekStartsOn ?? 1 } as GroupDaysByProps<TEvent>);
   }
 }
