@@ -2,4 +2,4 @@
  *  TanStack Time
  */
 export * from './utils';
-export * from './calendar';
+export * from './calendar-core';
