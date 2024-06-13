@@ -63,6 +63,7 @@
   },
   "dependencies": {
     "@js-temporal/polyfill": "^0.4.4",
+    "@tanstack/react-store": "^0.4.1",
     "@tanstack/time": "workspace:*",
     "typesafe-actions": "^5.1.0",
     "use-sync-external-store": "^1.2.0"

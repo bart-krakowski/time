@@ -2,8 +2,6 @@ import { Temporal } from '@js-temporal/polyfill'
 import { describe, expect, test, vi } from 'vitest'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { useCalendar } from '../useCalendar'
-import type { UseCalendarAction } from '../useCalendar/calendarActions';
-import type { UseCalendarState } from '../useCalendar/useCalendarState';
 
 describe('useCalendar', () => {
   const events = [
@@ -331,30 +329,6 @@ describe('useCalendar', () => {
       Temporal.Now.plainDateISO(),
     )
   })
-
-  test(`should allow overriding the reducer`, () => {
-    const customReducer = (state: UseCalendarState, action: UseCalendarAction) => {
-      if (action.type === 'SET_NEXT_PERIOD') {
-        return {
-          ...state,
-          currentPeriod: state.currentPeriod.add({ months: 2 }),
-        }
-      }
-
-      return state
-    }
-
-    const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'month' }, reducer: customReducer }),
-    )
-
-    act(() => {
-      result.current.goToNextPeriod()
-    })
-
-    const expectedNextMonth = Temporal.Now.plainDateISO().add({ months: 2 })
-    expect(result.current.currentPeriod).toEqual(expectedNextMonth)
-  });
 
   test('should group days by months correctly', () => {
     const { result } = renderHook(() =>
