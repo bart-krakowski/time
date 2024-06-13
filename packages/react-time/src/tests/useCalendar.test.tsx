@@ -207,21 +207,22 @@ describe('useCalendar', () => {
     vi.setSystemTime(new Date('2024-06-01T11:00:55'));
 
     const { result } = renderHook(() => useCalendar({ viewMode: { value: 1, unit: 'week' } }));
+    const currentTimeMarkerProps = result.current.getCurrentTimeMarkerProps();
 
     act(() => {
       vi.advanceTimersByTime(5000);
     })
 
-    const currentTimeMarkerProps = result.current.getCurrentTimeMarkerProps();
-
-    expect(currentTimeMarkerProps).toEqual({
-      style: {
-        position: 'absolute',
-        top: '45.90277777777778%',
-        left: 0,
-      },
-      currentTime: '11:01',
-    });
+    waitFor(() => {
+      expect(currentTimeMarkerProps).toEqual({
+        style: {
+          position: 'absolute',
+          top: '45.90277777777778%',
+          left: 0,
+        },
+        currentTime: '11:01',
+      });
+    })
   });
 
   test('should render array of days', () => {

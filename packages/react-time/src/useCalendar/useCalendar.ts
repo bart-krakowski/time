@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useTransition } from 'react'
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { useStore } from '@tanstack/react-store'
 import { Temporal } from '@js-temporal/polyfill'
 import { CalendarCore, type CalendarState, type Event } from '@tanstack/time'
@@ -9,15 +9,14 @@ export const useCalendar = <TEvent extends Event>(
 ): CalendarApi<TEvent> & { isPending: boolean } => {
   const [calendarCore] = useState(() => new CalendarCore<TEvent>(options))
   const state = useStore(calendarCore.store)
-
   const [isPending, startTransition] = useTransition()
   const currentTimeInterval = useRef<NodeJS.Timeout>()
 
-  useEffect(() => {
-    const updateCurrentTime = () => {
-      calendarCore.updateCurrentTime()
-    }
+  const updateCurrentTime = useCallback(() => {
+    calendarCore.updateCurrentTime()
+  }, [calendarCore])
 
+  useEffect(() => {
     if (currentTimeInterval.current) clearTimeout(currentTimeInterval.current)
 
     const now = Temporal.Now.plainDateTimeISO()
@@ -29,7 +28,7 @@ export const useCalendar = <TEvent extends Event>(
     }, msToNextMinute)
 
     return () => clearTimeout(currentTimeInterval.current)
-  }, [calendarCore])
+  }, [calendarCore, updateCurrentTime])
 
   const goToPreviousPeriod = () => {
     startTransition(() => {
