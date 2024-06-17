@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { useStore } from '@tanstack/react-store'
 import { Temporal } from '@js-temporal/polyfill'
-import { CalendarCore, type CalendarState, type Event } from '@tanstack/time'
-import type { CalendarApi, CalendarCoreOptions, GroupDaysByProps } from '@tanstack/time'
+import { CalendarCore, type Event } from '@tanstack/time'
+import type { CalendarApi, CalendarCoreOptions } from '@tanstack/time'
 
 export const useCalendar = <TEvent extends Event>(
   options: CalendarCoreOptions<TEvent>,
@@ -12,7 +12,7 @@ export const useCalendar = <TEvent extends Event>(
   const [isPending, startTransition] = useTransition()
   const currentTimeInterval = useRef<NodeJS.Timeout>()
 
-  const updateCurrentTime = useCallback(() => {
+  const updateCurrentTime = useCallback<typeof calendarCore.updateCurrentTime>(() => {
     calendarCore.updateCurrentTime()
   }, [calendarCore])
 
@@ -30,41 +30,41 @@ export const useCalendar = <TEvent extends Event>(
     return () => clearTimeout(currentTimeInterval.current)
   }, [calendarCore, updateCurrentTime])
 
-  const goToPreviousPeriod = useCallback(() => {
+  const goToPreviousPeriod = useCallback<typeof calendarCore.goToPreviousPeriod>(() => {
     startTransition(() => {
       calendarCore.goToPreviousPeriod()
     })
   }, [calendarCore, startTransition])
 
-  const goToNextPeriod = useCallback(() => {
+  const goToNextPeriod = useCallback<typeof calendarCore.goToNextPeriod>(() => {
     startTransition(() => {
       calendarCore.goToNextPeriod()
     })
   }, [calendarCore, startTransition])
 
-  const goToCurrentPeriod = useCallback(() => {
+  const goToCurrentPeriod = useCallback<typeof calendarCore.goToCurrentPeriod>(() => {
     startTransition(() => {
       calendarCore.goToCurrentPeriod()
     })
   }, [calendarCore, startTransition])
 
-  const goToSpecificPeriod = useCallback((date: Temporal.PlainDate) => {
+  const goToSpecificPeriod = useCallback<typeof calendarCore.goToSpecificPeriod>((date) => {
     startTransition(() => {
       calendarCore.goToSpecificPeriod(date)
     })
   }, [calendarCore, startTransition])
 
-  const changeViewMode = useCallback((newViewMode: CalendarState['viewMode']) => {
+  const changeViewMode = useCallback<typeof calendarCore.changeViewMode>((newViewMode) => {
     startTransition(() => {
       calendarCore.changeViewMode(newViewMode)
     })
   }, [calendarCore, startTransition])
 
-  const getEventProps = useCallback((id: TEvent['id']) => calendarCore.getEventProps(id), [calendarCore])
+  const getEventProps = useCallback<typeof calendarCore.getEventProps>((id) => calendarCore.getEventProps(id), [calendarCore])
 
-  const getCurrentTimeMarkerProps = useCallback(() => calendarCore.getCurrentTimeMarkerProps(), [calendarCore])
+  const getCurrentTimeMarkerProps = useCallback<typeof calendarCore.getCurrentTimeMarkerProps>(() => calendarCore.getCurrentTimeMarkerProps(), [calendarCore])
 
-  const groupDaysBy = useCallback((props: Omit<GroupDaysByProps<TEvent>, "weekStartsOn">) => calendarCore.groupDaysBy(props), [calendarCore])
+  const groupDaysBy = useCallback<typeof calendarCore.groupDaysBy>((props) => calendarCore.groupDaysBy(props), [calendarCore])
 
   return {
     currentPeriod: state.currentPeriod,
