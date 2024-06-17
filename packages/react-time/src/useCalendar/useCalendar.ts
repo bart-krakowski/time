@@ -64,7 +64,7 @@ export const useCalendar = <TEvent extends Event>(
 
   const getCurrentTimeMarkerProps = useCallback(() => calendarCore.getCurrentTimeMarkerProps(), [calendarCore])
 
-  const groupDaysBy = useCallback((props: Omit<GroupDaysByProps<TEvent>, 'weekStartsOn'>) => calendarCore.groupDaysBy(props), [calendarCore])
+  const groupDaysBy = useCallback((props: Omit<GroupDaysByProps<TEvent>, "weekStartsOn">) => calendarCore.groupDaysBy(props), [calendarCore])
 
   return {
     currentPeriod: state.currentPeriod,
