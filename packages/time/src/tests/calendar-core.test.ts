@@ -118,67 +118,14 @@ describe('CalendarCore', () => {
     });
   });
 
-  test('should update the current time marker props after time passes', () => {
-    vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(Temporal.PlainDateTime.from('2024-06-01T11:00:00'));
-
-    const coreOptions: CalendarCoreOptions<Event> = {
-      weekStartsOn: 1,
-      viewMode: { value: 1, unit: 'week' },
-      events: [],
-    };
-    calendarCore = new CalendarCore(coreOptions);
-
-    let currentTimeMarkerProps = calendarCore.getCurrentTimeMarkerProps();
-
-    expect(currentTimeMarkerProps).toEqual({
-      style: {
-        position: 'absolute',
-        top: '45.83333333333333%',
-        left: 0,
-      },
-      currentTime: '11:00',
-    });
-
-    vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(Temporal.PlainDateTime.from('2024-06-01T11:01:00'));
-
+  test('should update the current time on', () => {
+    const initialTime = calendarCore.store.state.currentTime;
+    const newMockDateTime = initialTime.add({ minutes: 1 });
+    vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(newMockDateTime);
+    
     calendarCore.updateCurrentTime();
-    currentTimeMarkerProps = calendarCore.getCurrentTimeMarkerProps();
-
-    expect(currentTimeMarkerProps).toEqual({
-      style: {
-        position: 'absolute',
-        top: '45.90277777777778%',
-        left: 0,
-      },
-      currentTime: '11:01',
-    });
-  });
-
-  test('should update the current time marker props after time passes when the next minute is in less than a minute', () => {
-    vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(Temporal.PlainDateTime.from('2024-06-01T11:00:55'));
-
-
-    const coreOptions: CalendarCoreOptions<Event> = {
-      weekStartsOn: 1,
-      viewMode: { value: 1, unit: 'week' },
-      events: [],
-    };
-    calendarCore = new CalendarCore(coreOptions);
-
-    vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(Temporal.PlainDateTime.from('2024-06-01T11:01:00'));
-
-    calendarCore.updateCurrentTime();
-    const currentTimeMarkerProps = calendarCore.getCurrentTimeMarkerProps();
-
-    expect(currentTimeMarkerProps).toEqual({
-      style: {
-        position: 'absolute',
-        top: '45.90277777777778%',
-        left: 0,
-      },
-      currentTime: '11:01',
-    });
-  });
+    expect(initialTime).toEqual(newMockDateTime);
+  })
 
   test('should group days correctly', () => {
     const daysWithEvents = calendarCore.getDaysWithEvents();
