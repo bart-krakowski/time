@@ -1,7 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { CalendarCore } from '../calendar-core';
-import type { CalendarCoreOptions, Event } from '../calendar-core';
+import { CalendarCore } from '../core/calendar';
+import type { CalendarCoreOptions, Event } from '../core/calendar';
 
 describe('CalendarCore', () => {
   let options: CalendarCoreOptions<Event>;

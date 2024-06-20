@@ -13,20 +13,6 @@ describe('DatePicker', () => {
     options = {
       weekStartsOn: 1,
       viewMode: { value: 1, unit: 'month' },
-      events: [
-        {
-          id: '1',
-          startDate: Temporal.PlainDateTime.from('2023-06-10T09:00'),
-          endDate: Temporal.PlainDateTime.from('2023-06-10T10:00'),
-          title: 'Event 1',
-        },
-        {
-          id: '2',
-          startDate: Temporal.PlainDateTime.from('2023-06-12T11:00'),
-          endDate: Temporal.PlainDateTime.from('2023-06-12T12:00'),
-          title: 'Event 2',
-        },
-      ],
       selectedDates: [Temporal.PlainDate.from('2023-06-10')],
       multiple: true,
     };
@@ -42,6 +28,10 @@ describe('DatePicker', () => {
   });
 
   test('should select a date correctly in single selection mode', () => {
+    datePicker = new DatePicker({
+      ...options,
+      multiple: false,
+    });
     datePicker.selectDate(Temporal.PlainDate.from('2023-06-15'));
     const selectedDates = datePicker.getSelectedDates();
     expect(selectedDates).toHaveLength(1);
