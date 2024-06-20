@@ -1,15 +1,15 @@
 import { Store } from '@tanstack/store';
 import { Temporal } from '@js-temporal/polyfill';
-import { getFirstDayOfMonth, getFirstDayOfWeek } from './utils';
-import { generateDateRange } from './calendar/generateDateRange';
-import { splitMultiDayEvents } from './calendar/splitMultiDayEvents';
-import { getEventProps } from './calendar/getEventProps';
-import { groupDaysBy } from './calendar/groupDaysBy';
+import { getFirstDayOfMonth, getFirstDayOfWeek } from '../utils';
+import { generateDateRange } from '../calendar/generateDateRange';
+import { splitMultiDayEvents } from '../calendar/splitMultiDayEvents';
+import { getEventProps } from '../calendar/getEventProps';
+import { groupDaysBy } from '../calendar/groupDaysBy';
 import type { Properties as CSSProperties } from 'csstype';
-import type { GroupDaysByProps } from './calendar/groupDaysBy';
-import type { CalendarState, Day, Event } from './calendar/types';
+import type { GroupDaysByProps } from '../calendar/groupDaysBy';
+import type { CalendarState, Day, Event } from '../calendar/types';
 
-export type { CalendarState, Event, Day } from './calendar/types';
+export type { CalendarState, Event, Day } from '../calendar/types';
 
 export interface ViewMode {
   value: number;
