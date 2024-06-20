@@ -55,7 +55,7 @@ The `CalendarCore` class provides a set of functionalities for managing calendar
 #### Example Usage
 
 ```ts
-import { CalendarCore, Event } from 'your-calendar-core-package';
+import { CalendarCore, Event } from '@tanstack/time';
 import { Temporal } from '@js-temporal/polyfill';
 
 interface MyEvent extends Event {
