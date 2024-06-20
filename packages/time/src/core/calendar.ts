@@ -16,7 +16,7 @@ export interface ViewMode {
   unit: 'month' | 'week' | 'day';
 }
 
-export interface CalendarCoreOptions<TEvent extends Event> {
+export interface CalendarCoreOptions<TEvent extends Event = Event> {
   weekStartsOn?: number;
   events?: TEvent[];
   viewMode: CalendarState['viewMode'];
