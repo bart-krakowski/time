@@ -42,7 +42,7 @@ export interface CalendarApi<TEvent extends Event> {
   groupDaysBy: (props: Omit<GroupDaysByProps<TEvent>, 'weekStartsOn'>) => (Day<TEvent> | null)[][];
 }
 
-export class CalendarCore<TEvent extends Event> {
+export class CalendarCore<TEvent extends Event = Event> {
   store: Store<CalendarState>;
   options: CalendarCoreOptions<TEvent>;
 
