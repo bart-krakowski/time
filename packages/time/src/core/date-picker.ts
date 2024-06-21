@@ -6,24 +6,23 @@ import type { CalendarCoreOptions, CalendarState } from './calendar';
 export interface DatePickerOptions extends CalendarCoreOptions {
   minDate?: Temporal.PlainDate;
   maxDate?: Temporal.PlainDate;
-  onSelectDate?: (date: Temporal.PlainDate) => void;
   multiple?: boolean;
   range?: boolean;
   selectedDates?: Temporal.PlainDate[];
 }
 
-export interface DatePickerState extends CalendarState {
+export interface DatePickerCoreState extends CalendarState {
   selectedDates: Map<string, Temporal.PlainDate>;
 }
 
-export class DatePicker extends CalendarCore {
-  datePickerStore: Store<DatePickerState>;
+export class DatePickerCore extends CalendarCore {
+  datePickerStore: Store<DatePickerCoreState>;
   options: DatePickerOptions;
 
   constructor(options: DatePickerOptions) {
     super(options);
     this.options = options;
-    this.datePickerStore = new Store<DatePickerState>({
+    this.datePickerStore = new Store<DatePickerCoreState>({
       ...this.store.state,
       selectedDates: new Map(options.selectedDates?.map(date => [date.toString(), date]) ?? []),
     });
@@ -34,7 +33,7 @@ export class DatePicker extends CalendarCore {
   }
 
   selectDate(date: Temporal.PlainDate) {
-    const { multiple, range, minDate, maxDate, onSelectDate } = this.options;
+    const { multiple, range, minDate, maxDate } = this.options;
 
     if (minDate && Temporal.PlainDate.compare(date, minDate) < 0) return;
     if (maxDate && Temporal.PlainDate.compare(date, maxDate) > 0) return;
@@ -58,7 +57,5 @@ export class DatePicker extends CalendarCore {
       ...prev,
       selectedDates,
     }));
-
-    onSelectDate?.(date);
   }
 }
