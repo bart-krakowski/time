@@ -9,6 +9,8 @@ import type { Properties as CSSProperties } from 'csstype';
 import type { GroupDaysByProps } from '../calendar/groupDaysBy';
 import type { CalendarState, Day, Event } from '../calendar/types';
 
+import './weekInfoPolyfill'
+
 export type { CalendarState, Event, Day } from '../calendar/types';
 
 export interface ViewMode {
