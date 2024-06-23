@@ -9,7 +9,7 @@ import type { Properties as CSSProperties } from 'csstype';
 import type { GroupDaysByProps } from '../calendar/groupDaysBy';
 import type { CalendarState, Day, Event } from '../calendar/types';
 
-import './weekInfoPolyfill'
+import './weekInfoPolyfill';
 
 export type { CalendarState, Event, Day } from '../calendar/types';
 
@@ -22,7 +22,7 @@ export interface CalendarCoreOptions<TEvent extends Event = Event> {
   weekStartsOn?: number;
   events?: TEvent[];
   viewMode: CalendarState['viewMode'];
-  locale?: Parameters<Temporal.PlainDate['toLocaleString']>['0'];
+  locale?: string;
 }
 
 export interface CalendarApi<TEvent extends Event> {
@@ -49,7 +49,7 @@ export class CalendarCore<TEvent extends Event> {
   options: CalendarCoreOptions<TEvent>;
 
   constructor(options: CalendarCoreOptions<TEvent>) {
-    this.options = options;
+    this.options = options; 
     this.store = new Store<CalendarState>({
       currentPeriod: Temporal.Now.plainDateISO(),
       viewMode: options.viewMode,
@@ -64,7 +64,7 @@ export class CalendarCore<TEvent extends Event> {
   }
 
   private getFirstDayOfWeek() {
-    return getFirstDayOfWeek(this.store.state.currentPeriod.toString(), this.options.weekStartsOn ?? 1);
+    return getFirstDayOfWeek(this.store.state.currentPeriod.toString(), this.options.locale);
   }
 
   private getCalendarDays() {
