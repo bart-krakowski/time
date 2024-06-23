@@ -16,22 +16,7 @@ declare namespace Intl {
     ;(Intl as any).Locale.prototype.getWeekInfo = function () {
       const locale = this.toString().toLowerCase()
       const weekInfo: Record<string, WeekInfo> = {
-        af_NA: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        af_ZA: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         af: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ak_GH: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -41,17 +26,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        sq_AL: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         sq: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        am_ET: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -61,97 +36,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        ar_DZ: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ar_BH: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ar_EG: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ar_IQ: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ar_JO: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ar_KW: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ar_LB: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ar_LY: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ar_MA: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ar_OM: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ar_QA: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ar_SA: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ar_SD: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ar_SY: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ar_TN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ar_AE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ar_YE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         ar: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        hy_AM: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -161,17 +46,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        as_IN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         as: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        asa_TZ: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -181,22 +56,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        az_Cyrl: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        az_Latn: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         az: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        bm_ML: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -206,17 +66,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        eu_ES: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         eu: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        be_BY: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -226,17 +76,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        bem_ZM: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         bem: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        bez_TZ: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -246,22 +86,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        bn_BD: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        bn_IN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         bn: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        bs_BA: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -271,17 +96,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        bg_BG: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         bg: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        my_MM: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -291,17 +106,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        ca_ES: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         ca: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        tzm_Latn: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -311,17 +116,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        chr_US: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         chr: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        cgg_UG: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -331,22 +126,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        zh_Hans: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        zh_Hant: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         zh: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        kw_GB: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -356,17 +136,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        hr_HR: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         hr: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        cs_CZ: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -376,22 +146,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        da_DK: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         da: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        nl_BE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        nl_NL: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -401,152 +156,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        ebu_KE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         ebu: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_AS: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_AU: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_BE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_BZ: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_BW: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_CA: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_GU: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_HK: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_IN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_IE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_IL: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_JM: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_MT: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_MH: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_MU: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_NA: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_NZ: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_MP: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_PK: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_PH: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_SG: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_ZA: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_TT: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_UM: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_VI: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_GB: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_US: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        en_ZW: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -561,22 +171,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        et_EE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         et: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ee_GH: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ee_TG: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -586,17 +181,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        fo_FO: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         fo: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fil_PH: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -606,167 +191,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        fi_FI: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         fi: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_BE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_BJ: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_BF: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_BI: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_CM: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_CA: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_CF: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_TD: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_KM: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_CG: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_CD: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_CI: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_DJ: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_GQ: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_FR: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_GA: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_GP: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_GN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_LU: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_MG: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_ML: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_MQ: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_MC: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_NE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_RW: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_RE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_BL: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_MF: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_SN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_CH: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fr_TG: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -776,17 +201,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        ff_SN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         ff: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        gl_ES: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -796,17 +211,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        lg_UG: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         lg: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ka_GE: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -816,47 +221,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        de_AT: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        de_BE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        de_DE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        de_LI: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        de_LU: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        de_CH: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         de: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        el_CY: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        el_GR: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -866,17 +231,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        gu_IN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         gu: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        guz_KE: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -886,17 +241,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        ha_Latn: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         ha: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        haw_US: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -906,17 +251,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        he_IL: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         he: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        hi_IN: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -926,17 +261,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        hu_HU: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         hu: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        is_IS: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -946,17 +271,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        ig_NG: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         ig: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        id_ID: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -966,22 +281,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        ga_IE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         ga: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        it_IT: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        it_CH: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -991,17 +291,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        ja_JP: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         ja: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        kea_CV: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1011,17 +301,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        kab_DZ: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         kab: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        kl_GL: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1031,17 +311,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        kln_KE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         kln: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        kam_KE: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1051,17 +321,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        kn_IN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         kn: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        kk_Cyrl: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1071,17 +331,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        km_KH: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         km: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ki_KE: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1091,17 +341,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        rw_RW: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         rw: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        kok_IN: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1111,17 +351,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        ko_KR: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         ko: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        khq_ML: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1131,17 +361,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        ses_ML: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         ses: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        lag_TZ: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1151,17 +371,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        lv_LV: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         lv: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        lt_LT: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1171,17 +381,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        luo_KE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         luo: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        luy_KE: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1191,17 +391,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        mk_MK: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         mk: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        jmc_TZ: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1211,17 +401,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        kde_TZ: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         kde: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        mg_MG: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1231,22 +411,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        ms_BN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ms_MY: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         ms: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ml_IN: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1256,17 +421,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        mt_MT: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         mt: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        gv_GB: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1276,22 +431,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        mr_IN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         mr: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        mas_KE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        mas_TZ: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1301,17 +441,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        mer_KE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         mer: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        mfe_MU: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1321,22 +451,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        naq_NA: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         naq: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ne_IN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ne_NP: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1346,17 +461,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        nd_ZW: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         nd: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        nb_NO: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1366,17 +471,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        nn_NO: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         nn: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        nyn_UG: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1386,22 +481,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        or_IN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         or: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        om_ET: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        om_KE: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1411,22 +491,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        ps_AF: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         ps: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fa_AF: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        fa_IR: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1436,32 +501,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        pl_PL: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         pl: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        pt_BR: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        pt_GW: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        pt_MZ: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        pt_PT: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1471,27 +511,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        pa_Arab: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        pa_Guru: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         pa: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ro_MD: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ro_RO: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1501,17 +521,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        rm_CH: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         rm: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        rof_TZ: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1521,27 +531,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        ru_MD: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ru_RU: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ru_UA: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         ru: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        rwk_TZ: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1551,17 +541,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        saq_KE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         saq: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        sg_CF: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1571,22 +551,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        seh_MZ: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         seh: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        sr_Cyrl: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        sr_Latn: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1596,17 +561,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        sn_ZW: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         sn: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ii_CN: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1616,17 +571,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        si_LK: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         si: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        sk_SK: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1636,17 +581,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        sl_SI: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         sl: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        xog_UG: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1656,137 +591,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        so_DJ: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        so_ET: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        so_KE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        so_SO: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         so: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_AR: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_BO: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_CL: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_CO: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_CR: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_DO: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_EC: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_SV: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_GQ: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_GT: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_HN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_419: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_MX: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_NI: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_PA: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_PY: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_PE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_PR: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_ES: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_US: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_UY: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        es_VE: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1796,27 +601,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        sw_KE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        sw_TZ: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         sw: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        sv_FI: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        sv_SE: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1826,22 +611,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        gsw_CH: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         gsw: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        shi_Latn: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        shi_Tfng: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1851,22 +621,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        dav_KE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         dav: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ta_IN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ta_LK: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1876,22 +631,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        te_IN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         te: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        teo_KE: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        teo_UG: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1901,22 +641,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        th_TH: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         th: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        bo_CN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        bo_IN: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1926,22 +651,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        ti_ER: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ti_ET: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         ti: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        to_TO: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1951,17 +661,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        tr_TR: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         tr: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        uk_UA: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -1971,32 +671,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        ur_IN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        ur_PK: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         ur: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        uz_Arab: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        uz_Cyrl: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        uz_Latn: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -2006,17 +681,7 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        vi_VN: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         vi: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        vun_TZ: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
@@ -2026,27 +691,12 @@ declare namespace Intl {
           weekend: [6, 7],
           minimalDays: 4,
         },
-        cy_GB: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         cy: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
         },
-        yo_NG: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
         yo: {
-          firstDay: 1,
-          weekend: [6, 7],
-          minimalDays: 4,
-        },
-        zu_ZA: {
           firstDay: 1,
           weekend: [6, 7],
           minimalDays: 4,
