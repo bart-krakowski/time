@@ -2,8 +2,8 @@ import type { Temporal } from "@js-temporal/polyfill"
 
 export interface Event {
   id: string;
-  startDate: Temporal.PlainDateTime;
-  endDate: Temporal.PlainDateTime;
+  startDate: Temporal.PlainDateTime | Temporal.ZonedDateTime;
+  endDate: Temporal.PlainDateTime | Temporal.ZonedDateTime;
   title: string;
 }
 

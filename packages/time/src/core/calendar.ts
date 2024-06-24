@@ -120,8 +120,8 @@ export class CalendarCore<TEvent extends Event> {
   private getEventMap() {
     const map = new Map<string, TEvent[]>();
     this.options.events?.forEach((event) => {
-      const eventStartDate = event.startDate.toZonedDateTime(this.options.timeZone);
-      const eventEndDate = event.endDate.toZonedDateTime(this.options.timeZone);
+      const eventStartDate = event.startDate instanceof Temporal.PlainDateTime ? event.startDate.toZonedDateTime(this.options.timeZone) : event.startDate;
+      const eventEndDate = event.endDate instanceof Temporal.PlainDateTime ? event.endDate.toZonedDateTime(this.options.timeZone) : event.endDate;
       if (
         Temporal.ZonedDateTime.compare(
           eventStartDate,
