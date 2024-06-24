@@ -19,10 +19,11 @@ export interface ViewMode {
 }
 
 export interface CalendarCoreOptions<TEvent extends Event = Event> {
-  weekStartsOn?: number;
   events?: TEvent[];
   viewMode: CalendarState['viewMode'];
   locale?: string;
+  timeZone?: string;
+  calendar?: string;
 }
 
 export interface CalendarApi<TEvent extends Event> {
@@ -71,7 +72,7 @@ export class CalendarCore<TEvent extends Event> {
     const start =
       this.store.state.viewMode.unit === 'month'
         ? this.getFirstDayOfMonth().subtract({
-            days: (this.getFirstDayOfMonth().dayOfWeek - (this.options.weekStartsOn ?? 1) + 7) % 7,
+            days: (this.getFirstDayOfMonth().dayOfWeek - (this.getFirstDayOfWeek().dayOfWeek + 1) + 7) % 7,
           })
         : this.store.state.currentPeriod;
 
@@ -82,7 +83,7 @@ export class CalendarCore<TEvent extends Event> {
           .add({ months: this.store.state.viewMode.value })
           .subtract({ days: 1 });
         const lastDayOfMonthWeekDay =
-          (lastDayOfMonth.dayOfWeek - (this.options.weekStartsOn ?? 1) + 7) % 7;
+          (lastDayOfMonth.dayOfWeek - (this.getFirstDayOfWeek().dayOfWeek + 1) + 7) % 7;
         end = lastDayOfMonth.add({ days: 6 - lastDayOfMonthWeekDay });
         break;
       }
@@ -162,7 +163,7 @@ export class CalendarCore<TEvent extends Event> {
     const baseDate = Temporal.PlainDate.from('2024-01-01');
     return Array.from({ length: 7 }).map((_, i) =>
       baseDate
-        .add({ days: (i + (this.options.weekStartsOn ?? 1) - 1) % 7 })
+        .add({ days: (i + (this.getFirstDayOfWeek().dayOfWeek + 1)) % 7 })
         .toLocaleString(this.options.locale, { weekday: 'short' }),
     );
   }
@@ -283,6 +284,6 @@ export class CalendarCore<TEvent extends Event> {
   }
 
   groupDaysBy({ days, unit, fillMissingDays = true }: Omit<GroupDaysByProps<TEvent>, 'weekStartsOn'>) {
-    return groupDaysBy({ days, unit, fillMissingDays, weekStartsOn: this.options.weekStartsOn ?? 1 } as GroupDaysByProps<TEvent>);
+    return groupDaysBy({ days, unit, fillMissingDays, weekStartsOn: this.getFirstDayOfWeek().dayOfWeek } as GroupDaysByProps<TEvent>);
   }
 }

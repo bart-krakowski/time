@@ -11,7 +11,6 @@ describe('CalendarCore', () => {
 
   beforeEach(() => {
     options = {
-      weekStartsOn: 1,
       viewMode: { value: 1, unit: 'month' },
       events: [
         {
@@ -100,7 +99,6 @@ describe('CalendarCore', () => {
     vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(Temporal.PlainDateTime.from('2024-06-01T11:00:00'));
 
     const coreOptions: CalendarCoreOptions<Event> = {
-      weekStartsOn: 1,
       viewMode: { value: 1, unit: 'week' },
       events: [],
     };
