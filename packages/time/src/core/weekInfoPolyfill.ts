@@ -8,6 +8,7 @@ interface WeekInfo {
 declare namespace Intl {
   interface Locale {
     getWeekInfo: () => WeekInfo
+    weekInfo?: WeekInfo
   }
 }
 
