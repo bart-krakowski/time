@@ -5,6 +5,7 @@ import { generateDateRange } from '../calendar/generateDateRange';
 import { splitMultiDayEvents } from '../calendar/splitMultiDayEvents';
 import { getEventProps } from '../calendar/getEventProps';
 import { groupDaysBy } from '../calendar/groupDaysBy';
+import { getDateDefaults } from '../utils/dateDefaults';
 import type { Properties as CSSProperties } from 'csstype';
 import type { GroupDaysByProps } from '../calendar/groupDaysBy';
 import type { CalendarState, Day, Event } from '../calendar/types';
@@ -19,7 +20,7 @@ export interface ViewMode {
 }
 
 export interface CalendarCoreOptions<TEvent extends Event = Event> {
-  events?: TEvent[];
+  events?: TEvent[] | null;
   viewMode: CalendarState['viewMode'];
   locale?: string;
   timeZone?: string;
@@ -47,14 +48,22 @@ export interface CalendarApi<TEvent extends Event> {
 
 export class CalendarCore<TEvent extends Event> {
   store: Store<CalendarState>;
-  options: CalendarCoreOptions<TEvent>;
+  options: Required<CalendarCoreOptions<TEvent>>;
 
   constructor(options: CalendarCoreOptions<TEvent>) {
-    this.options = options; 
+    const defaults = getDateDefaults();
+    this.options = {
+      ...options,
+      locale: options.locale || defaults.locale,
+      timeZone: options.timeZone || defaults.timeZone,
+      calendar: options.calendar || defaults.calendar,
+      events: options.events || null,
+    };
+  
     this.store = new Store<CalendarState>({
-      currentPeriod: Temporal.Now.plainDateISO(),
+      currentPeriod: Temporal.Now.plainDateISO().withCalendar(this.options.calendar),
       viewMode: options.viewMode,
-      currentTime: Temporal.Now.plainDateTimeISO(),
+      currentTime: Temporal.Now.plainDateTimeISO(this.options.timeZone),
     });
   }
 
@@ -111,15 +120,15 @@ export class CalendarCore<TEvent extends Event> {
   private getEventMap() {
     const map = new Map<string, TEvent[]>();
     this.options.events?.forEach((event) => {
-      const eventStartDate = Temporal.PlainDateTime.from(event.startDate);
-      const eventEndDate = Temporal.PlainDateTime.from(event.endDate);
+      const eventStartDate = event.startDate.toZonedDateTime(this.options.timeZone);
+      const eventEndDate = event.endDate.toZonedDateTime(this.options.timeZone);
       if (
-        Temporal.PlainDate.compare(
-          eventStartDate.toPlainDate(),
-          eventEndDate.toPlainDate(),
+        Temporal.ZonedDateTime.compare(
+          eventStartDate,
+          eventEndDate,
         ) !== 0
       ) {
-        const splitEvents = splitMultiDayEvents<TEvent>(event);
+        const splitEvents = splitMultiDayEvents<TEvent>(event, this.options.timeZone);
         splitEvents.forEach((splitEvent) => {
           const splitKey = splitEvent.startDate.toString().split('T')[0];
           if (splitKey) {
