@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
+import { useCallback, useRef, useState, useTransition } from 'react'
 import { useStore } from '@tanstack/react-store'
 import { Temporal } from '@js-temporal/polyfill'
 import { CalendarCore, type Event } from '@tanstack/time'
+import { useIsomorphicLayoutEffect } from '../utils'
 import type { CalendarApi, CalendarCoreOptions } from '@tanstack/time'
 
 export const useCalendar = <TEvent extends Event>(
@@ -16,7 +17,7 @@ export const useCalendar = <TEvent extends Event>(
     calendarCore.updateCurrentTime()
   }, [calendarCore])
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (currentTimeInterval.current) clearTimeout(currentTimeInterval.current)
 
     const now = Temporal.Now.plainDateTimeISO()
