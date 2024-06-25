@@ -14,38 +14,77 @@ import './weekInfoPolyfill';
 
 export type { CalendarState, Event, Day } from '../calendar/types';
 
+/**
+ * Represents the configuration for the current viewing mode of a calendar,
+ * specifying the scale and unit of time.
+ */
 export interface ViewMode {
+  /** The number of units for the view mode. */
   value: number;
+  /** The unit of time that the calendar view should display (month, week, or day). */
   unit: 'month' | 'week' | 'day';
 }
 
+/**
+ * Configuration options for initializing a CalendarCore instance, allowing customization
+ * of events, locale, time zone, and the calendar system.
+ * @template TEvent - Specifies the event type, extending a base Event type.
+ */
 export interface CalendarCoreOptions<TEvent extends Event = Event> {
+  /** An optional array of events to be handled by the calendar. */
   events?: TEvent[] | null;
+  /** The initial view mode configuration of the calendar. */
   viewMode: CalendarState['viewMode'];
+  /** Optional locale for date formatting. Uses a BCP 47 language tag. */
   locale?: Intl.UnicodeBCP47LocaleIdentifier;
+  /** Optional time zone specification for the calendar. */
   timeZone?: Temporal.TimeZoneLike;
+  /** Optional calendar system to be used. */
   calendar?: Temporal.CalendarLike;
 }
 
+/**
+ * The API surface provided by CalendarCore, allowing interaction with the calendar's state
+ * and manipulation of its settings and data.
+ * @template TEvent - The type of events handled by the calendar.
+ */
 export interface CalendarApi<TEvent extends Event> {
+  /** The currently focused date period in the calendar. */
   currentPeriod: CalendarState['currentPeriod'];
+  /** The current view mode of the calendar. */
   viewMode: CalendarState['viewMode'];
+  /** The current date and time according to the calendar's time zone. */
   currentTime: CalendarState['currentTime'];
+  /** An array of days, each potentially containing events. */
   days: Array<Day<TEvent>>;
+  /** An array of names for the days of the week, localized to the calendar's locale. */
   daysNames: string[];
+  /** Navigates to the previous period according to the current view mode. */
   goToPreviousPeriod: () => void;
+  /** Navigates to the next period according to the current view mode. */
   goToNextPeriod: () => void;
+  /** Resets the view to the current period based on today's date. */
   goToCurrentPeriod: () => void;
+  /** Navigates to a specific date. */
   goToSpecificPeriod: (date: Temporal.PlainDate) => void;
+  /** Changes the current view mode of the calendar. */
   changeViewMode: (newViewMode: CalendarState['viewMode']) => void;
+  /** Retrieves styling properties for a specific event, identified by ID. */
   getEventProps: (id: Event['id']) => { style: CSSProperties } | null;
+  /** Provides properties for the marker indicating the current time. */
   getCurrentTimeMarkerProps: () => {
     style: CSSProperties;
     currentTime: string | undefined;
   };
+  /** Groups days by a specified unit. */
   groupDaysBy: (props: Omit<GroupDaysByProps<TEvent>, 'weekStartsOn'>) => (Day<TEvent> | null)[][];
 }
 
+/**
+ * Core functionality for a calendar system, managing the state and operations of the calendar,
+ * such as navigating through time periods, handling events, and adjusting settings.
+ * @template TEvent - The type of events managed by the calendar.
+ */
 export class CalendarCore<TEvent extends Event> {
   store: Store<CalendarState>;
   options: Required<CalendarCoreOptions<TEvent>>;
