@@ -7,7 +7,7 @@ export interface Event {
   title: string;
 }
 
-export interface CalendarState {
+export interface CalendarStore {
   currentPeriod: Temporal.PlainDate
   viewMode: {
     value: number
