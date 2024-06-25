@@ -67,9 +67,7 @@ export const useCalendar = <TEvent extends Event>(
   const groupDaysBy = useCallback<typeof calendarCore.groupDaysBy>((props) => calendarCore.groupDaysBy(props), [calendarCore])
 
   return {
-    currentPeriod: state.currentPeriod,
-    viewMode: state.viewMode,
-    currentTime: state.currentTime,
+    ...state,
     days: calendarCore.getDaysWithEvents(),
     daysNames: calendarCore.getDaysNames(),
     goToPreviousPeriod,
