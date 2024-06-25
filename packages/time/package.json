@@ -55,5 +55,12 @@
   "files": [
     "dist",
     "src"
-  ]
+  ],
+  "dependencies": {
+    "@js-temporal/polyfill": "^0.4.4",
+    "@tanstack/store": "^0.4.1"
+  },
+  "devDependencies": {
+    "csstype": "^3.1.3"
+  }
 }
