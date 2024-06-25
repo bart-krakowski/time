@@ -1,27 +1,41 @@
 import { Store } from '@tanstack/store';
 import { Temporal } from '@js-temporal/polyfill';
+import { getDateDefaults } from '../utils/dateDefaults';
 import { CalendarCore } from './calendar';
-import type { CalendarCoreOptions, CalendarState } from './calendar';
+import type { CalendarCoreOptions, CalendarStore } from './calendar';
 
 export interface DatePickerOptions extends CalendarCoreOptions {
-  minDate?: Temporal.PlainDate;
-  maxDate?: Temporal.PlainDate;
+  minDate?: Temporal.PlainDate | null;
+  maxDate?: Temporal.PlainDate | null;
   multiple?: boolean;
   range?: boolean;
   selectedDates?: Temporal.PlainDate[];
 }
 
-export interface DatePickerCoreState extends CalendarState {
+export interface DatePickerCoreState extends CalendarStore {
   selectedDates: Map<string, Temporal.PlainDate>;
 }
 
 export class DatePickerCore extends CalendarCore {
   datePickerStore: Store<DatePickerCoreState>;
-  options: DatePickerOptions;
+  options: Required<DatePickerOptions>;
 
   constructor(options: DatePickerOptions) {
     super(options);
-    this.options = options;
+    const defaults = getDateDefaults()
+
+    this.options = {
+      ...options,
+      multiple: options.multiple ?? false,
+      range: options.range ?? false,
+      minDate: options.minDate ?? null,
+      maxDate: options.maxDate ?? null,
+      selectedDates: options.selectedDates ?? [],
+      events: options.events ?? [],
+      locale: options.locale ?? defaults.locale,
+      timeZone: options.timeZone ?? defaults.timeZone,
+      calendar: options.calendar ?? defaults.calendar,
+    }
     this.datePickerStore = new Store<DatePickerCoreState>({
       ...this.store.state,
       selectedDates: new Map(options.selectedDates?.map(date => [date.toString(), date]) ?? []),

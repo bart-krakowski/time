@@ -94,7 +94,7 @@ export interface CalendarApi<TEvent extends Event>
  * such as navigating through time periods, handling events, and adjusting settings.
  * @template TEvent - The type of events managed by the calendar.
  */
-export class CalendarCore<TEvent extends Event>
+export class CalendarCore<TEvent extends Event = Event>
   implements CalendarActions<TEvent>
 {
   store: Store<CalendarStore>
