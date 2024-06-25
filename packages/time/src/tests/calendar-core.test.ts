@@ -8,10 +8,10 @@ describe('CalendarCore', () => {
   let calendarCore: CalendarCore<Event>;
   const mockDate = Temporal.PlainDate.from('2023-06-15');
   const mockDateTime = Temporal.PlainDateTime.from('2023-06-15T10:00');
+  const mockTimeZone = 'America/New_York';
 
   beforeEach(() => {
     options = {
-      weekStartsOn: 1,
       viewMode: { value: 1, unit: 'month' },
       events: [
         {
@@ -27,6 +27,7 @@ describe('CalendarCore', () => {
           title: 'Event 2',
         },
       ],
+      timeZone: mockTimeZone,
     };
     calendarCore = new CalendarCore(options);
     vi.spyOn(Temporal.Now, 'plainDateISO').mockReturnValue(mockDate);
@@ -90,7 +91,7 @@ describe('CalendarCore', () => {
     const initialTime = calendarCore.store.state.currentTime;
     const newMockDateTime = initialTime.add({ minutes: 1 });
     vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(newMockDateTime);
-    
+
     calendarCore.updateCurrentTime();
     const updatedTime = calendarCore.store.state.currentTime;
     expect(updatedTime).toEqual(newMockDateTime);
@@ -100,9 +101,9 @@ describe('CalendarCore', () => {
     vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(Temporal.PlainDateTime.from('2024-06-01T11:00:00'));
 
     const coreOptions: CalendarCoreOptions<Event> = {
-      weekStartsOn: 1,
       viewMode: { value: 1, unit: 'week' },
       events: [],
+      timeZone: mockTimeZone,
     };
     calendarCore = new CalendarCore(coreOptions);
 
@@ -118,18 +119,32 @@ describe('CalendarCore', () => {
     });
   });
 
-  test('should update the current time on', () => {
+  test('should update the current time', () => {
     const initialTime = calendarCore.store.state.currentTime;
     const newMockDateTime = initialTime.add({ minutes: 1 });
     vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(newMockDateTime);
-    
+
     calendarCore.updateCurrentTime();
-    expect(initialTime).toEqual(newMockDateTime);
-  })
+    expect(calendarCore.store.state.currentTime).toEqual(newMockDateTime);
+  });
 
   test('should group days correctly', () => {
     const daysWithEvents = calendarCore.getDaysWithEvents();
-    const groupedDays = calendarCore.groupDaysBy({ days: daysWithEvents, unit: 'month'});
+    const groupedDays = calendarCore.groupDaysBy({ days: daysWithEvents, unit: 'month' });
     expect(groupedDays.length).toBeGreaterThan(0);
+  });
+
+  test('should initialize with the correct time zone', () => {
+    expect(calendarCore.options.timeZone).toBe(mockTimeZone);
+  });
+
+  test('should respect custom calendar', () => {
+    const customCalendar = 'islamic-civil';
+    options.calendar = customCalendar;
+    calendarCore = new CalendarCore(options);
+
+    const today = Temporal.Now.plainDateISO(customCalendar);
+    expect(calendarCore.store.state.currentPeriod.calendarId).toBe(customCalendar);
+    expect(calendarCore.store.state.currentPeriod).toEqual(today);
   });
 });

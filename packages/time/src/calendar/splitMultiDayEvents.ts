@@ -1,13 +1,13 @@
 import { Temporal } from '@js-temporal/polyfill';
 import type { Event } from './types';
 
-export const splitMultiDayEvents = <TEvent extends Event>(event: TEvent): TEvent[] => {
-  const startDate = Temporal.PlainDateTime.from(event.startDate);
-  const endDate = Temporal.PlainDateTime.from(event.endDate);
+export const splitMultiDayEvents = <TEvent extends Event>(event: TEvent, timeZone: Temporal.TimeZoneLike): TEvent[] => {
+  const startDate = event.startDate instanceof Temporal.PlainDateTime ? event.startDate.toZonedDateTime(timeZone) : event.startDate;
+  const endDate = event.endDate instanceof Temporal.PlainDateTime ? event.endDate.toZonedDateTime(timeZone) : event.endDate;
   const events: TEvent[] = [];
 
   let currentDay = startDate;
-  while (Temporal.PlainDate.compare(currentDay.toPlainDate(), endDate.toPlainDate()) < 0) {
+  while (Temporal.ZonedDateTime.compare(currentDay, endDate) < 0) {
     const startOfCurrentDay = currentDay.with({ hour: 0, minute: 0, second: 0, millisecond: 0 });
     const endOfCurrentDay = currentDay.with({ hour: 23, minute: 59, second: 59, millisecond: 999 });
 

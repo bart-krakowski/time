@@ -241,20 +241,13 @@ describe('useCalendar', () => {
     expect(weeks.find((week) => week.some((day) => day?.isToday))?.find((day) => day?.isToday)?.date.toString()).toBe('2024-06-01');
   });
 
-  test('should return the correct day names based on weekStartsOn', () => {
+  test('should return the correct day names based on the locale', () => {
     const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'month' }, locale: 'en-US', weekStartsOn: 1 })
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' }, locale: 'en-US' })
     );
 
     const { daysNames } = result.current;
     expect(daysNames).toEqual(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
-
-    const { result: resultSundayStart } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'month' }, locale: 'en-US', weekStartsOn: 7 })
-    );
-
-    const { daysNames: sundayDaysNames } = resultSundayStart.current;
-    expect(sundayDaysNames).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
   });
 
   test('should correctly mark days as in current period', () => {
@@ -354,18 +347,5 @@ describe('useCalendar', () => {
     expect(weeks).toHaveLength(5);
     expect(weeks[0]?.[0]?.date.toString()).toBe('2024-05-27');
     expect(weeks[4]?.[6]?.date.toString()).toBe('2024-06-30');
-  });
-
-  test('should group days by weeks correctly when weekStartsOn is Sunday', () => {
-    const { result } = renderHook(() =>
-      useCalendar({ events, viewMode: { value: 1, unit: 'month' }, locale: 'en-US', weekStartsOn: 7 })
-    );
-
-    const { days, groupDaysBy } = result.current;
-    const weeks = groupDaysBy({ days, unit: 'week' });
-
-    expect(weeks).toHaveLength(6);
-    expect(weeks[0]?.[0]?.date.toString()).toBe('2024-05-26');
-    expect(weeks[4]?.[6]?.date.toString()).toBe('2024-06-29');
   });
 });
