@@ -22,9 +22,9 @@ export interface ViewMode {
 export interface CalendarCoreOptions<TEvent extends Event = Event> {
   events?: TEvent[] | null;
   viewMode: CalendarState['viewMode'];
-  locale?: string;
-  timeZone?: string;
-  calendar?: string;
+  locale?: Intl.UnicodeBCP47LocaleIdentifier;
+  timeZone?: Temporal.TimeZoneLike;
+  calendar?: Temporal.CalendarLike;
 }
 
 export interface CalendarApi<TEvent extends Event> {
