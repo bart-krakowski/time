@@ -10,7 +10,7 @@ export interface TimeCoreOptions {
   timeZone?: Temporal.TimeZoneLike
 }
 
-interface TimeState {
+export interface TimeState {
   /**
    * The current time.
    * @default Temporal.Now.zonedDateTimeISO()
@@ -20,17 +20,17 @@ interface TimeState {
   currentTime: Temporal.ZonedDateTime
 }
 
-export abstract class TimeCore {
-  protected store: Store<TimeState>
+export abstract class TimeCore<TState extends TimeState> {
+  protected store: Store<TState>
   protected interval: NodeJS.Timeout | null = null
   protected timeZone: Temporal.TimeZoneLike
 
   constructor(options: TimeCoreOptions = {}) {
     const defaultTimeZone = getDefaultTimeZone()
     this.timeZone = options.timeZone || defaultTimeZone
-    this.store = new Store<TimeState>({
+    this.store = new Store<TState>({
       currentTime: Temporal.Now.zonedDateTimeISO(this.timeZone),
-    })
+    } as TState)
     this.updateCurrentTime()
   }
 
