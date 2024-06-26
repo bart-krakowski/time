@@ -17,39 +17,43 @@ The `CalendarCore` class provides a set of functionalities for managing calendar
 #### Parameters
 
 - `weekStartsOn?: number`
-  - An optional number that specifies the day of the week that the calendar should start on. It defaults to 1 (Monday).
+An optional number that specifies the day of the week that the calendar should start on. It defaults to 1 (Monday).
 - `events?: TEvent[]`
-  - An optional array of events that the calendar should display.
+An optional array of events that the calendar should display.
 - `viewMode: ViewMode`
-  - An object that specifies the initial view mode of the calendar.
+An object that specifies the initial view mode of the calendar.
 - `locale?: Parameters<Temporal.PlainDate['toLocaleString']>['0']`
-  - An optional string that specifies the locale to use for formatting dates and times.
+An optional string that specifies the locale to use for formatting dates and times.
+- `timeZone?: Temporal.TimeZoneLike`
+Optional time zone specification for the calendar.
+- `calendar?: Temporal.CalendarLike`
+Optional calendar system to be used.
 
 
 #### Returns
 
 - `getDaysWithEvents(): Array<Day<TEvent>>`
-  - Returns an array of days in the current period with their associated events.
+Returns an array of days in the current period with their associated events.
 - `getDaysNames(): string[]`
-  - Returns an array of strings representing the names of the days of the week based on the locale and week start day.
-- `changeViewMode(newViewMode: ViewMode): void`
-  - Changes the view mode of the calendar.
+Returns an array of strings representing the names of the days of the week based on the locale and week start day.
+- `changeViewMode(newViewMode: CalendarStore['viewMode']): void`
+Changes the view mode of the calendar.
 - `goToPreviousPeriod(): void`
-  - Navigates to the previous period based on the current view mode.
+Navigates to the previous period based on the current view mode.
 - `goToNextPeriod(): void`
-  - Navigates to the next period based on the current view mode.
+Navigates to the next period based on the current view mode.
 - `goToCurrentPeriod(): void`
-  - Navigates to the current period.
+Navigates to the current period.
 - `goToSpecificPeriod(date: Temporal.PlainDate): void`
-  - Navigates to a specific period based on the provided date.
+Navigates to a specific period based on the provided date.
 - `updateCurrentTime(): void`
-  - Updates the current time.
+Updates the current time.
 - `getEventProps(id: Event['id']): { style: CSSProperties } | null`
-  - Retrieves the style properties for a specific event based on its ID.
+Retrieves the style properties for a specific event based on its ID.
 - `getCurrentTimeMarkerProps(): { style: CSSProperties; currentTime: string | undefined }`
-  - Retrieves the style properties and current time for the current time marker.
+Retrieves the style properties and current time for the current time marker.
 - `groupDaysBy(props: Omit<GroupDaysByProps<TEvent>, 'weekStartsOn'>): (Day<TEvent> | null)[][]`
-  - Groups the days in the current period by a specified unit. The fillMissingDays parameter can be used to fill in missing days with previous or next month's days.
+Groups the days in the current period by a specified unit. The fillMissingDays parameter can be used to fill in missing days with previous or next month's days.
 
 
 #### Example Usage
@@ -80,10 +84,11 @@ const events: MyEvent[] = [
 ];
 
 const calendarCore = new CalendarCore<MyEvent>({
-  weekStartsOn: 1,
   viewMode: { value: 1, unit: 'month' },
   events,
   locale: 'en-US',
+  timeZone: 'America/New_York',
+  calendar: 'gregory',
 });
 
 // Get days with events
