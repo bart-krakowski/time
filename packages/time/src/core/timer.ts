@@ -11,7 +11,19 @@ interface TimerOptions extends TimeCoreOptions {
   /**
    * A callback that is called when the timer finishes.
    */
-  onFinished?: () => void
+  onFinish?: () => void
+  /**
+   * A callback that is called when the timer finishes.
+   */
+  onStart?: () => void
+  /**
+   * A callback that is called when the timer stops.
+   */
+  onStop?: () => void
+  /**
+   * A callback that is called when the timer resets.
+   */
+  onReset?: () => void
 }
 
 interface TimerState extends TimeState {
@@ -68,6 +80,7 @@ export class Timer extends TimeCore<TimerState> implements TimerActions {
         isRunning: true,
       }))
       this.startUpdatingTime(1000)
+      this.options.onStart?.()
     }
   }
 
@@ -78,6 +91,7 @@ export class Timer extends TimeCore<TimerState> implements TimerActions {
         isRunning: false,
       }))
       this.stopUpdatingTime()
+      this.options.onStop?.()
     }
   }
 
@@ -87,6 +101,7 @@ export class Timer extends TimeCore<TimerState> implements TimerActions {
       ...prev,
       remainingTime: this.options.initialTime,
     }))
+    this.options.onReset?.()
   }
 
   protected updateCurrentTime() {
@@ -98,7 +113,7 @@ export class Timer extends TimeCore<TimerState> implements TimerActions {
       }))
       if (this.store.state.remainingTime <= 0) {
         this.stop()
-        this.options.onFinished?.()
+        this.options.onFinish?.()
       }
     }
   }
