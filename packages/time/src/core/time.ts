@@ -21,9 +21,9 @@ export interface TimeState {
 }
 
 export abstract class TimeCore<TState extends TimeState> {
-  protected store: Store<TState>
-  protected interval: NodeJS.Timeout | null = null
-  protected timeZone: Temporal.TimeZoneLike
+  store: Store<TState>
+  interval: NodeJS.Timeout | null = null
+  timeZone: Temporal.TimeZoneLike
 
   constructor(options: TimeCoreOptions = {}) {
     const defaultTimeZone = getDefaultTimeZone()

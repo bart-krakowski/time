@@ -2,7 +2,7 @@ import { Store } from '@tanstack/store'
 import { TimeCore } from './time'
 import type { TimeCoreOptions, TimeState } from './time'
 
-interface TimerOptions extends TimeCoreOptions {
+export interface TimerOptions extends TimeCoreOptions {
   /**
    * The initial time for the timer.
    * @default 0
