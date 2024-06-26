@@ -82,10 +82,11 @@ const CalendarComponent = ({ events }) => {
     getCurrentTimeMarkerProps,
     groupDaysBy,
   } = useCalendar({
-    weekStartsOn: 1,
     viewMode: { value: 1, unit: 'month' },
+    events,
     locale: 'en-US',
-    onChangeViewMode: (newViewMode) => console.log('View mode changed:', newViewMode),
+    timeZone: 'America/New_York',
+    calendar: 'gregory',
   });
 
   return (
