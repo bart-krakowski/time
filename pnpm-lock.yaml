@@ -150,6 +150,9 @@ importers:
 
   packages/react-time:
     dependencies:
+      '@tanstack/react-store':
+        specifier: ^0.5.2
+        version: 0.5.2(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/time':
         specifier: workspace:*
         version: link:../time
@@ -3307,8 +3310,24 @@ packages:
       - vite
     dev: true
 
+  /@tanstack/react-store@0.5.2(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-qzYy3ov/U/QZV8MX4zpStlp0Wwj91dmz7faVQwyLZLHiZp1VbOC5WfbUfbkKz9waL6MecZLKvosYVbgxz8Ty7Q==}
+    peerDependencies:
+      react: ^17.0.0 || ^18.0.0
+      react-dom: ^17.0.0 || ^18.0.0
+    dependencies:
+      '@tanstack/store': 0.5.2
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
+
   /@tanstack/store@0.4.1:
     resolution: {integrity: sha512-NvW3MomYSTzQK61AWdtWNIhWgszXFZDRgCNlvSDw/DBaoLqJIlZ0/gKLsditA8un/BGU1NR06+j0a/UNLgXA+Q==}
+    dev: false
+
+  /@tanstack/store@0.5.2:
+    resolution: {integrity: sha512-t3vR/nzKnixSmJcSjAULL4mlK6hApsC/pFNjwhLTgJJuWzGQaEjcaQvWfyD3LTVm4wljIL0gWW9cZ7Zrqb1bPQ==}
     dev: false
 
   /@testing-library/dom@9.3.4:
