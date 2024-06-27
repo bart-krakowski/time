@@ -7,7 +7,7 @@ export interface TimerOptions extends TimeCoreOptions {
    * The initial time for the timer.
    * @default 0
    */
-  initialTime: number
+  initialTime?: number
   /**
    * A callback that is called when the timer finishes.
    */
@@ -67,7 +67,7 @@ export class Timer extends TimeCore<TimerState> implements TimerActions {
     super(options)
     this.options = options
     this.store = new Store<TimerState>({
-      remainingTime: options.initialTime,
+      remainingTime: options.initialTime || 0,
       isRunning: false,
       currentTime: this.store.state.currentTime,
     })
@@ -99,7 +99,7 @@ export class Timer extends TimeCore<TimerState> implements TimerActions {
     this.stop()
     this.store.setState((prev) => ({
       ...prev,
-      remainingTime: this.options.initialTime,
+      remainingTime: this.options.initialTime || 0,
     }))
     this.options.onReset?.()
   }

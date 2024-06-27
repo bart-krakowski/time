@@ -2,7 +2,6 @@ import { useStore } from '@tanstack/react-store'
 import { Timer, type TimerApi, type TimerOptions } from '@tanstack/time'
 import { useCallback, useState } from 'react'
 
-
 export const useTimer = (options: TimerOptions): TimerApi => {
   const [timer] = useState(() => new Timer(options))
   const state = useStore(timer.store)
