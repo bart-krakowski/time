@@ -10,8 +10,8 @@ export const getEventProps = (
   const event = [...eventMap.values()].flat().find((currEvent) => currEvent.id === id);
   if (!event) return null;
 
-  const eventStartDate = Temporal.ZonedDateTime.from(event.startDate);
-  const eventEndDate = Temporal.ZonedDateTime.from(event.endDate);
+  const eventStartDate = Temporal.ZonedDateTime.from(event.start);
+  const eventEndDate = Temporal.ZonedDateTime.from(event.end);
   const isSplitEvent = Temporal.PlainDate.compare(eventStartDate.toPlainDate(), eventEndDate.toPlainDate()) !== 0;
 
   let percentageOfDay;
@@ -37,8 +37,8 @@ export const getEventProps = (
   const eventHeight = Math.min((eventHeightInMinutes / (24 * 60)) * 100, 20);
 
   const overlappingEvents = [...eventMap.values()].flat().filter((e) => {
-    const eStartDate = Temporal.ZonedDateTime.from(e.startDate);
-    const eEndDate = Temporal.ZonedDateTime.from(e.endDate);
+    const eStartDate = Temporal.ZonedDateTime.from(e.start);
+    const eEndDate = Temporal.ZonedDateTime.from(e.end);
     return (
       (e.id !== id &&
         Temporal.ZonedDateTime.compare(eventStartDate, eStartDate) >= 0 &&

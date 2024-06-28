@@ -16,14 +16,14 @@ describe('CalendarCore', () => {
       events: [
         {
           id: '1',
-          startDate: Temporal.PlainDateTime.from('2023-06-10T09:00'),
-          endDate: Temporal.PlainDateTime.from('2023-06-10T10:00'),
+          start: Temporal.PlainDateTime.from('2023-06-10T09:00'),
+          end: Temporal.PlainDateTime.from('2023-06-10T10:00'),
           title: 'Event 1',
         },
         {
           id: '2',
-          startDate: Temporal.PlainDateTime.from('2023-06-12T11:00'),
-          endDate: Temporal.PlainDateTime.from('2023-06-12T12:00'),
+          start: Temporal.PlainDateTime.from('2023-06-12T11:00'),
+          end: Temporal.PlainDateTime.from('2023-06-12T12:00'),
           title: 'Event 2',
         },
       ],

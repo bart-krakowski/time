@@ -189,27 +189,27 @@ export class CalendarCore<TEvent extends Event>
     const map = new Map<string, TEvent[]>()
     this.options.events?.forEach((event) => {
       const eventStartDate =
-        event.startDate instanceof Temporal.PlainDateTime
-          ? event.startDate.toZonedDateTime(this.options.timeZone)
-          : event.startDate
+        event.start instanceof Temporal.PlainDateTime
+          ? event.start.toZonedDateTime(this.options.timeZone)
+          : event.start
       const eventEndDate =
-        event.endDate instanceof Temporal.PlainDateTime
-          ? event.endDate.toZonedDateTime(this.options.timeZone)
-          : event.endDate
+        event.end instanceof Temporal.PlainDateTime
+          ? event.end.toZonedDateTime(this.options.timeZone)
+          : event.end
       if (Temporal.ZonedDateTime.compare(eventStartDate, eventEndDate) !== 0) {
         const splitEvents = splitMultiDayEvents<TEvent>(
           event,
           this.options.timeZone,
         )
         splitEvents.forEach((splitEvent) => {
-          const splitKey = splitEvent.startDate.toString().split('T')[0]
+          const splitKey = splitEvent.start.toString().split('T')[0]
           if (splitKey) {
             if (!map.has(splitKey)) map.set(splitKey, [])
             map.get(splitKey)?.push(splitEvent)
           }
         })
       } else {
-        const eventKey = event.startDate.toString().split('T')[0]
+        const eventKey = event.start.toString().split('T')[0]
         if (eventKey) {
           if (!map.has(eventKey)) map.set(eventKey, [])
           map.get(eventKey)?.push(event)
