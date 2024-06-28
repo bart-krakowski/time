@@ -13,7 +13,6 @@ export interface CalendarStore {
     value: number
     unit: 'month' | 'week' | 'day'
   }
-  currentTime: Temporal.PlainDateTime
 }
 
 export type Day<TEvent extends Event = Event> = {

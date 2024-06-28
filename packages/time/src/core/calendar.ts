@@ -61,11 +61,6 @@ interface CalendarActions<TEvent extends Event> {
   changeViewMode: (newViewMode: CalendarStore['viewMode']) => void
   /** Retrieves styling properties for a specific event, identified by ID. */
   getEventProps: (id: Event['id']) => { style: CSSProperties } | null
-  /** Provides properties for the marker indicating the current time. */
-  getCurrentTimeMarkerProps: () => {
-    style: CSSProperties
-    currentTime: string | undefined
-  }
   /** Groups days by a specified unit. */
   groupDaysBy: (
     props: Omit<GroupDaysByProps<TEvent>, 'weekStartsOn'>,
@@ -77,8 +72,6 @@ interface CalendarState<TEvent extends Event> {
   currentPeriod: CalendarStore['currentPeriod']
   /** The current view mode of the calendar. */
   viewMode: CalendarStore['viewMode']
-  /** The current date and time according to the calendar's time zone. */
-  currentTime: CalendarStore['currentTime']
   /** An array of days, each potentially containing events. */
   days: Array<Day<TEvent>>
   /** An array of names for the days of the week, localized to the calendar's locale. */
@@ -115,7 +108,6 @@ export class CalendarCore<TEvent extends Event>
         this.options.calendar,
       ),
       viewMode: options.viewMode,
-      currentTime: Temporal.Now.plainDateTimeISO(this.options.timeZone),
     })
   }
 
@@ -350,36 +342,8 @@ export class CalendarCore<TEvent extends Event>
     }))
   }
 
-  updateCurrentTime() {
-    this.store.setState((prev) => ({
-      ...prev,
-      currentTime: Temporal.Now.plainDateTimeISO(),
-    }))
-  }
-
   getEventProps(id: Event['id']) {
     return getEventProps(this.getEventMap(), id, this.store.state)
-  }
-
-  getCurrentTimeMarkerProps(): {
-    style: CSSProperties
-    currentTime: string | undefined
-  } {
-    const { hour, minute } = this.store.state.currentTime
-    const currentTimeInMinutes = hour * 60 + minute
-    const percentageOfDay = (currentTimeInMinutes / (24 * 60)) * 100
-
-    return {
-      style: {
-        position: 'absolute',
-        top: `${percentageOfDay}%`,
-        left: 0,
-      },
-      currentTime: this.store.state.currentTime
-        .toString()
-        .split('T')[1]
-        ?.substring(0, 5),
-    }
   }
 
   groupDaysBy({

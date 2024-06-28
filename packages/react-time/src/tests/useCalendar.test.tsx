@@ -1,20 +1,20 @@
 import { Temporal } from '@js-temporal/polyfill'
-import { describe, expect, test, vi } from 'vitest'
-import { act, renderHook, waitFor } from '@testing-library/react'
+import { describe, expect, test } from 'vitest'
+import { act, renderHook } from '@testing-library/react'
 import { useCalendar } from '../useCalendar'
 
 describe('useCalendar', () => {
   const events = [
     {
       id: '1',
-      startDate: Temporal.PlainDateTime.from('2024-06-01T10:00:00'),
-      endDate: Temporal.PlainDateTime.from('2024-06-01T12:00:00'),
+      start: Temporal.PlainDateTime.from('2024-06-01T10:00:00'),
+      end: Temporal.PlainDateTime.from('2024-06-01T12:00:00'),
       title: 'Event 1',
     },
     {
       id: '2',
-      startDate: Temporal.PlainDateTime.from('2024-06-02T14:00:00'),
-      endDate: Temporal.PlainDateTime.from('2024-06-02T16:00:00'),
+      start: Temporal.PlainDateTime.from('2024-06-02T14:00:00'),
+      end: Temporal.PlainDateTime.from('2024-06-02T16:00:00'),
       title: 'Event 2',
     },
   ]
@@ -108,14 +108,14 @@ describe('useCalendar', () => {
     const overlappingEvents = [
       {
         id: '1',
-        startDate: Temporal.PlainDateTime.from('2024-06-01T10:00:00'),
-        endDate: Temporal.PlainDateTime.from('2024-06-01T12:00:00'),
+        start: Temporal.PlainDateTime.from('2024-06-01T10:00:00'),
+        end: Temporal.PlainDateTime.from('2024-06-01T12:00:00'),
         title: 'Event 1',
       },
       {
         id: '2',
-        startDate: Temporal.PlainDateTime.from('2024-06-01T11:00:00'),
-        endDate: Temporal.PlainDateTime.from('2024-06-01T13:00:00'),
+        start: Temporal.PlainDateTime.from('2024-06-01T11:00:00'),
+        end: Temporal.PlainDateTime.from('2024-06-01T13:00:00'),
         title: 'Event 2',
       },
     ]
@@ -148,82 +148,6 @@ describe('useCalendar', () => {
       },
     })
   })
-
-  test('should return the correct props for the current time marker', () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date('2024-06-01T11:00:00'));
-    const { result } = renderHook(() =>
-      useCalendar({ viewMode: { value: 1, unit: 'week' } }),
-    );
-
-    const getCurrentTimeMarkerProps = result.current.getCurrentTimeMarkerProps();
-
-    expect(getCurrentTimeMarkerProps).toEqual({
-      style: {
-        position: 'absolute',
-        top: '45.83333333333333%',
-        left: 0,
-      },
-      currentTime: '11:00',
-    });
-  });
-
-  test('should update the current time marker props after time passes', () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date('2024-06-01T11:00:00'));
-    const { result } = renderHook(() =>
-      useCalendar({ viewMode: { value: 1, unit: 'week' } }),
-    );
-
-    const currentTimeMarkerProps = result.current.getCurrentTimeMarkerProps();
-
-    expect(currentTimeMarkerProps).toEqual({
-      style: {
-        position: 'absolute',
-        top: '45.83333333333333%',
-        left: 0,
-      },
-      currentTime: '11:00',
-    });
-
-    act(() => {
-      vi.advanceTimersByTime(60000);
-    });
-
-    waitFor(() => {
-      expect(currentTimeMarkerProps).toEqual({
-        style: {
-          position: 'absolute',
-          top: '45.90277777777778%',
-          left: 0,
-        },
-        currentTime: '11:01',
-      });
-    });
-  });
-
-  test('should update the current time marker props after time passes when the next minute is in less than a minute', () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date('2024-06-01T11:00:55'));
-
-    const { result } = renderHook(() => useCalendar({ viewMode: { value: 1, unit: 'week' } }));
-    const currentTimeMarkerProps = result.current.getCurrentTimeMarkerProps();
-
-    act(() => {
-      vi.advanceTimersByTime(5000);
-    })
-
-    waitFor(() => {
-      expect(currentTimeMarkerProps).toEqual({
-        style: {
-          position: 'absolute',
-          top: '45.90277777777778%',
-          left: 0,
-        },
-        currentTime: '11:01',
-      });
-    })
-  });
 
   test('should render array of days', () => {
     const { result } = renderHook(() =>

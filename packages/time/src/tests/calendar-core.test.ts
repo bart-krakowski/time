@@ -87,47 +87,6 @@ describe('CalendarCore', () => {
     expect(calendarCore.store.state.currentPeriod).toEqual(specificDate);
   });
 
-  test('should update current time correctly', () => {
-    const initialTime = calendarCore.store.state.currentTime;
-    const newMockDateTime = initialTime.add({ minutes: 1 });
-    vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(newMockDateTime);
-
-    calendarCore.updateCurrentTime();
-    const updatedTime = calendarCore.store.state.currentTime;
-    expect(updatedTime).toEqual(newMockDateTime);
-  });
-
-  test('should return the correct props for the current time marker', () => {
-    vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(Temporal.PlainDateTime.from('2024-06-01T11:00:00'));
-
-    const coreOptions: CalendarCoreOptions<Event> = {
-      viewMode: { value: 1, unit: 'week' },
-      events: [],
-      timeZone: mockTimeZone,
-    };
-    calendarCore = new CalendarCore(coreOptions);
-
-    const currentTimeMarkerProps = calendarCore.getCurrentTimeMarkerProps();
-
-    expect(currentTimeMarkerProps).toEqual({
-      style: {
-        position: 'absolute',
-        top: '45.83333333333333%',
-        left: 0,
-      },
-      currentTime: '11:00',
-    });
-  });
-
-  test('should update the current time', () => {
-    const initialTime = calendarCore.store.state.currentTime;
-    const newMockDateTime = initialTime.add({ minutes: 1 });
-    vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(newMockDateTime);
-
-    calendarCore.updateCurrentTime();
-    expect(calendarCore.store.state.currentTime).toEqual(newMockDateTime);
-  });
-
   test('should group days correctly', () => {
     const daysWithEvents = calendarCore.getDaysWithEvents();
     const groupedDays = calendarCore.groupDaysBy({ days: daysWithEvents, unit: 'month' });
