@@ -1,17 +1,17 @@
 import { Temporal } from "@js-temporal/polyfill";
 import type { Properties as CSSProperties } from "csstype";
-import type { CalendarState, Event } from "./types";
+import type { CalendarStore, Event } from "./types";
 
 export const getEventProps = (
   eventMap: Map<string, Event[]>,
   id: Event['id'],
-  state: CalendarState
+  state: CalendarStore,
 ): { style: CSSProperties } | null => {
   const event = [...eventMap.values()].flat().find((currEvent) => currEvent.id === id);
   if (!event) return null;
 
-  const eventStartDate = Temporal.PlainDateTime.from(event.startDate);
-  const eventEndDate = Temporal.PlainDateTime.from(event.endDate);
+  const eventStartDate = Temporal.ZonedDateTime.from(event.startDate);
+  const eventEndDate = Temporal.ZonedDateTime.from(event.endDate);
   const isSplitEvent = Temporal.PlainDate.compare(eventStartDate.toPlainDate(), eventEndDate.toPlainDate()) !== 0;
 
   let percentageOfDay;
@@ -37,18 +37,18 @@ export const getEventProps = (
   const eventHeight = Math.min((eventHeightInMinutes / (24 * 60)) * 100, 20);
 
   const overlappingEvents = [...eventMap.values()].flat().filter((e) => {
-    const eStartDate = Temporal.PlainDateTime.from(e.startDate);
-    const eEndDate = Temporal.PlainDateTime.from(e.endDate);
+    const eStartDate = Temporal.ZonedDateTime.from(e.startDate);
+    const eEndDate = Temporal.ZonedDateTime.from(e.endDate);
     return (
       (e.id !== id &&
-        Temporal.PlainDateTime.compare(eventStartDate, eStartDate) >= 0 &&
-        Temporal.PlainDateTime.compare(eventStartDate, eEndDate) <= 0) ||
-      (Temporal.PlainDateTime.compare(eventEndDate, eStartDate) >= 0 &&
-        Temporal.PlainDateTime.compare(eventEndDate, eEndDate) <= 0) ||
-      (Temporal.PlainDateTime.compare(eStartDate, eventStartDate) >= 0 &&
-        Temporal.PlainDateTime.compare(eStartDate, eventEndDate) <= 0) ||
-      (Temporal.PlainDateTime.compare(eEndDate, eventStartDate) >= 0 &&
-        Temporal.PlainDateTime.compare(eEndDate, eventEndDate) <= 0)
+        Temporal.ZonedDateTime.compare(eventStartDate, eStartDate) >= 0 &&
+        Temporal.ZonedDateTime.compare(eventStartDate, eEndDate) <= 0) ||
+      (Temporal.ZonedDateTime.compare(eventEndDate, eStartDate) >= 0 &&
+        Temporal.ZonedDateTime.compare(eventEndDate, eEndDate) <= 0) ||
+      (Temporal.ZonedDateTime.compare(eStartDate, eventStartDate) >= 0 &&
+        Temporal.ZonedDateTime.compare(eStartDate, eventEndDate) <= 0) ||
+      (Temporal.ZonedDateTime.compare(eEndDate, eventStartDate) >= 0 &&
+        Temporal.ZonedDateTime.compare(eEndDate, eventEndDate) <= 0)
     );
   });
 
