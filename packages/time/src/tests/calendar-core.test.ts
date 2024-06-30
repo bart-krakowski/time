@@ -4,8 +4,8 @@ import { CalendarCore } from '../core/calendar';
 import type { CalendarCoreOptions, Event } from '../core/calendar';
 
 describe('CalendarCore', () => {
-  let options: CalendarCoreOptions<Event>;
-  let calendarCore: CalendarCore<Event>;
+  let options: CalendarCoreOptions<string, Event<string>>;
+  let calendarCore: CalendarCore<string, Event<string>>;
   const mockDate = Temporal.PlainDate.from('2023-06-15');
   const mockDateTime = Temporal.PlainDateTime.from('2023-06-15T10:00');
   const mockTimeZone = 'America/New_York';

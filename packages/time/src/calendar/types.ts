@@ -1,11 +1,13 @@
-import type { Temporal } from "@js-temporal/polyfill"
+import type { Temporal } from '@js-temporal/polyfill'
 
-export interface Event<TResource extends string = string> {
-  id: string;
-  start: Temporal.PlainDateTime | Temporal.ZonedDateTime;
-  end: Temporal.PlainDateTime | Temporal.ZonedDateTime;
-  title: string;
-  resources?: TResource[];
+export type Resource = string | null
+
+export interface Event<TResource extends Resource = Resource> {
+  id: string
+  start: Temporal.PlainDateTime | Temporal.ZonedDateTime
+  end: Temporal.PlainDateTime | Temporal.ZonedDateTime
+  title: string
+  resources?: TResource[]
 }
 
 export interface CalendarStore {
@@ -16,7 +18,10 @@ export interface CalendarStore {
   }
 }
 
-export type Day<TEvent extends Event = Event> = {
+export type Day<
+  TResource extends string | null = null,
+  TEvent extends Event<TResource> = Event<TResource>,
+> = {
   date: Temporal.PlainDate
   events: TEvent[]
   isToday: boolean

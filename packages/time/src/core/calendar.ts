@@ -8,7 +8,7 @@ import { groupDaysBy } from '../calendar/groupDaysBy'
 import { getDateDefaults } from '../utils/dateDefaults'
 import type { Properties as CSSProperties } from 'csstype'
 import type { GroupDaysByProps } from '../calendar/groupDaysBy'
-import type { CalendarStore, Day, Event } from '../calendar/types'
+import type { CalendarStore, Day, Event, Resource } from '../calendar/types'
 
 import './weekInfoPolyfill'
 
@@ -30,7 +30,7 @@ export interface ViewMode {
  * of events, locale, time zone, and the calendar system.
  * @template TEvent - Specifies the event type, extending a base Event type.
  */
-export interface CalendarCoreOptions<TResource extends string, TEvent extends Event<TResource>> {
+export interface CalendarCoreOptions<TResource extends Resource, TEvent extends Event<TResource>> {
   /** An optional array of events to be handled by the calendar. */
   events?: TEvent[] | null
   /** The initial view mode configuration of the calendar. */
@@ -42,7 +42,7 @@ export interface CalendarCoreOptions<TResource extends string, TEvent extends Ev
   /** Optional calendar system to be used. */
   calendar?: Temporal.CalendarLike
   /** Optional resources to be used in the calendar. */
-  resources?: TResource[]
+  resources?: TResource[] | null
 }
 
 /**
@@ -50,7 +50,7 @@ export interface CalendarCoreOptions<TResource extends string, TEvent extends Ev
  * and manipulation of its settings and data.
  * @template TEvent - The type of events handled by the calendar.
  */
-interface CalendarActions<TEvent extends Event> {
+interface CalendarActions<TResource extends string, TEvent extends Event<TResource>> {
   /** Navigates to the previous period according to the current view mode. */
   goToPreviousPeriod: () => void
   /** Navigates to the next period according to the current view mode. */
@@ -65,37 +65,37 @@ interface CalendarActions<TEvent extends Event> {
   getEventProps: (id: Event['id']) => { style: CSSProperties } | null
   /** Groups days by a specified unit. */
   groupDaysBy: (
-    props: Omit<GroupDaysByProps<TEvent>, 'weekStartsOn'>,
-  ) => (Day<TEvent> | null)[][]
+    props: Omit<GroupDaysByProps<TResource, TEvent>, 'weekStartsOn'>,
+  ) => (Day<TResource, TEvent> | null)[][]
 }
 
-interface CalendarState<TEvent extends Event> {
+interface CalendarState<TResource extends string, TEvent extends Event<TResource>> {
   /** The currently focused date period in the calendar. */
   currentPeriod: CalendarStore['currentPeriod']
   /** The current view mode of the calendar. */
   viewMode: CalendarStore['viewMode']
   /** An array of days, each potentially containing events. */
-  days: Array<Day<TEvent>>
+  days: Array<Day<TResource, TEvent>>
   /** An array of names for the days of the week, localized to the calendar's locale. */
   daysNames: string[]
 }
 
-export interface CalendarApi<TEvent extends Event>
-  extends CalendarActions<TEvent>,
-    CalendarState<TEvent> {}
+export interface CalendarApi<TResource extends string, TEvent extends Event<TResource>>
+  extends CalendarActions<TResource, TEvent>,
+    CalendarState<TResource, TEvent> {}
 
 /**
  * Core functionality for a calendar system, managing the state and operations of the calendar,
  * such as navigating through time periods, handling events, and adjusting settings.
  * @template TEvent - The type of events managed by the calendar.
  */
-export class CalendarCore<TEvent extends Event>
-  implements CalendarActions<TEvent>
+export class CalendarCore<TResource extends string, TEvent extends Event<TResource>>
+  implements CalendarActions<TResource, TEvent>
 {
   store: Store<CalendarStore>
-  options: Required<CalendarCoreOptions<TEvent>>
+  options: Required<CalendarCoreOptions<TResource, TEvent>>
 
-  constructor(options: CalendarCoreOptions<TEvent>) {
+  constructor(options: CalendarCoreOptions<TResource, TEvent>) {
     const defaults = getDateDefaults()
     this.options = {
       ...options,
@@ -103,6 +103,7 @@ export class CalendarCore<TEvent extends Event>
       timeZone: options.timeZone || defaults.timeZone,
       calendar: options.calendar || defaults.calendar,
       events: options.events || null,
+      resources: options.resources || null,
     }
 
     this.store = new Store<CalendarStore>({
@@ -191,7 +192,7 @@ export class CalendarCore<TEvent extends Event>
           ? event.end.toZonedDateTime(this.options.timeZone)
           : event.end
       if (Temporal.ZonedDateTime.compare(eventStartDate, eventEndDate) !== 0) {
-        const splitEvents = splitMultiDayEvents<TEvent>(
+        const splitEvents = splitMultiDayEvents<TResource, TEvent>(
           event,
           this.options.timeZone,
         )
@@ -352,12 +353,12 @@ export class CalendarCore<TEvent extends Event>
     days,
     unit,
     fillMissingDays = true,
-  }: Omit<GroupDaysByProps<TEvent>, 'weekStartsOn'>) {
-    return groupDaysBy({
+  }: Omit<GroupDaysByProps<TResource, TEvent>, 'weekStartsOn'>) {
+    return groupDaysBy<TResource, TEvent>({
       days,
       unit,
       fillMissingDays,
       weekStartsOn: this.getFirstDayOfWeek().dayOfWeek,
-    } as GroupDaysByProps<TEvent>)
+    } as GroupDaysByProps<TResource, TEvent>)
   }
 }
