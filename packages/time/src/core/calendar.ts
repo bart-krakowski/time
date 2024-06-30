@@ -30,7 +30,7 @@ export interface ViewMode {
  * of events, locale, time zone, and the calendar system.
  * @template TEvent - Specifies the event type, extending a base Event type.
  */
-export interface CalendarCoreOptions<TEvent extends Event = Event> {
+export interface CalendarCoreOptions<TResource extends string, TEvent extends Event<TResource>> {
   /** An optional array of events to be handled by the calendar. */
   events?: TEvent[] | null
   /** The initial view mode configuration of the calendar. */
@@ -41,6 +41,8 @@ export interface CalendarCoreOptions<TEvent extends Event = Event> {
   timeZone?: Temporal.TimeZoneLike
   /** Optional calendar system to be used. */
   calendar?: Temporal.CalendarLike
+  /** Optional resources to be used in the calendar. */
+  resources?: TResource[]
 }
 
 /**
