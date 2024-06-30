@@ -6,13 +6,12 @@ import { splitMultiDayEvents } from '../calendar/splitMultiDayEvents'
 import { getEventProps } from '../calendar/getEventProps'
 import { groupDaysBy } from '../calendar/groupDaysBy'
 import { getDateDefaults } from '../utils/dateDefaults'
-import type { Properties as CSSProperties } from 'csstype'
 import type { GroupDaysByProps } from '../calendar/groupDaysBy'
 import type { CalendarStore, Day, Event, Resource } from '../calendar/types'
 
 import './weekInfoPolyfill'
 
-export type { CalendarStore, Event, Day } from '../calendar/types'
+export type * from '../calendar/types'
 
 /**
  * Represents the configuration for the current viewing mode of a calendar,
@@ -30,7 +29,10 @@ export interface ViewMode {
  * of events, locale, time zone, and the calendar system.
  * @template TEvent - Specifies the event type, extending a base Event type.
  */
-export interface CalendarCoreOptions<TResource extends Resource, TEvent extends Event<TResource>> {
+export interface CalendarCoreOptions<
+  TResource extends Resource,
+  TEvent extends Event<TResource>,
+> {
   /** An optional array of events to be handled by the calendar. */
   events?: TEvent[] | null
   /** The initial view mode configuration of the calendar. */
@@ -50,7 +52,10 @@ export interface CalendarCoreOptions<TResource extends Resource, TEvent extends 
  * and manipulation of its settings and data.
  * @template TEvent - The type of events handled by the calendar.
  */
-interface CalendarActions<TResource extends string, TEvent extends Event<TResource>> {
+interface CalendarActions<
+  TResource extends Resource,
+  TEvent extends Event<TResource>,
+> {
   /** Navigates to the previous period according to the current view mode. */
   goToPreviousPeriod: () => void
   /** Navigates to the next period according to the current view mode. */
@@ -62,14 +67,22 @@ interface CalendarActions<TResource extends string, TEvent extends Event<TResour
   /** Changes the current view mode of the calendar. */
   changeViewMode: (newViewMode: CalendarStore['viewMode']) => void
   /** Retrieves styling properties for a specific event, identified by ID. */
-  getEventProps: (id: Event['id']) => { style: CSSProperties } | null
+  getEventProps: (id: Event['id']) => {
+    eventHeightInMinutes: number
+    isSplitEvent: boolean
+    overlappingEvents: TEvent[]
+  } | null
+
   /** Groups days by a specified unit. */
   groupDaysBy: (
     props: Omit<GroupDaysByProps<TResource, TEvent>, 'weekStartsOn'>,
   ) => (Day<TResource, TEvent> | null)[][]
 }
 
-interface CalendarState<TResource extends string, TEvent extends Event<TResource>> {
+interface CalendarState<
+  TResource extends Resource,
+  TEvent extends Event<TResource>,
+> {
   /** The currently focused date period in the calendar. */
   currentPeriod: CalendarStore['currentPeriod']
   /** The current view mode of the calendar. */
@@ -80,8 +93,10 @@ interface CalendarState<TResource extends string, TEvent extends Event<TResource
   daysNames: string[]
 }
 
-export interface CalendarApi<TResource extends string, TEvent extends Event<TResource>>
-  extends CalendarActions<TResource, TEvent>,
+export interface CalendarApi<
+  TResource extends Resource,
+  TEvent extends Event<TResource>,
+> extends CalendarActions<TResource, TEvent>,
     CalendarState<TResource, TEvent> {}
 
 /**
@@ -89,8 +104,10 @@ export interface CalendarApi<TResource extends string, TEvent extends Event<TRes
  * such as navigating through time periods, handling events, and adjusting settings.
  * @template TEvent - The type of events managed by the calendar.
  */
-export class CalendarCore<TResource extends string, TEvent extends Event<TResource>>
-  implements CalendarActions<TResource, TEvent>
+export class CalendarCore<
+  TResource extends Resource,
+  TEvent extends Event<TResource>,
+> implements CalendarActions<TResource, TEvent>
 {
   store: Store<CalendarStore>
   options: Required<CalendarCoreOptions<TResource, TEvent>>
@@ -346,7 +363,11 @@ export class CalendarCore<TResource extends string, TEvent extends Event<TResour
   }
 
   getEventProps(id: Event['id']) {
-    return getEventProps(this.getEventMap(), id, this.store.state)
+    return getEventProps(
+      this.getEventMap(),
+      id,
+      this.store.state,
+    ) as ReturnType<CalendarActions<TResource, TEvent>['getEventProps']>
   }
 
   groupDaysBy({

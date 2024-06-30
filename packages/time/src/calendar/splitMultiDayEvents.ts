@@ -1,9 +1,9 @@
 import { Temporal } from '@js-temporal/polyfill'
 import { endOf, startOf } from '../utils'
-import type { Event } from './types'
+import type { Event, Resource } from './types'
 
 export const splitMultiDayEvents = <
-  TResource extends string | null = null,
+  TResource extends Resource = Resource,
   TEvent extends Event<TResource> = Event<TResource>,
 >(
   event: TEvent,

@@ -93,14 +93,9 @@ describe('useCalendar', () => {
     const eventProps = result.current.getEventProps('1')
 
     expect(eventProps).toEqual({
-      style: {
-        position: 'absolute',
-        top: 'min(41.66666666666667%, calc(100% - 55px))',
-        left: '2%',
-        width: '96%',
-        margin: 0,
-        height: '8.333333333333332%',
-      },
+      eventHeightInMinutes: 120,
+      isSplitEvent: false,
+      overlappingEvents: [],
     })
   })
 
@@ -127,25 +122,15 @@ describe('useCalendar', () => {
     const event2Props = result.current.getEventProps('2')
 
     expect(event1Props).toEqual({
-      style: {
-        position: 'absolute',
-        top: 'min(41.66666666666667%, calc(100% - 55px))',
-        left: '2%',
-        width: '47%',
-        margin: 0,
-        height: '8.333333333333332%',
-      },
+      eventHeightInMinutes: 120,
+      isSplitEvent: false,
+      overlappingEvents: overlappingEvents[1]
     })
 
     expect(event2Props).toEqual({
-      style: {
-        position: 'absolute',
-        top: 'min(45.83333333333333%, calc(100% - 55px))',
-        left: '51%',
-        width: '47%',
-        margin: 0,
-        height: '8.333333333333332%',
-      },
+      eventHeightInMinutes: 120,
+      isSplitEvent: false,
+      overlappingEvents: overlappingEvents[0]
     })
   })
 

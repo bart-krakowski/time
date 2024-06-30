@@ -1,12 +1,12 @@
 import { useCallback, useState, useTransition } from 'react'
 import { useStore } from '@tanstack/react-store'
 import { CalendarCore, type Event } from '@tanstack/time'
-import type { CalendarApi, CalendarCoreOptions } from '@tanstack/time'
+import type { CalendarApi, CalendarCoreOptions, Resource } from '@tanstack/time'
 
-export const useCalendar = <TEvent extends Event>(
-  options: CalendarCoreOptions<TEvent>,
-): CalendarApi<TEvent> & { isPending: boolean } => {
-  const [calendarCore] = useState(() => new CalendarCore<TEvent>(options))
+export const useCalendar = <TResource extends Resource, TEvent extends Event<TResource> = Event<TResource>>(
+  options: CalendarCoreOptions<TResource, TEvent>,
+): CalendarApi<TResource, TEvent> & { isPending: boolean } => {
+  const [calendarCore] = useState(() => new CalendarCore<TResource, TEvent>(options))
   const state = useStore(calendarCore.store)
   const [isPending, startTransition] = useTransition()
 

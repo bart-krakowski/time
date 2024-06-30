@@ -19,7 +19,7 @@ export interface CalendarStore {
 }
 
 export type Day<
-  TResource extends string | null = null,
+  TResource extends Resource = Resource,
   TEvent extends Event<TResource> = Event<TResource>,
 > = {
   date: Temporal.PlainDate
