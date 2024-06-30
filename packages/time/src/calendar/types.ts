@@ -1,10 +1,11 @@
 import type { Temporal } from "@js-temporal/polyfill"
 
-export interface Event {
+export interface Event<TResource extends string = string> {
   id: string;
   start: Temporal.PlainDateTime | Temporal.ZonedDateTime;
   end: Temporal.PlainDateTime | Temporal.ZonedDateTime;
   title: string;
+  resources?: TResource[];
 }
 
 export interface CalendarStore {
