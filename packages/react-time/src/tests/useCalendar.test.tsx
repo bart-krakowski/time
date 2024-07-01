@@ -27,7 +27,7 @@ describe('useCalendar', () => {
   beforeEach(() => {
     vi.spyOn(Temporal.Now, 'plainDateISO').mockReturnValue(mockDate);
     vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(mockDateTime);
-    vi.spyOn(Temporal.Now, 'zonedDateTime').mockReturnValue(Temporal.Now.zonedDateTime('gregory',mockTimeZone));
+    vi.spyOn(Temporal.Now, 'zonedDateTime').mockReturnValue(Temporal.Now.zonedDateTime('gregory', mockTimeZone));
     vi.spyOn(Temporal.Now, 'zonedDateTimeISO').mockReturnValue(Temporal.Now.zonedDateTimeISO());
   });
 
@@ -170,6 +170,14 @@ describe('useCalendar', () => {
     const { getDaysNames } = result.current;
     const daysNames = getDaysNames();
     expect(daysNames).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
+
+    const { result: resultPl } = renderHook(() =>
+      useCalendar({ events, viewMode: { value: 1, unit: 'month' }, locale: 'pl' })
+    );
+
+    const { getDaysNames: getDaysNamesPl } = resultPl.current;
+    const daysNamesPl = getDaysNamesPl();
+    expect(daysNamesPl).toEqual(['pon.', 'wt.', 'śr.', 'czw.', 'pt.', 'sob.', 'niedz.']);
   });
 
   test('should correctly mark days as in current period', () => {
@@ -180,13 +188,13 @@ describe('useCalendar', () => {
     const { days } = result.current;
     const weeks = result.current.groupDaysBy({ days, unit: 'week' });
     const daysInCurrentPeriod = weeks.flat().map(day => day?.isInCurrentPeriod);
-
     expect(daysInCurrentPeriod).toEqual([
-      false, false, false, false, false, true, true,
+      false, false, false, false, false, false, true,
       true, true, true, true, true, true, true,
       true, true, true, true, true, true, true,
       true, true, true, true, true, true, true,
-      true, true, true, true, true, true, true
+      true, true, true, true, true, true, true,
+      true, false, false, false, false, false, false
     ]);
   });
 
@@ -266,8 +274,8 @@ describe('useCalendar', () => {
 
     const { days, groupDaysBy } = result.current;
     const weeks = groupDaysBy({ days, unit: 'week' });
-    expect(weeks).toHaveLength(5);
-    expect(weeks[0]?.[0]?.date.toString()).toBe('2024-05-27');
-    expect(weeks[4]?.[6]?.date.toString()).toBe('2024-06-30');
+    expect(weeks).toHaveLength(6);
+    expect(weeks[0]?.[0]?.date.toString()).toBe('2024-05-26');
+    expect(weeks[4]?.[6]?.date.toString()).toBe('2024-06-29');
   });
 });
