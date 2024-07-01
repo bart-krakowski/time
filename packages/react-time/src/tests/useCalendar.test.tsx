@@ -25,7 +25,7 @@ describe('useCalendar', () => {
     )
     expect(result.current.viewMode).toEqual({ value: 1, unit: 'month' })
     expect(result.current.currentPeriod.toString()).toBe(
-      Temporal.Now.plainDateISO().toString(),
+      Temporal.Now.plainDateISO().withCalendar('gregory').toString(),
     )
   })
 
@@ -155,8 +155,9 @@ describe('useCalendar', () => {
       useCalendar({ events, viewMode: { value: 1, unit: 'month' }, locale: 'en-US' })
     );
 
-    const { daysNames } = result.current;
-    expect(daysNames).toEqual(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+    const { getDaysNames } = result.current;
+    const daysNames = getDaysNames();
+    expect(daysNames).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
   });
 
   test('should correctly mark days as in current period', () => {

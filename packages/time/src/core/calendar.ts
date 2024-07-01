@@ -72,6 +72,8 @@ interface CalendarActions<
     isSplitEvent: boolean
     overlappingEvents: TEvent[]
   } | null
+  /** Retrieves the names of the days of the week, based on the current locale. */
+  getDaysNames: (weekday?: 'long' | 'short') => string[]
 
   /** Groups days by a specified unit. */
   groupDaysBy: (
@@ -89,8 +91,6 @@ interface CalendarState<
   viewMode: CalendarStore['viewMode']
   /** An array of days, each potentially containing events. */
   days: Array<Day<TResource, TEvent>>
-  /** An array of names for the days of the week, localized to the calendar's locale. */
-  daysNames: string[]
 }
 
 export interface CalendarApi<
@@ -252,13 +252,15 @@ export class CalendarCore<
     })
   }
 
-  getDaysNames() {
-    const baseDate = Temporal.PlainDate.from('2024-01-01')
+  getDaysNames(weekday: 'long' | 'short' = 'short') {
+    const baseDate = Temporal.PlainDate.from('2024-01-01');
+    const firstDayOfWeek = this.getFirstDayOfWeek().dayOfWeek;
+
     return Array.from({ length: 7 }).map((_, i) =>
       baseDate
-        .add({ days: (i + (this.getFirstDayOfWeek().dayOfWeek + 1)) % 7 })
-        .toLocaleString(this.options.locale, { weekday: 'short' }),
-    )
+        .add({ days: (i + (firstDayOfWeek - 1)) % 7 })
+        .toLocaleString(this.options.locale, { weekday: weekday }),
+    );
   }
 
   changeViewMode(newViewMode: CalendarStore['viewMode']) {

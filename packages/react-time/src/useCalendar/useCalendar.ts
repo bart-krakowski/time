@@ -44,10 +44,12 @@ export const useCalendar = <TResource extends Resource, TEvent extends Event<TRe
 
   const groupDaysBy = useCallback<typeof calendarCore.groupDaysBy>((props) => calendarCore.groupDaysBy(props), [calendarCore])
 
+  const getDaysNames = useCallback<typeof calendarCore.getDaysNames>((props) => calendarCore.getDaysNames(props), [calendarCore])
+
   return {
     ...state,
     days: calendarCore.getDaysWithEvents(),
-    daysNames: calendarCore.getDaysNames(),
+    getDaysNames,
     goToPreviousPeriod,
     goToNextPeriod,
     goToCurrentPeriod,
