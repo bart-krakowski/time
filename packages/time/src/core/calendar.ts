@@ -115,10 +115,8 @@ export class CalendarCore<
   constructor(options: CalendarCoreOptions<TResource, TEvent>) {
     const defaults = getDateDefaults()
     this.options = {
+      ...defaults,
       ...options,
-      locale: options.locale || defaults.locale,
-      timeZone: options.timeZone || defaults.timeZone,
-      calendar: options.calendar || defaults.calendar,
       events: options.events || null,
       resources: options.resources || null,
     }

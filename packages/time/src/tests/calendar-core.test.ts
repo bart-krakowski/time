@@ -26,6 +26,12 @@ describe('CalendarCore', () => {
           end: Temporal.PlainDateTime.from('2023-06-12T12:00'),
           title: 'Event 2',
         },
+        {
+          id: '3',
+          start: Temporal.PlainDateTime.from('2023-06-12T11:00'),
+          end: Temporal.PlainDateTime.from('2023-06-12T13:00'),
+          title: 'Event 3',
+        },
       ],
       timeZone: mockTimeZone,
     };
@@ -52,8 +58,9 @@ describe('CalendarCore', () => {
     const dayWithEvent2 = daysWithEvents.find((day) => day.date.equals(Temporal.PlainDate.from('2023-06-12')));
     expect(dayWithEvent1?.events).toHaveLength(1);
     expect(dayWithEvent1?.events[0]?.id).toBe('1');
-    expect(dayWithEvent2?.events).toHaveLength(1);
+    expect(dayWithEvent2?.events).toHaveLength(2);
     expect(dayWithEvent2?.events[0]?.id).toBe('2');
+    expect(dayWithEvent2?.events[1]?.id).toBe('3');
   });
 
   test('should change view mode correctly', () => {
@@ -108,4 +115,64 @@ describe('CalendarCore', () => {
     expect(calendarCore.store.state.currentPeriod.calendarId).toBe(customCalendar);
     expect(calendarCore.store.state.currentPeriod).toEqual(today);
   });
+
+  test('should return the correct props for an event', () => {
+    const eventProps = calendarCore.getEventProps('1');
+    expect(eventProps).toEqual({
+      eventHeightInMinutes: 60,
+      isSplitEvent: false,
+      overlappingEvents: [],
+    });
+  });
+
+  test('should return the correct props for overlapping events', () => {
+    const event1Props = calendarCore.getEventProps('2');
+    const event2Props = calendarCore.getEventProps('3');
+
+    expect(event1Props).toEqual({
+      eventHeightInMinutes: 60,
+      isSplitEvent: false,
+      overlappingEvents: [options.events![2]],
+    });
+
+    expect(event2Props).toEqual({
+      eventHeightInMinutes: 120,
+      isSplitEvent: false,
+      overlappingEvents: [options.events![1]],
+    });
+  });
+
+  test('should correctly mark days as in current period', () => {
+    const daysWithEvents = calendarCore.getDaysWithEvents();
+    const currentPeriodDays = daysWithEvents.filter(day => day.isInCurrentPeriod);
+    expect(currentPeriodDays).toHaveLength(30);  // Assuming a 30-day month
+  });
+
+  test('should return the correct day names based on the locale', () => {
+    const daysNames = calendarCore.getDaysNames('short');
+    expect(daysNames).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
+  });
+
+  test('should reset to the current period correctly', () => {
+    calendarCore.goToNextPeriod();
+    calendarCore.goToCurrentPeriod();
+    const today = Temporal.Now.plainDateISO();
+    expect(calendarCore.store.state.currentPeriod).toEqual(today);
+  });
+
+  test('should group days by weeks correctly', () => {
+    const daysWithEvents = calendarCore.getDaysWithEvents();
+    const weeks = calendarCore.groupDaysBy({ days: daysWithEvents, unit: 'week' });
+    expect(weeks).toHaveLength(6);
+    expect(weeks[0]?.[0]?.date.toString()).toBe('2023-05-28');
+    expect(weeks[4]?.[6]?.date.toString()).toBe('2023-06-30');
+  });
+
+  test('should group days by months correctly', () => {
+    const daysWithEvents = calendarCore.getDaysWithEvents();
+    const months = calendarCore.groupDaysBy({ days: daysWithEvents, unit: 'month' });
+    expect(months).toHaveLength(1);
+    expect(months[0]?.[0]?.date.toString()).toBe('2023-06-01');
+  });
+
 });
