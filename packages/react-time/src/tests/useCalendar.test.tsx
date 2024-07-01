@@ -19,7 +19,6 @@ describe('useCalendar', () => {
     },
   ]
 
-
   const mockDate = Temporal.PlainDate.from('2024-06-15');
   const mockDateTime = Temporal.PlainDateTime.from('2024-06-15T10:00');
   const mockTimeZone = 'America/New_York';
