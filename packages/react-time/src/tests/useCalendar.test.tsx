@@ -1,5 +1,5 @@
 import { Temporal } from '@js-temporal/polyfill'
-import { describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { act, renderHook } from '@testing-library/react'
 import { useCalendar } from '../useCalendar'
 
@@ -18,6 +18,18 @@ describe('useCalendar', () => {
       title: 'Event 2',
     },
   ]
+
+
+  const mockDate = Temporal.PlainDate.from('2024-06-15');
+  const mockDateTime = Temporal.PlainDateTime.from('2024-06-15T10:00');
+  const mockTimeZone = 'America/New_York';
+
+  beforeEach(() => {
+    vi.spyOn(Temporal.Now, 'plainDateISO').mockReturnValue(mockDate);
+    vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(mockDateTime);
+    vi.spyOn(Temporal.Now, 'zonedDateTime').mockReturnValue(Temporal.Now.zonedDateTime('gregory',mockTimeZone));
+    vi.spyOn(Temporal.Now, 'zonedDateTimeISO').mockReturnValue(Temporal.Now.zonedDateTimeISO());
+  });
 
   test('should initialize with the correct view mode and current period', () => {
     const { result } = renderHook(() =>
@@ -142,12 +154,12 @@ describe('useCalendar', () => {
     const { days } = result.current;
     const weeks = result.current.groupDaysBy({ days, unit: 'week' });
 
-    expect(weeks).toHaveLength(5);
+    expect(weeks).toHaveLength(6);
     expect(weeks[0]).toHaveLength(7);
 
-    expect(weeks[0]?.[0]?.date.toString()).toBe('2024-05-27');
-    expect(weeks[weeks.length - 1]?.[0]?.date.toString()).toBe('2024-06-24');
-    expect(weeks.find((week) => week.some((day) => day?.isToday))?.find((day) => day?.isToday)?.date.toString()).toBe('2024-06-01');
+    expect(weeks[0]?.[0]?.date.toString()).toBe('2024-05-26');
+    expect(weeks[weeks.length - 1]?.[0]?.date.toString()).toBe('2024-06-30');
+    expect(weeks.find((week) => week.some((day) => day?.isToday))?.find((day) => day?.isToday)?.date.toString()).toBe('2024-06-15');
   });
 
   test('should return the correct day names based on the locale', () => {
