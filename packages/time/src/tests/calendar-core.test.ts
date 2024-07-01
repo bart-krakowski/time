@@ -32,6 +32,8 @@ describe('CalendarCore', () => {
     calendarCore = new CalendarCore(options);
     vi.spyOn(Temporal.Now, 'plainDateISO').mockReturnValue(mockDate);
     vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(mockDateTime);
+    vi.spyOn(Temporal.Now, 'zonedDateTime').mockReturnValue(Temporal.Now.zonedDateTime('gregory',mockTimeZone));
+    vi.spyOn(Temporal.Now, 'zonedDateTimeISO').mockReturnValue(Temporal.Now.zonedDateTimeISO());
   });
 
   test('should initialize with the correct current period', () => {
