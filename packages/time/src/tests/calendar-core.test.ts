@@ -11,6 +11,31 @@ describe('CalendarCore', () => {
   const mockTimeZone = 'America/New_York';
 
   beforeEach(() => {
+    vi.spyOn(Temporal.Now, 'plainDateISO').mockReturnValue(mockDate);
+    vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(mockDateTime);
+    vi.spyOn(Temporal.Now, 'zonedDateTime').mockReturnValue(
+      Temporal.ZonedDateTime.from({
+        timeZone: mockTimeZone,
+        year: 2023,
+        month: 6,
+        day: 15,
+        hour: 10,
+        minute: 0,
+        second: 0,
+      })
+    );
+    vi.spyOn(Temporal.Now, 'zonedDateTimeISO').mockReturnValue(
+      Temporal.ZonedDateTime.from({
+        timeZone: mockTimeZone,
+        year: 2023,
+        month: 6,
+        day: 15,
+        hour: 10,
+        minute: 0,
+        second: 0,
+      })
+    );
+
     options = {
       viewMode: { value: 1, unit: 'month' },
       events: [
@@ -36,10 +61,6 @@ describe('CalendarCore', () => {
       timeZone: mockTimeZone,
     };
     calendarCore = new CalendarCore(options);
-    vi.spyOn(Temporal.Now, 'plainDateISO').mockReturnValue(mockDate);
-    vi.spyOn(Temporal.Now, 'plainDateTimeISO').mockReturnValue(mockDateTime);
-    vi.spyOn(Temporal.Now, 'zonedDateTime').mockReturnValue(Temporal.Now.zonedDateTime('gregory',mockTimeZone));
-    vi.spyOn(Temporal.Now, 'zonedDateTimeISO').mockReturnValue(Temporal.Now.zonedDateTimeISO());
   });
 
   test('should initialize with the correct current period', () => {
@@ -163,9 +184,10 @@ describe('CalendarCore', () => {
   test('should group days by weeks correctly', () => {
     const daysWithEvents = calendarCore.getDaysWithEvents();
     const weeks = calendarCore.groupDaysBy({ days: daysWithEvents, unit: 'week' });
-    expect(weeks).toHaveLength(6);
+
+    expect(weeks).toHaveLength(5);
     expect(weeks[0]?.[0]?.date.toString()).toBe('2023-05-28');
-    expect(weeks[4]?.[6]?.date.toString()).toBe('2023-06-30');
+    expect(weeks[4]?.[6]?.date.toString()).toBe('2023-07-01');
   });
 
   test('should group days by months correctly', () => {
