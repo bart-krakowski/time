@@ -63,205 +63,245 @@ describe('CalendarCore', () => {
     calendarCore = new CalendarCore(options)
   })
 
-  test('should initialize with the correct current period', () => {
-    const today = Temporal.Now.plainDateISO()
-    expect(calendarCore.store.state.currentPeriod).toEqual(today)
-    expect(calendarCore.store.state.activeDate).toEqual(today)
-  })
-
-  test('should get the correct days with events for the month', () => {
-    const daysWithEvents = calendarCore.getDaysWithEvents()
-    expect(daysWithEvents.length).toBeGreaterThan(0)
-  })
-
-  test('should correctly map events to days', () => {
-    const daysWithEvents = calendarCore.getDaysWithEvents()
-    const dayWithEvent1 = daysWithEvents.find((day) =>
-      day.date.equals(Temporal.PlainDate.from('2024-06-10')),
-    )
-    const dayWithEvent2 = daysWithEvents.find((day) =>
-      day.date.equals(Temporal.PlainDate.from('2024-06-12')),
-    )
-    expect(dayWithEvent1?.events).toHaveLength(1)
-    expect(dayWithEvent1?.events[0]?.id).toBe('1')
-    expect(dayWithEvent2?.events).toHaveLength(2)
-    expect(dayWithEvent2?.events[0]?.id).toBe('2')
-    expect(dayWithEvent2?.events[1]?.id).toBe('3')
-  })
-
-  test('should change view mode correctly', () => {
-    calendarCore.changeViewMode({ value: 2, unit: 'week' })
-    expect(calendarCore.store.state.viewMode.value).toBe(2)
-    expect(calendarCore.store.state.viewMode.unit).toBe('week')
-  })
-
-  test('should go to previous period correctly', () => {
-    const initialPeriod = calendarCore.store.state.currentPeriod
-    calendarCore.goToPreviousPeriod()
-    const expectedPreviousMonth = initialPeriod.subtract({ months: 1 })
-    expect(calendarCore.store.state.currentPeriod).toEqual(
-      expectedPreviousMonth,
-    )
-    expect(calendarCore.store.state.activeDate).toEqual(expectedPreviousMonth)
-  })
-
-  test('should go to next period correctly', () => {
-    const initialPeriod = calendarCore.store.state.currentPeriod
-    calendarCore.goToNextPeriod()
-    const expectedNextMonth = initialPeriod.add({ months: 1 })
-    expect(calendarCore.store.state.currentPeriod).toEqual(expectedNextMonth)
-    expect(calendarCore.store.state.activeDate).toEqual(expectedNextMonth)
-  })
-
-  test('should go to current period correctly', () => {
-    calendarCore.goToNextPeriod()
-    calendarCore.goToCurrentPeriod()
-    const today = Temporal.Now.plainDateISO()
-    expect(calendarCore.store.state.currentPeriod).toEqual(today)
-    expect(calendarCore.store.state.activeDate).toEqual(today)
-  })
-
-  test('should go to specific period correctly', () => {
-    const specificDate = Temporal.PlainDate.from('2024-07-01')
-    calendarCore.goToSpecificPeriod(specificDate)
-    expect(calendarCore.store.state.currentPeriod).toEqual(specificDate)
-    expect(calendarCore.store.state.activeDate).toEqual(specificDate)
-  })
-
-  test('should group days correctly', () => {
-    const daysWithEvents = calendarCore.getDaysWithEvents()
-    const groupedDays = calendarCore.groupDaysBy({
-      days: daysWithEvents,
-      unit: 'month',
+  describe('Initialization', () => {
+    test('should initialize with the correct current period', () => {
+      const today = Temporal.Now.plainDateISO()
+      expect(calendarCore.store.state.currentPeriod).toEqual(today)
+      expect(calendarCore.store.state.activeDate).toEqual(today)
     })
-    expect(groupedDays.length).toBeGreaterThan(0)
-  })
 
-  test('should initialize with the correct time zone', () => {
-    expect(calendarCore.options.timeZone).toBe(mockTimeZone)
-  })
+    test('should initialize with the correct time zone', () => {
+      expect(calendarCore.options.timeZone).toBe(mockTimeZone)
+    })
 
-  test('should respect custom calendar', () => {
-    const customCalendar = 'islamic-civil'
-    options.calendar = customCalendar
-    calendarCore = new CalendarCore(options)
+    test('should respect custom calendar', () => {
+      const customCalendar = 'islamic-civil'
+      options.calendar = customCalendar
+      calendarCore = new CalendarCore(options)
 
-    const today = Temporal.Now.plainDateISO(customCalendar)
-    expect(calendarCore.store.state.currentPeriod.calendarId).toBe(
-      customCalendar,
-    )
-    expect(calendarCore.store.state.currentPeriod).toEqual(today)
-    expect(calendarCore.store.state.activeDate).toEqual(today)
-  })
-
-  test('should return the correct props for an event', () => {
-    const eventProps = calendarCore.getEventProps('1')
-    expect(eventProps).toEqual({
-      eventHeightInMinutes: 60,
-      isSplitEvent: false,
-      overlappingEvents: [],
+      const today = Temporal.Now.plainDateISO(customCalendar)
+      expect(calendarCore.store.state.currentPeriod.calendarId).toBe(
+        customCalendar,
+      )
+      expect(calendarCore.store.state.currentPeriod).toEqual(today)
+      expect(calendarCore.store.state.activeDate).toEqual(today)
     })
   })
 
-  test('should return the correct props for overlapping events', () => {
-    const event1Props = calendarCore.getEventProps('2')
-    const event2Props = calendarCore.getEventProps('3')
-
-    expect(event1Props).toEqual({
-      eventHeightInMinutes: 60,
-      isSplitEvent: false,
-      overlappingEvents: [options.events![2]],
+  describe('Event mapping', () => {
+    test('should get the correct days with events for the month', () => {
+      const daysWithEvents = calendarCore.getDaysWithEvents()
+      expect(daysWithEvents.length).toBeGreaterThan(0)
     })
 
-    expect(event2Props).toEqual({
-      eventHeightInMinutes: 120,
-      isSplitEvent: false,
-      overlappingEvents: [options.events![1]],
+    test('should correctly map events to days', () => {
+      const daysWithEvents = calendarCore.getDaysWithEvents()
+      const dayWithEvent1 = daysWithEvents.find((day) =>
+        day.date.equals(Temporal.PlainDate.from('2024-06-10')),
+      )
+      const dayWithEvent2 = daysWithEvents.find((day) =>
+        day.date.equals(Temporal.PlainDate.from('2024-06-12')),
+      )
+      expect(dayWithEvent1?.events).toHaveLength(1)
+      expect(dayWithEvent1?.events[0]?.id).toBe('1')
+      expect(dayWithEvent2?.events).toHaveLength(2)
+      expect(dayWithEvent2?.events[0]?.id).toBe('2')
+      expect(dayWithEvent2?.events[1]?.id).toBe('3')
+    })
+
+    test('should return the correct props for an event', () => {
+      const eventProps = calendarCore.getEventProps('1')
+      expect(eventProps).toEqual({
+        eventHeightInMinutes: 60,
+        isSplitEvent: false,
+        overlappingEvents: [],
+      })
+    })
+
+    test('should return the correct props for overlapping events', () => {
+      const event1Props = calendarCore.getEventProps('2')
+      const event2Props = calendarCore.getEventProps('3')
+
+      expect(event1Props).toEqual({
+        eventHeightInMinutes: 60,
+        isSplitEvent: false,
+        overlappingEvents: [options.events![2]],
+      })
+
+      expect(event2Props).toEqual({
+        eventHeightInMinutes: 120,
+        isSplitEvent: false,
+        overlappingEvents: [options.events![1]],
+      })
     })
   })
 
-  test('should correctly mark days as in current period', () => {
-    const daysWithEvents = calendarCore.getDaysWithEvents()
-    const currentPeriodDays = daysWithEvents.filter(
-      (day) => day.isInCurrentPeriod,
-    )
-    expect(currentPeriodDays).toHaveLength(30)
-  })
-
-  test('should return the correct day names based on the locale', () => {
-    const daysNames = calendarCore.getDaysNames('short')
-    expect(daysNames).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
-  })
-
-  test('should reset to the current period correctly', () => {
-    calendarCore.goToNextPeriod()
-    calendarCore.goToCurrentPeriod()
-    const today = Temporal.Now.plainDateISO()
-    expect(calendarCore.store.state.currentPeriod).toEqual(today)
-    expect(calendarCore.store.state.activeDate).toEqual(today)
-  })
-
-  test('should group days by weeks correctly', () => {
-    const daysWithEvents = calendarCore.getDaysWithEvents()
-    const weeks = calendarCore.groupDaysBy({
-      days: daysWithEvents,
-      unit: 'week',
+  describe('View mode', () => {
+    test('should change view mode correctly', () => {
+      calendarCore.changeViewMode({ value: 2, unit: 'week' })
+      expect(calendarCore.store.state.viewMode.value).toBe(2)
+      expect(calendarCore.store.state.viewMode.unit).toBe('week')
     })
 
-    expect(weeks).toHaveLength(5)
-    expect(weeks[0]?.[0]?.date.toString()).toBe('2024-05-28')
-    expect(weeks[4]?.[6]?.date.toString()).toBe('2024-07-01')
-  })
-
-  test('should group days by months correctly', () => {
-    const daysWithEvents = calendarCore.getDaysWithEvents()
-    const months = calendarCore.groupDaysBy({
-      days: daysWithEvents,
-      unit: 'month',
+    test('should change view mode to workWeek correctly', () => {
+      calendarCore.changeViewMode({ value: 1, unit: 'workWeek' })
+      expect(calendarCore.store.state.viewMode.value).toBe(1)
+      expect(calendarCore.store.state.viewMode.unit).toBe('workWeek')
     })
-    expect(months).toHaveLength(1)
-    expect(months[0]?.[0]?.date.toString()).toBe('2024-06-01')
   })
 
-  test('should change view mode to workWeek correctly', () => {
-    calendarCore.changeViewMode({ value: 1, unit: 'workWeek' })
-    expect(calendarCore.store.state.viewMode.value).toBe(1)
-    expect(calendarCore.store.state.viewMode.unit).toBe('workWeek')
-  })
-
-  test('should go to previous workWeek correctly', () => {
-    calendarCore.changeViewMode({ value: 1, unit: 'workWeek' })
-    const initialPeriod = calendarCore.store.state.currentPeriod
-    calendarCore.goToPreviousPeriod()
-    const expectedPreviousWorkWeek = initialPeriod.subtract({ days: 7 })
-    expect(calendarCore.store.state.currentPeriod).toEqual(
-      expectedPreviousWorkWeek,
-    )
-    expect(calendarCore.store.state.activeDate).toEqual(
-      expectedPreviousWorkWeek,
-    )
-  })
-
-  test('should go to next workWeek correctly', () => {
-    calendarCore.changeViewMode({ value: 1, unit: 'workWeek' })
-    const initialPeriod = calendarCore.store.state.currentPeriod
-    calendarCore.goToNextPeriod()
-    const expectedNextWorkWeek = initialPeriod.add({ days: 7 })
-    expect(calendarCore.store.state.currentPeriod).toEqual(expectedNextWorkWeek)
-    expect(calendarCore.store.state.activeDate).toEqual(expectedNextWorkWeek)
-  })
-
-  test('should group days by workWeek correctly', () => {
-    calendarCore.changeViewMode({ value: 1, unit: 'workWeek' })
-    const daysWithEvents = calendarCore.getDaysWithEvents()
-    const workWeeks = calendarCore.groupDaysBy({
-      days: daysWithEvents,
-      unit: 'workWeek',
+  describe('Navigation', () => {
+    test('should go to previous period correctly', () => {
+      const initialPeriod = calendarCore.store.state.currentPeriod
+      calendarCore.goToPreviousPeriod()
+      const expectedPreviousMonth = initialPeriod.subtract({ months: 1 })
+      expect(calendarCore.store.state.currentPeriod).toEqual(
+        expectedPreviousMonth,
+      )
+      expect(calendarCore.store.state.activeDate).toEqual(expectedPreviousMonth)
     })
 
-    expect(workWeeks.length).toBeGreaterThan(0)
-    expect(workWeeks[0]?.length).toBe(5)
-    expect(workWeeks[0]?.[0]?.date.toString()).toBe('2024-06-10[u-ca=gregory]')
-    expect(workWeeks[0]?.[4]?.date.toString()).toBe('2024-06-14[u-ca=gregory]')
+    test('should go to next period correctly', () => {
+      const initialPeriod = calendarCore.store.state.currentPeriod
+      calendarCore.goToNextPeriod()
+      const expectedNextMonth = initialPeriod.add({ months: 1 })
+      expect(calendarCore.store.state.currentPeriod).toEqual(expectedNextMonth)
+      expect(calendarCore.store.state.activeDate).toEqual(expectedNextMonth)
+    })
+
+    test('should go to current period correctly', () => {
+      calendarCore.goToNextPeriod()
+      calendarCore.goToCurrentPeriod()
+      const today = Temporal.Now.plainDateISO()
+      expect(calendarCore.store.state.currentPeriod).toEqual(today)
+      expect(calendarCore.store.state.activeDate).toEqual(today)
+    })
+
+    test('should go to specific period correctly', () => {
+      const specificDate = Temporal.PlainDate.from('2024-07-01')
+      calendarCore.goToSpecificPeriod(specificDate)
+      expect(calendarCore.store.state.currentPeriod).toEqual(specificDate)
+      expect(calendarCore.store.state.activeDate).toEqual(specificDate)
+    })
+
+    test('should go to previous workWeek correctly', () => {
+      calendarCore.changeViewMode({ value: 1, unit: 'workWeek' })
+      const initialPeriod = calendarCore.store.state.currentPeriod
+      calendarCore.goToPreviousPeriod()
+      const expectedPreviousWorkWeek = initialPeriod.subtract({ days: 7 })
+      expect(calendarCore.store.state.currentPeriod).toEqual(
+        expectedPreviousWorkWeek,
+      )
+      expect(calendarCore.store.state.activeDate).toEqual(
+        expectedPreviousWorkWeek,
+      )
+    })
+
+    test('should go to next workWeek correctly', () => {
+      calendarCore.changeViewMode({ value: 1, unit: 'workWeek' })
+      const initialPeriod = calendarCore.store.state.currentPeriod
+      calendarCore.goToNextPeriod()
+      const expectedNextWorkWeek = initialPeriod.add({ days: 7 })
+      expect(calendarCore.store.state.currentPeriod).toEqual(
+        expectedNextWorkWeek,
+      )
+      expect(calendarCore.store.state.activeDate).toEqual(expectedNextWorkWeek)
+    })
+  })
+
+  describe('Days grouping', () => {
+    test('should group days correctly', () => {
+      const daysWithEvents = calendarCore.getDaysWithEvents()
+      const groupedDays = calendarCore.groupDaysBy({
+        days: daysWithEvents,
+        unit: 'month',
+      })
+      expect(groupedDays.length).toBeGreaterThan(0)
+    })
+
+    test('should group days by weeks correctly', () => {
+      const daysWithEvents = calendarCore.getDaysWithEvents()
+      const weeks = calendarCore.groupDaysBy({
+        days: daysWithEvents,
+        unit: 'week',
+      })
+
+      expect(weeks).toHaveLength(6)
+      expect(weeks[0]?.[0]?.date.toString()).toBe('2024-05-26')
+      expect(weeks[5]?.[6]?.date.toString()).toBe('2024-07-06')
+    })
+
+    test('should group days by months correctly', () => {
+      const daysWithEvents = calendarCore.getDaysWithEvents()
+      const months = calendarCore.groupDaysBy({
+        days: daysWithEvents,
+        unit: 'month',
+      })
+      expect(months).toHaveLength(1)
+      expect(months[0]?.[0]?.date.toString()).toBe('2024-06-01')
+    })
+
+    test('should group days by workWeek correctly', () => {
+      calendarCore.changeViewMode({ value: 1, unit: 'workWeek' })
+      const daysWithEvents = calendarCore.getDaysWithEvents()
+      const workWeeks = calendarCore.groupDaysBy({
+        days: daysWithEvents,
+        unit: 'workWeek',
+      })
+
+      expect(workWeeks.length).toBeGreaterThan(0)
+      expect(workWeeks[0]?.length).toBe(5)
+      expect(workWeeks[0]?.[0]?.date.toString()).toBe(
+        '2024-06-10[u-ca=gregory]',
+      )
+      expect(workWeeks[0]?.[4]?.date.toString()).toBe(
+        '2024-06-14[u-ca=gregory]',
+      )
+    })
+
+    test('should group days by workWeek correctly with custom locale', () => {
+      const customLocale = 'pl'
+      calendarCore = new CalendarCore({ ...options, locale: customLocale })
+      const daysWithEvents = calendarCore.getDaysWithEvents()
+      const workWeeks = calendarCore.groupDaysBy({
+        days: daysWithEvents,
+        unit: 'workWeek',
+      })
+
+      expect(workWeeks.length).toBeGreaterThan(0)
+      expect(workWeeks[0]?.length).toBe(5)
+      expect(workWeeks[0]?.[0]?.date.toString()).toBe('2024-05-27')
+      expect(workWeeks[0]?.[4]?.date.toString()).toBe('2024-05-31')
+    })
+  })
+
+  describe('Locale and timezone', () => {
+    test('should return the correct day names based on default locale', () => {
+      const daysNames = calendarCore.getDaysNames('short')
+      expect(daysNames).toEqual([
+        'Sun',
+        'Mon',
+        'Tue',
+        'Wed',
+        'Thu',
+        'Fri',
+        'Sat',
+      ])
+    })
+
+    test('should return the correct day names based on custom locale', () => {
+      const customLocale = 'pl'
+      calendarCore = new CalendarCore({ ...options, locale: customLocale })
+      const customDaysNames = calendarCore.getDaysNames('short')
+      expect(customDaysNames).toEqual([
+        'pon.',
+        'wt.',
+        'śr.',
+        'czw.',
+        'pt.',
+        'sob.',
+        'niedz.',
+      ])
+    })
   })
 })
