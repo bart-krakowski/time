@@ -187,13 +187,21 @@ export class CalendarCore<
     }
 
     const allDays = generateDateRange(start, end)
-    const startMonth = this.store.state.currentPeriod.month
-    const endMonth = this.store.state.currentPeriod.add({
-      months: this.store.state.viewMode.value - 1,
-    }).month
+    const startMonthDate = this.store.state.currentPeriod.with({ day: 1 })
+    const endMonthDate = this.store.state.currentPeriod
+      .add({
+        months: this.store.state.viewMode.value - 1,
+      })
+      .with({
+        day: Temporal.PlainDate.from(
+          this.store.state.currentPeriod.toString({ calendarName: 'auto' }),
+        ).daysInMonth,
+      })
 
     return allDays.filter(
-      (day) => day.month >= startMonth && day.month <= endMonth,
+      (day) =>
+        Temporal.PlainDate.compare(day, startMonthDate) >= 0 &&
+        Temporal.PlainDate.compare(day, endMonthDate) <= 0,
     )
   }
 
@@ -214,14 +222,14 @@ export class CalendarCore<
           this.options.timeZone,
         )
         splitEvents.forEach((splitEvent) => {
-          const [ datePart ] = splitEvent.start.toString().split('T')
+          const [datePart] = splitEvent.start.toString().split('T')
           if (datePart) {
             if (!map.has(datePart)) map.set(datePart, [])
             map.get(datePart)?.push(splitEvent)
           }
         })
       } else {
-        const [ eventKey ] = event.start.toString().split('T')
+        const [eventKey] = event.start.toString().split('T')
         if (eventKey) {
           if (!map.has(eventKey)) map.set(eventKey, [])
           map.get(eventKey)?.push(event)
@@ -253,14 +261,14 @@ export class CalendarCore<
   }
 
   getDaysNames(weekday: 'long' | 'short' = 'short') {
-    const baseDate = Temporal.PlainDate.from('2024-01-01');
-    const firstDayOfWeek = this.getFirstDayOfWeek().dayOfWeek;
+    const baseDate = Temporal.PlainDate.from('2024-01-01')
+    const firstDayOfWeek = this.getFirstDayOfWeek().dayOfWeek
 
     return Array.from({ length: 7 }).map((_, i) =>
       baseDate
         .add({ days: (i + (firstDayOfWeek - 1)) % 7 })
         .toLocaleString(this.options.locale, { weekday: weekday }),
-    );
+    )
   }
 
   changeViewMode(newViewMode: CalendarStore['viewMode']) {
