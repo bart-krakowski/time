@@ -212,14 +212,14 @@ export class CalendarCore<
           this.options.timeZone,
         )
         splitEvents.forEach((splitEvent) => {
-          const splitKey = splitEvent.start.toString().split('T')[0]
-          if (splitKey) {
-            if (!map.has(splitKey)) map.set(splitKey, [])
-            map.get(splitKey)?.push(splitEvent)
+          const [ datePart ] = splitEvent.start.toString().split('T')
+          if (datePart) {
+            if (!map.has(datePart)) map.set(datePart, [])
+            map.get(datePart)?.push(splitEvent)
           }
         })
       } else {
-        const eventKey = event.start.toString().split('T')[0]
+        const [ eventKey ] = event.start.toString().split('T')
         if (eventKey) {
           if (!map.has(eventKey)) map.set(eventKey, [])
           map.get(eventKey)?.push(event)
