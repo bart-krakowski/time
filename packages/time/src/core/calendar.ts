@@ -413,12 +413,13 @@ export class CalendarCore<
     days,
     unit,
     fillMissingDays = true,
-  }: Omit<GroupDaysByProps<TResource, TEvent>, 'weekStartsOn'>) {
+  }: Omit<GroupDaysByProps<TResource, TEvent>, 'weekStartsOn' | 'locale'>) {
     return groupDaysBy<TResource, TEvent>({
       days,
       unit,
       fillMissingDays,
       weekStartsOn: this.getFirstDayOfWeek().dayOfWeek,
+      locale: this.options.locale,
     } as GroupDaysByProps<TResource, TEvent>)
   }
 }

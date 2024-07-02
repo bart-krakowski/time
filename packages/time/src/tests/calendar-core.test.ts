@@ -6,8 +6,8 @@ import type { CalendarCoreOptions, Event } from '../core/calendar'
 describe('CalendarCore', () => {
   let options: CalendarCoreOptions<string, Event<string>>
   let calendarCore: CalendarCore<string, Event<string>>
-  const mockDate = Temporal.PlainDate.from('2023-06-15')
-  const mockDateTime = Temporal.PlainDateTime.from('2023-06-15T10:00')
+  const mockDate = Temporal.PlainDate.from('2024-06-15')
+  const mockDateTime = Temporal.PlainDateTime.from('2024-06-15T10:00')
   const mockTimeZone = 'America/New_York'
 
   beforeEach(() => {
@@ -16,7 +16,7 @@ describe('CalendarCore', () => {
     vi.spyOn(Temporal.Now, 'zonedDateTime').mockReturnValue(
       Temporal.ZonedDateTime.from({
         timeZone: mockTimeZone,
-        year: 2023,
+        year: 2024,
         month: 6,
         day: 15,
         hour: 10,
@@ -27,7 +27,7 @@ describe('CalendarCore', () => {
     vi.spyOn(Temporal.Now, 'zonedDateTimeISO').mockReturnValue(
       Temporal.ZonedDateTime.from({
         timeZone: mockTimeZone,
-        year: 2023,
+        year: 2024,
         month: 6,
         day: 15,
         hour: 10,
@@ -41,20 +41,20 @@ describe('CalendarCore', () => {
       events: [
         {
           id: '1',
-          start: Temporal.PlainDateTime.from('2023-06-10T09:00'),
-          end: Temporal.PlainDateTime.from('2023-06-10T10:00'),
+          start: Temporal.PlainDateTime.from('2024-06-10T09:00'),
+          end: Temporal.PlainDateTime.from('2024-06-10T10:00'),
           title: 'Event 1',
         },
         {
           id: '2',
-          start: Temporal.PlainDateTime.from('2023-06-12T11:00'),
-          end: Temporal.PlainDateTime.from('2023-06-12T12:00'),
+          start: Temporal.PlainDateTime.from('2024-06-12T11:00'),
+          end: Temporal.PlainDateTime.from('2024-06-12T12:00'),
           title: 'Event 2',
         },
         {
           id: '3',
-          start: Temporal.PlainDateTime.from('2023-06-12T11:00'),
-          end: Temporal.PlainDateTime.from('2023-06-12T13:00'),
+          start: Temporal.PlainDateTime.from('2024-06-12T11:00'),
+          end: Temporal.PlainDateTime.from('2024-06-12T13:00'),
           title: 'Event 3',
         },
       ],
@@ -77,10 +77,10 @@ describe('CalendarCore', () => {
   test('should correctly map events to days', () => {
     const daysWithEvents = calendarCore.getDaysWithEvents()
     const dayWithEvent1 = daysWithEvents.find((day) =>
-      day.date.equals(Temporal.PlainDate.from('2023-06-10')),
+      day.date.equals(Temporal.PlainDate.from('2024-06-10')),
     )
     const dayWithEvent2 = daysWithEvents.find((day) =>
-      day.date.equals(Temporal.PlainDate.from('2023-06-12')),
+      day.date.equals(Temporal.PlainDate.from('2024-06-12')),
     )
     expect(dayWithEvent1?.events).toHaveLength(1)
     expect(dayWithEvent1?.events[0]?.id).toBe('1')
@@ -122,7 +122,7 @@ describe('CalendarCore', () => {
   })
 
   test('should go to specific period correctly', () => {
-    const specificDate = Temporal.PlainDate.from('2023-07-01')
+    const specificDate = Temporal.PlainDate.from('2024-07-01')
     calendarCore.goToSpecificPeriod(specificDate)
     expect(calendarCore.store.state.currentPeriod).toEqual(specificDate)
     expect(calendarCore.store.state.activeDate).toEqual(specificDate)
@@ -185,7 +185,7 @@ describe('CalendarCore', () => {
     const currentPeriodDays = daysWithEvents.filter(
       (day) => day.isInCurrentPeriod,
     )
-    expect(currentPeriodDays).toHaveLength(30) // Assuming a 30-day month
+    expect(currentPeriodDays).toHaveLength(30)
   })
 
   test('should return the correct day names based on the locale', () => {
@@ -209,8 +209,8 @@ describe('CalendarCore', () => {
     })
 
     expect(weeks).toHaveLength(5)
-    expect(weeks[0]?.[0]?.date.toString()).toBe('2023-05-28')
-    expect(weeks[4]?.[6]?.date.toString()).toBe('2023-07-01')
+    expect(weeks[0]?.[0]?.date.toString()).toBe('2024-05-28')
+    expect(weeks[4]?.[6]?.date.toString()).toBe('2024-07-01')
   })
 
   test('should group days by months correctly', () => {
@@ -220,7 +220,7 @@ describe('CalendarCore', () => {
       unit: 'month',
     })
     expect(months).toHaveLength(1)
-    expect(months[0]?.[0]?.date.toString()).toBe('2023-06-01')
+    expect(months[0]?.[0]?.date.toString()).toBe('2024-06-01')
   })
 
   test('should change view mode to workWeek correctly', () => {
@@ -233,7 +233,7 @@ describe('CalendarCore', () => {
     calendarCore.changeViewMode({ value: 1, unit: 'workWeek' })
     const initialPeriod = calendarCore.store.state.currentPeriod
     calendarCore.goToPreviousPeriod()
-    const expectedPreviousWorkWeek = initialPeriod.subtract({ days: 5 })
+    const expectedPreviousWorkWeek = initialPeriod.subtract({ days: 7 })
     expect(calendarCore.store.state.currentPeriod).toEqual(
       expectedPreviousWorkWeek,
     )
@@ -246,12 +246,13 @@ describe('CalendarCore', () => {
     calendarCore.changeViewMode({ value: 1, unit: 'workWeek' })
     const initialPeriod = calendarCore.store.state.currentPeriod
     calendarCore.goToNextPeriod()
-    const expectedNextWorkWeek = initialPeriod.add({ days: 5 })
+    const expectedNextWorkWeek = initialPeriod.add({ days: 7 })
     expect(calendarCore.store.state.currentPeriod).toEqual(expectedNextWorkWeek)
     expect(calendarCore.store.state.activeDate).toEqual(expectedNextWorkWeek)
   })
 
   test('should group days by workWeek correctly', () => {
+    calendarCore.changeViewMode({ value: 1, unit: 'workWeek' })
     const daysWithEvents = calendarCore.getDaysWithEvents()
     const workWeeks = calendarCore.groupDaysBy({
       days: daysWithEvents,
@@ -260,5 +261,7 @@ describe('CalendarCore', () => {
 
     expect(workWeeks.length).toBeGreaterThan(0)
     expect(workWeeks[0]?.length).toBe(5)
+    expect(workWeeks[0]?.[0]?.date.toString()).toBe('2024-06-10[u-ca=gregory]')
+    expect(workWeeks[0]?.[4]?.date.toString()).toBe('2024-06-14[u-ca=gregory]')
   })
 })
