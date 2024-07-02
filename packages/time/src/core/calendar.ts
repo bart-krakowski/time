@@ -74,7 +74,6 @@ interface CalendarActions<
   } | null
   /** Retrieves the names of the days of the week, based on the current locale. */
   getDaysNames: (weekday?: 'long' | 'short') => string[]
-
   /** Groups days by a specified unit. */
   groupDaysBy: (
     props: Omit<GroupDaysByProps<TResource, TEvent>, 'weekStartsOn'>,
@@ -91,6 +90,8 @@ interface CalendarState<
   viewMode: CalendarStore['viewMode']
   /** An array of days, each potentially containing events. */
   days: Array<Day<TResource, TEvent>>
+  /** The currently active date in the calendar. */
+  activeDate: Temporal.PlainDate
 }
 
 export interface CalendarApi<
@@ -121,10 +122,11 @@ export class CalendarCore<
       resources: options.resources || null,
     }
 
+    const now = Temporal.Now.plainDateISO().withCalendar(this.options.calendar)
+
     this.store = new Store<CalendarStore>({
-      currentPeriod: Temporal.Now.plainDateISO().withCalendar(
-        this.options.calendar,
-      ),
+      currentPeriod: now,
+      activeDate: now,
       viewMode: options.viewMode,
     })
   }
@@ -269,39 +271,39 @@ export class CalendarCore<
   }
 
   goToPreviousPeriod() {
-    const firstDayOfMonth = this.getFirstDayOfMonth()
-    const firstDayOfWeek = this.getFirstDayOfWeek()
-
     switch (this.store.state.viewMode.unit) {
       case 'month': {
-        const firstDayOfPrevMonth = firstDayOfMonth.subtract({
+        const newActiveDate = this.store.state.activeDate.subtract({
           months: this.store.state.viewMode.value,
         })
         this.store.setState((prev) => ({
           ...prev,
-          currentPeriod: firstDayOfPrevMonth,
+          activeDate: newActiveDate,
+          currentPeriod: newActiveDate,
         }))
         break
       }
 
       case 'week': {
-        const firstDayOfPrevWeek = firstDayOfWeek.subtract({
+        const newActiveDate = this.store.state.activeDate.subtract({
           weeks: this.store.state.viewMode.value,
         })
         this.store.setState((prev) => ({
           ...prev,
-          currentPeriod: firstDayOfPrevWeek,
+          activeDate: newActiveDate,
+          currentPeriod: newActiveDate,
         }))
         break
       }
 
       case 'day': {
-        const prevCustomStart = this.store.state.currentPeriod.subtract({
+        const newActiveDate = this.store.state.activeDate.subtract({
           days: this.store.state.viewMode.value,
         })
         this.store.setState((prev) => ({
           ...prev,
-          currentPeriod: prevCustomStart,
+          activeDate: newActiveDate,
+          currentPeriod: newActiveDate,
         }))
         break
       }
@@ -309,39 +311,39 @@ export class CalendarCore<
   }
 
   goToNextPeriod() {
-    const firstDayOfMonth = this.getFirstDayOfMonth()
-    const firstDayOfWeek = this.getFirstDayOfWeek()
-
     switch (this.store.state.viewMode.unit) {
       case 'month': {
-        const firstDayOfNextMonth = firstDayOfMonth.add({
+        const newActiveDate = this.store.state.activeDate.add({
           months: this.store.state.viewMode.value,
         })
         this.store.setState((prev) => ({
           ...prev,
-          currentPeriod: firstDayOfNextMonth,
+          activeDate: newActiveDate,
+          currentPeriod: newActiveDate,
         }))
         break
       }
 
       case 'week': {
-        const firstDayOfNextWeek = firstDayOfWeek.add({
+        const newActiveDate = this.store.state.activeDate.add({
           weeks: this.store.state.viewMode.value,
         })
         this.store.setState((prev) => ({
           ...prev,
-          currentPeriod: firstDayOfNextWeek,
+          activeDate: newActiveDate,
+          currentPeriod: newActiveDate,
         }))
         break
       }
 
       case 'day': {
-        const nextCustomStart = this.store.state.currentPeriod.add({
+        const newActiveDate = this.store.state.activeDate.add({
           days: this.store.state.viewMode.value,
         })
         this.store.setState((prev) => ({
           ...prev,
-          currentPeriod: nextCustomStart,
+          activeDate: newActiveDate,
+          currentPeriod: newActiveDate,
         }))
         break
       }
@@ -349,15 +351,18 @@ export class CalendarCore<
   }
 
   goToCurrentPeriod() {
+    const now = Temporal.Now.plainDateISO()
     this.store.setState((prev) => ({
       ...prev,
-      currentPeriod: Temporal.Now.plainDateISO(),
+      activeDate: now,
+      currentPeriod: now,
     }))
   }
 
   goToSpecificPeriod(date: Temporal.PlainDate) {
     this.store.setState((prev) => ({
       ...prev,
+      activeDate: date,
       currentPeriod: date,
     }))
   }

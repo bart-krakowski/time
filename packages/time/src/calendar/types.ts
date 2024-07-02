@@ -12,6 +12,7 @@ export interface Event<TResource extends Resource = Resource> {
 
 export interface CalendarStore {
   currentPeriod: Temporal.PlainDate
+  activeDate: Temporal.PlainDate
   viewMode: {
     value: number
     unit: 'month' | 'week' | 'day'

@@ -66,6 +66,7 @@ describe('CalendarCore', () => {
   test('should initialize with the correct current period', () => {
     const today = Temporal.Now.plainDateISO();
     expect(calendarCore.store.state.currentPeriod).toEqual(today);
+    expect(calendarCore.store.state.activeDate).toEqual(today);
   });
 
   test('should get the correct days with events for the month', () => {
@@ -95,6 +96,7 @@ describe('CalendarCore', () => {
     calendarCore.goToPreviousPeriod();
     const expectedPreviousMonth = initialPeriod.subtract({ months: 1 });
     expect(calendarCore.store.state.currentPeriod).toEqual(expectedPreviousMonth);
+    expect(calendarCore.store.state.activeDate).toEqual(expectedPreviousMonth);
   });
 
   test('should go to next period correctly', () => {
@@ -102,6 +104,7 @@ describe('CalendarCore', () => {
     calendarCore.goToNextPeriod();
     const expectedNextMonth = initialPeriod.add({ months: 1 });
     expect(calendarCore.store.state.currentPeriod).toEqual(expectedNextMonth);
+    expect(calendarCore.store.state.activeDate).toEqual(expectedNextMonth);
   });
 
   test('should go to current period correctly', () => {
@@ -109,12 +112,14 @@ describe('CalendarCore', () => {
     calendarCore.goToCurrentPeriod();
     const today = Temporal.Now.plainDateISO();
     expect(calendarCore.store.state.currentPeriod).toEqual(today);
+    expect(calendarCore.store.state.activeDate).toEqual(today);
   });
 
   test('should go to specific period correctly', () => {
     const specificDate = Temporal.PlainDate.from('2023-07-01');
     calendarCore.goToSpecificPeriod(specificDate);
     expect(calendarCore.store.state.currentPeriod).toEqual(specificDate);
+    expect(calendarCore.store.state.activeDate).toEqual(specificDate);
   });
 
   test('should group days correctly', () => {
@@ -135,6 +140,7 @@ describe('CalendarCore', () => {
     const today = Temporal.Now.plainDateISO(customCalendar);
     expect(calendarCore.store.state.currentPeriod.calendarId).toBe(customCalendar);
     expect(calendarCore.store.state.currentPeriod).toEqual(today);
+    expect(calendarCore.store.state.activeDate).toEqual(today);
   });
 
   test('should return the correct props for an event', () => {
@@ -179,6 +185,7 @@ describe('CalendarCore', () => {
     calendarCore.goToCurrentPeriod();
     const today = Temporal.Now.plainDateISO();
     expect(calendarCore.store.state.currentPeriod).toEqual(today);
+    expect(calendarCore.store.state.activeDate).toEqual(today);
   });
 
   test('should group days by weeks correctly', () => {
@@ -196,5 +203,4 @@ describe('CalendarCore', () => {
     expect(months).toHaveLength(1);
     expect(months[0]?.[0]?.date.toString()).toBe('2023-06-01');
   });
-
 });
