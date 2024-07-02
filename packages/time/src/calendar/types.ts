@@ -15,7 +15,7 @@ export interface CalendarStore {
   activeDate: Temporal.PlainDate
   viewMode: {
     value: number
-    unit: 'month' | 'week' | 'day'
+    unit: 'month' | 'week' | 'workWeek' | 'day'
   }
 }
 

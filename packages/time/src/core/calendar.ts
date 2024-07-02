@@ -20,8 +20,8 @@ export type * from '../calendar/types'
 export interface ViewMode {
   /** The number of units for the view mode. */
   value: number
-  /** The unit of time that the calendar view should display (month, week, or day). */
-  unit: 'month' | 'week' | 'day'
+  /** The unit of time that the calendar view should display (month, week, workWeek or day). */
+  unit: 'month' | 'week' | 'day' | 'workWeek'
 }
 
 /**
@@ -184,6 +184,10 @@ export class CalendarCore<
         })
         break
       }
+      case 'workWeek': {
+        end = start.add({ days: 4 })
+        break
+      }
     }
 
     const allDays = generateDateRange(start, end)
@@ -315,6 +319,17 @@ export class CalendarCore<
         }))
         break
       }
+      case 'workWeek': {
+        const newActiveDate = this.store.state.activeDate.subtract({
+          days: 5,
+        })
+        this.store.setState((prev) => ({
+          ...prev,
+          activeDate: newActiveDate,
+          currentPeriod: newActiveDate,
+        }))
+        break
+      }
     }
   }
 
@@ -347,6 +362,17 @@ export class CalendarCore<
       case 'day': {
         const newActiveDate = this.store.state.activeDate.add({
           days: this.store.state.viewMode.value,
+        })
+        this.store.setState((prev) => ({
+          ...prev,
+          activeDate: newActiveDate,
+          currentPeriod: newActiveDate,
+        }))
+        break
+      }
+      case 'workWeek': {
+        const newActiveDate = this.store.state.activeDate.add({
+          days: 5,
         })
         this.store.setState((prev) => ({
           ...prev,

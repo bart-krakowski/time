@@ -21,7 +21,7 @@ type GroupDaysByWeekProps<
   TResource extends Resource,
   TEvent extends Event<TResource> = Event<TResource>,
 > = GroupDaysByBaseProps<TResource, TEvent> & {
-  unit: 'week'
+  unit: 'week' | 'workWeek'
   fillMissingDays?: boolean
 }
 
@@ -114,6 +114,60 @@ export const groupDaysBy = <
       }
 
       return weeks
+    }
+
+    case 'workWeek': {
+      const workWeeks: (Day<TResource, TEvent> | null)[][] = []
+      let currentWorkWeek: (Day<TResource, TEvent> | null)[] = []
+
+      days.forEach((day) => {
+        if (
+          currentWorkWeek.length === 0 &&
+          day?.date.dayOfWeek !== weekStartsOn
+        ) {
+          if (day) {
+            const dayOfWeek = (day.date.dayOfWeek - weekStartsOn + 7) % 7
+            for (let i = 0; i < dayOfWeek; i++) {
+              currentWorkWeek.push(
+                fillMissingDays
+                  ? {
+                      date: day.date.subtract({ days: dayOfWeek - i }),
+                      events: [],
+                      isToday: false,
+                      isInCurrentPeriod: false,
+                    }
+                  : null,
+              )
+            }
+          }
+        }
+        currentWorkWeek.push(day)
+        if (currentWorkWeek.length === 5) {
+          workWeeks.push(currentWorkWeek)
+          currentWorkWeek = []
+        }
+      })
+
+      if (currentWorkWeek.length > 0) {
+        while (currentWorkWeek.length < 5) {
+          const lastDate =
+            currentWorkWeek[currentWorkWeek.length - 1]?.date ??
+            Temporal.PlainDate.from('2024-01-01')
+          currentWorkWeek.push(
+            fillMissingDays
+              ? {
+                  date: lastDate.add({ days: 1 }),
+                  events: [],
+                  isToday: false,
+                  isInCurrentPeriod: false,
+                }
+              : null,
+          )
+        }
+        workWeeks.push(currentWorkWeek)
+      }
+
+      return workWeeks
     }
     default:
       break
