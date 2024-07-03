@@ -13,22 +13,6 @@ export const getEventProps = (
   const eventEndDate = Temporal.ZonedDateTime.from(event.end);
   const isSplitEvent = Temporal.PlainDate.compare(eventStartDate.toPlainDate(), eventEndDate.toPlainDate()) !== 0;
 
-  let eventHeightInMinutes;
-
-  if (isSplitEvent) {
-    const isStartPart = eventStartDate.hour !== 0 || eventStartDate.minute !== 0;
-    if (isStartPart) {
-      const eventTimeInMinutes = eventStartDate.hour * 60 + eventStartDate.minute;
-      eventHeightInMinutes = 24 * 60 - eventTimeInMinutes;
-    } else {
-      eventHeightInMinutes = eventEndDate.hour * 60 + eventEndDate.minute;
-    }
-  } else {
-    const eventTimeInMinutes = eventStartDate.hour * 60 + eventStartDate.minute;
-    const endTimeInMinutes = eventEndDate.hour * 60 + eventEndDate.minute;
-    eventHeightInMinutes = endTimeInMinutes - eventTimeInMinutes;
-  }
-
   const overlappingEvents = [...eventMap.values()].flat().filter((e) => {
     const eStartDate = Temporal.ZonedDateTime.from(e.start);
     const eEndDate = Temporal.ZonedDateTime.from(e.end);
@@ -47,7 +31,6 @@ export const getEventProps = (
 
   if (state.viewMode.unit === 'week' || state.viewMode.unit === 'day') {
     return {
-      eventHeightInMinutes,
       isSplitEvent,
       overlappingEvents,
     };
