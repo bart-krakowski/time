@@ -112,7 +112,6 @@ describe('CalendarCore', () => {
     test('should return the correct props for an event', () => {
       const eventProps = calendarCore.getEventProps('1')
       expect(eventProps).toEqual({
-        eventHeightInMinutes: 60,
         isSplitEvent: false,
         overlappingEvents: [],
       })
@@ -123,13 +122,11 @@ describe('CalendarCore', () => {
       const event2Props = calendarCore.getEventProps('3')
 
       expect(event1Props).toEqual({
-        eventHeightInMinutes: 60,
         isSplitEvent: false,
         overlappingEvents: [options.events![2]],
       })
 
       expect(event2Props).toEqual({
-        eventHeightInMinutes: 120,
         isSplitEvent: false,
         overlappingEvents: [options.events![1]],
       })

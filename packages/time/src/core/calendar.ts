@@ -68,7 +68,6 @@ interface CalendarActions<
   changeViewMode: (newViewMode: CalendarStore['viewMode']) => void
   /** Retrieves styling properties for a specific event, identified by ID. */
   getEventProps: (id: Event['id']) => {
-    eventHeightInMinutes: number
     isSplitEvent: boolean
     overlappingEvents: TEvent[]
   } | null
