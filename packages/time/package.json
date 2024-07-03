@@ -57,7 +57,7 @@
     "src"
   ],
   "dependencies": {
-    "@bart-krakowski/get-week-info-polyfill": "^1.0.2",
+    "@bart-krakowski/get-week-info-polyfill": "^1.0.3",
     "@js-temporal/polyfill": "^0.4.4",
     "@tanstack/store": "^0.4.1"
   },
