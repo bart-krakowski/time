@@ -9,7 +9,7 @@ import { getDateDefaults } from '../utils/dateDefaults'
 import type { GroupDaysByProps } from '../calendar/groupDaysBy'
 import type { CalendarStore, Day, Event, Resource } from '../calendar/types'
 
-import './weekInfoPolyfill'
+import '@bart-krakowski/get-week-info-polyfill'
 
 export type * from '../calendar/types'
 
