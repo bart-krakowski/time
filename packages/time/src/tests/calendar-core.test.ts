@@ -110,6 +110,7 @@ describe('CalendarCore', () => {
     })
 
     test('should return the correct props for an event', () => {
+      calendarCore.changeViewMode({ value: 1, unit: 'day' })
       const eventProps = calendarCore.getEventProps('1')
       expect(eventProps).toEqual({
         isSplitEvent: false,
@@ -118,6 +119,7 @@ describe('CalendarCore', () => {
     })
 
     test('should return the correct props for overlapping events', () => {
+      calendarCore.changeViewMode({ value: 1, unit: 'day' })
       const event1Props = calendarCore.getEventProps('2')
       const event2Props = calendarCore.getEventProps('3')
 
