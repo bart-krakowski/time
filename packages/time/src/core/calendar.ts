@@ -93,11 +93,15 @@ interface CalendarState<
   activeDate: CalendarStore['activeDate']
 }
 
+type ConvertTemporalToString<T> = {
+  [K in keyof T]: T[K] extends Temporal.PlainDate ? string : T[K]
+}
+
 export interface CalendarApi<
   TResource extends Resource,
   TEvent extends Event<TResource>,
 > extends CalendarActions<TResource, TEvent>,
-    CalendarState<TResource, TEvent> {}
+    ConvertTemporalToString<CalendarState<TResource, TEvent>> {}
 
 /**
  * Core functionality for a calendar system, managing the state and operations of the calendar,

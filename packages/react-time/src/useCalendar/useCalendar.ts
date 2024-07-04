@@ -47,7 +47,9 @@ export const useCalendar = <TResource extends Resource, TEvent extends Event<TRe
   const getDaysNames = useCallback<typeof calendarCore.getDaysNames>((props) => calendarCore.getDaysNames(props), [calendarCore])
 
   return {
-    ...state,
+    activeDate: state.activeDate.toString(),
+    currentPeriod: state.currentPeriod.toString(),
+    viewMode: state.viewMode,
     days: calendarCore.getDaysWithEvents(),
     getDaysNames,
     goToPreviousPeriod,
