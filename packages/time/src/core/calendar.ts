@@ -63,7 +63,7 @@ interface CalendarActions<
   /** Resets the view to the current period based on today's date. */
   goToCurrentPeriod: () => void
   /** Navigates to a specific date. */
-  goToSpecificPeriod: (date: Temporal.PlainDate) => void
+  goToSpecificPeriod: (date: string) => void
   /** Changes the current view mode of the calendar. */
   changeViewMode: (newViewMode: CalendarStore['viewMode']) => void
   /** Retrieves styling properties for a specific event, identified by ID. */
@@ -90,7 +90,7 @@ interface CalendarState<
   /** An array of days, each potentially containing events. */
   days: Array<Day<TResource, TEvent>>
   /** The currently active date in the calendar. */
-  activeDate: Temporal.PlainDate
+  activeDate: CalendarStore['activeDate']
 }
 
 export interface CalendarApi<
@@ -189,7 +189,7 @@ export class CalendarCore<
       }
     }
 
-    const allDays = generateDateRange(start, end)
+    const allDays = generateDateRange(start.toString(), end.toString())
     const startMonthDate = this.store.state.currentPeriod.with({ day: 1 })
     const endMonthDate = this.store.state.currentPeriod
       .add({
@@ -392,11 +392,11 @@ export class CalendarCore<
     }))
   }
 
-  goToSpecificPeriod(date: Temporal.PlainDate) {
+  goToSpecificPeriod(date: string) {
     this.store.setState((prev) => ({
       ...prev,
-      activeDate: date,
-      currentPeriod: date,
+      activeDate: Temporal.PlainDate.from(date),
+      currentPeriod: Temporal.PlainDate.from(date),
     }))
   }
 
