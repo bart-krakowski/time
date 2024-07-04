@@ -157,7 +157,7 @@ export class CalendarCore<
           })
         : this.store.state.currentPeriod
 
-    let end
+    let end: Temporal.PlainDate
     switch (this.store.state.viewMode.unit) {
       case 'month': {
         const lastDayOfMonth = this.getFirstDayOfMonth()
@@ -211,14 +211,12 @@ export class CalendarCore<
   private getEventMap() {
     const map = new Map<string, TEvent[]>()
     this.options.events?.forEach((event) => {
-      const eventStartDate =
-        event.start instanceof Temporal.PlainDateTime
-          ? event.start.toZonedDateTime(this.options.timeZone)
-          : event.start
-      const eventEndDate =
-        event.end instanceof Temporal.PlainDateTime
-          ? event.end.toZonedDateTime(this.options.timeZone)
-          : event.end
+      const eventStartDate = Temporal.PlainDateTime.from(
+        event.start,
+      ).toZonedDateTime(this.options.timeZone)
+      const eventEndDate = Temporal.PlainDateTime.from(
+        event.end,
+      ).toZonedDateTime(this.options.timeZone)
       if (Temporal.ZonedDateTime.compare(eventStartDate, eventEndDate) !== 0) {
         const splitEvents = splitMultiDayEvents<TResource, TEvent>(
           event,

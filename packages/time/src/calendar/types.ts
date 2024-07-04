@@ -4,8 +4,8 @@ export type Resource = string | null
 
 export interface Event<TResource extends Resource = Resource> {
   id: string
-  start: Temporal.PlainDateTime | Temporal.ZonedDateTime
-  end: Temporal.PlainDateTime | Temporal.ZonedDateTime
+  start: string
+  end: string
   title: string
   resources?: TResource[]
 }

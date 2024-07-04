@@ -41,20 +41,20 @@ describe('CalendarCore', () => {
       events: [
         {
           id: '1',
-          start: Temporal.PlainDateTime.from('2024-06-10T09:00'),
-          end: Temporal.PlainDateTime.from('2024-06-10T10:00'),
+          start: '2024-06-10T09:00',
+          end: '2024-06-10T10:00',
           title: 'Event 1',
         },
         {
           id: '2',
-          start: Temporal.PlainDateTime.from('2024-06-12T11:00'),
-          end: Temporal.PlainDateTime.from('2024-06-12T12:00'),
+          start: '2024-06-12T11:00',
+          end: '2024-06-12T12:00',
           title: 'Event 2',
         },
         {
           id: '3',
-          start: Temporal.PlainDateTime.from('2024-06-12T11:00'),
-          end: Temporal.PlainDateTime.from('2024-06-12T13:00'),
+          start: '2024-06-12T11:00',
+          end: '2024-06-12T13:00',
           title: 'Event 3',
         },
       ],
@@ -177,7 +177,7 @@ describe('CalendarCore', () => {
     })
 
     test('should go to specific period correctly', () => {
-      const specificDate = Temporal.PlainDate.from('2024-07-01')
+      const specificDate = '2024-07-01'
       calendarCore.goToSpecificPeriod(specificDate)
       expect(calendarCore.store.state.currentPeriod).toEqual(specificDate)
       expect(calendarCore.store.state.activeDate).toEqual(specificDate)
