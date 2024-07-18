@@ -18,15 +18,15 @@ export const splitMultiDayEvents = <
     const eventStart =
       Temporal.PlainDateTime.compare(currentDay, startDate) === 0
         ? startDate
-        : startOf(currentDay)
+        : startOf(currentDay, 'day')
     const eventEnd =
-      Temporal.PlainDateTime.compare(endDate, endOf(currentDay)) <= 0
+      Temporal.PlainDateTime.compare(endDate, endOf(currentDay, 'day')) < 0
         ? endDate
-        : endOf(currentDay)
+        : endOf(currentDay, 'day')
 
     events.push({ ...event, start: eventStart, end: eventEnd })
 
-    currentDay = startOf(currentDay).add({ days: 1 })
+    currentDay = startOf(currentDay, 'day').add({ days: 1 })
   }
 
   return events
