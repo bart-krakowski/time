@@ -125,12 +125,34 @@ describe('CalendarCore', () => {
 
       expect(event1Props).toEqual({
         isSplitEvent: false,
-        overlappingEvents: [options.events![2]],
+        overlappingEvents: [
+          {
+            ...options.events![2],
+            start:
+              Temporal.PlainDateTime.from('2024-06-12T11:00').toZonedDateTime(
+                mockTimeZone,
+              ),
+            end: Temporal.PlainDateTime.from(
+              '2024-06-12T13:00',
+            ).toZonedDateTime(mockTimeZone),
+          },
+        ],
       })
 
       expect(event2Props).toEqual({
         isSplitEvent: false,
-        overlappingEvents: [options.events![1]],
+        overlappingEvents: [
+          {
+            ...options.events![1],
+            start:
+              Temporal.PlainDateTime.from('2024-06-12T11:00').toZonedDateTime(
+                mockTimeZone,
+              ),
+            end: Temporal.PlainDateTime.from(
+              '2024-06-12T12:00',
+            ).toZonedDateTime(mockTimeZone),
+          },
+        ],
       })
     })
   })
@@ -179,8 +201,12 @@ describe('CalendarCore', () => {
     test('should go to specific period correctly', () => {
       const specificDate = '2024-07-01'
       calendarCore.goToSpecificPeriod(specificDate)
-      expect(calendarCore.store.state.currentPeriod).toEqual(specificDate)
-      expect(calendarCore.store.state.activeDate).toEqual(specificDate)
+      expect(calendarCore.store.state.currentPeriod.toString()).toEqual(
+        specificDate,
+      )
+      expect(calendarCore.store.state.activeDate.toString()).toEqual(
+        specificDate,
+      )
     })
 
     test('should go to previous workWeek correctly', () => {
@@ -241,21 +267,16 @@ describe('CalendarCore', () => {
     })
 
     test('should group days by workWeek correctly', () => {
-      calendarCore.changeViewMode({ value: 1, unit: 'workWeek' })
       const daysWithEvents = calendarCore.getDaysWithEvents()
       const workWeeks = calendarCore.groupDaysBy({
         days: daysWithEvents,
         unit: 'workWeek',
       })
 
-      expect(workWeeks.length).toBeGreaterThan(0)
+      expect(workWeeks.length).toBe(9)
       expect(workWeeks[0]?.length).toBe(5)
-      expect(workWeeks[0]?.[0]?.date.toString()).toBe(
-        '2024-06-10[u-ca=gregory]',
-      )
-      expect(workWeeks[0]?.[4]?.date.toString()).toBe(
-        '2024-06-14[u-ca=gregory]',
-      )
+      expect(workWeeks[0]?.[0]?.date.toString()).toBe('2024-05-27')
+      expect(workWeeks[0]?.[4]?.date.toString()).toBe('2024-05-31')
     })
 
     test('should group days by workWeek correctly with custom locale', () => {
