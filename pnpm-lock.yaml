@@ -195,8 +195,8 @@ importers:
   packages/time:
     dependencies:
       '@bart-krakowski/get-week-info-polyfill':
-        specifier: ^1.0.3
-        version: 1.0.3
+        specifier: ^1.0.5
+        version: 1.0.5
       '@js-temporal/polyfill':
         specifier: ^0.4.4
         version: 0.4.4
@@ -1843,8 +1843,8 @@ packages:
       '@babel/helper-validator-identifier': 7.22.20
       to-fast-properties: 2.0.0
 
-  /@bart-krakowski/get-week-info-polyfill@1.0.3:
-    resolution: {integrity: sha512-Rg3nnpR1WuVNtL0A+OxdQpzHfMRNQOezJcYPZQ1XR8VdiefZZw8ea0MMjhfu13pELwsMRxZmsbmGYX5rJTN5WQ==}
+  /@bart-krakowski/get-week-info-polyfill@1.0.5:
+    resolution: {integrity: sha512-TE6yg50I2W0/EJ43OAD76TNleubb/P3w8DcxsGlUZIJNODtBjyqXyxyaj9vwiftb288TBl7Sfst2alNHSp4PCQ==}
     dev: false
 
   /@commitlint/parse@18.6.1:

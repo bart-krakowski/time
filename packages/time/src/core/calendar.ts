@@ -75,7 +75,7 @@ interface CalendarActions<
   getDaysNames: (weekday?: 'long' | 'short') => string[]
   /** Groups days by a specified unit. */
   groupDaysBy: (
-    props: Omit<GroupDaysByProps<TResource, TEvent>, 'weekStartsOn'>,
+    props: Omit<GroupDaysByProps<TResource, TEvent>, 'weekStartsOn' | 'locale'>,
   ) => (Day<TResource, TEvent> | null)[][]
 }
 
@@ -133,6 +133,7 @@ export class CalendarCore<
       viewMode: options.viewMode,
     })
   }
+
 
   private getFirstDayOfMonth() {
     return getFirstDayOfMonth(

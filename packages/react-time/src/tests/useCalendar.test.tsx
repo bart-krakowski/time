@@ -23,14 +23,14 @@ describe('useCalendar', () => {
   const events: Event<string>[] = [
     {
       id: '1',
-      start: Temporal.PlainDateTime.from('2024-06-01T10:00:00'),
-      end: Temporal.PlainDateTime.from('2024-06-01T12:00:00'),
+      start: '2024-06-01T10:00:00',
+      end: '2024-06-01T12:00:00',
       title: 'Event 1',
     },
     {
       id: '2',
-      start: Temporal.PlainDateTime.from('2024-06-02T14:00:00'),
-      end: Temporal.PlainDateTime.from('2024-06-02T16:00:00'),
+      start: '2024-06-02T14:00:00',
+      end: '2024-06-02T16:00:00',
       title: 'Event 2',
     },
   ];
@@ -52,6 +52,7 @@ describe('useCalendar', () => {
       subscribe: vi.fn(),
       state: {
         currentPeriod: mockDate,
+        activeDate: mockDate,
         viewMode: { value: 1, unit: 'month' },
       },
     };
@@ -127,7 +128,7 @@ describe('useCalendar', () => {
       useCalendar({ events, viewMode: { value: 1, unit: 'month' } }),
     );
 
-    const specificDate = Temporal.PlainDate.from('2024-06-01');
+    const specificDate = '2024-06-01';
     act(() => {
       result.current.goToSpecificPeriod(specificDate);
     });
