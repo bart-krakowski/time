@@ -1,67 +1,99 @@
 import type { Temporal } from '@js-temporal/polyfill'
 
+type ViewUnit = 'month' | 'week' | 'day' | 'workWeek' | 'decade' | 'year'
+
+interface StartOfParams {
+  date: Temporal.ZonedDateTime
+  unit: ViewUnit
+  firstDayOfWeek?: number
+}
+
 /**
  * Helper function to get the start of a given temporal unit.
- * @param date {Temporal.ZonedDateTime} - The date for which the start of the unit is needed.
- * @param unit {Unit} - The unit for which to find the start ('day', 'week', 'month', 'year', 'workWeek', 'decade').
+ * @param {StartOfParams} params - The parameters for the startOf function.
  * @returns {Temporal.ZonedDateTime} The start of the given unit.
  */
-export const startOf = (date: Temporal.ZonedDateTime, unit: 'day' | 'week' | 'month' | 'year' | 'workWeek' | 'decade'): Temporal.ZonedDateTime => {
+export function startOf({
+  date,
+  unit,
+  firstDayOfWeek = 1
+}: StartOfParams): Temporal.ZonedDateTime {
+  let startDate: Temporal.ZonedDateTime
+
   switch (unit) {
     case 'day':
-      return date.with({
+      startDate = date.with({
         hour: 0,
         minute: 0,
         second: 0,
         millisecond: 0,
-      });
+        microsecond: 0,
+        nanosecond: 0
+      })
+      break
     case 'week': {
-      const startOfWeek = date.subtract({ days: date.dayOfWeek - 1 }).with({
+      const daysToSubtract = (date.dayOfWeek - firstDayOfWeek + 7) % 7
+      startDate = date.subtract({ days: daysToSubtract }).with({
         hour: 0,
         minute: 0,
         second: 0,
         millisecond: 0,
-      });
-      return startOfWeek;
+        microsecond: 0,
+        nanosecond: 0
+      })
+      break
     }
-    case 'month': {
-      const startOfMonth = date.with({ day: 1 }).with({
+    case 'month':
+      startDate = date.with({
+        day: 1,
         hour: 0,
         minute: 0,
         second: 0,
         millisecond: 0,
-      });
-      return startOfMonth;
-    }
-    case 'year': {
-      const startOfYear = date.with({ month: 1, day: 1 }).with({
+        microsecond: 0,
+        nanosecond: 0
+      })
+      break
+    case 'year':
+      startDate = date.with({
+        month: 1,
+        day: 1,
         hour: 0,
         minute: 0,
         second: 0,
         millisecond: 0,
-      });
-      return startOfYear;
-    }
+        microsecond: 0,
+        nanosecond: 0
+      })
+      break
     case 'workWeek': {
-      const dayOfWeek = date.dayOfWeek;
-      const startOfWorkWeek = dayOfWeek === 1 ? date : date.subtract({ days: dayOfWeek - 1 });
-      return startOfWorkWeek.with({
+      const daysToSubtract = (date.dayOfWeek - 1 + 7) % 7
+      startDate = date.subtract({ days: daysToSubtract }).with({
         hour: 0,
         minute: 0,
         second: 0,
         millisecond: 0,
-      });
+        microsecond: 0,
+        nanosecond: 0
+      })
+      break
     }
-    case 'decade': {
-      const startOfDecade = date.with({ year: date.year - (date.year % 10), month: 1, day: 1 }).with({
+    case 'decade':
+      startDate = date.with({
+        year: date.year - (date.year % 10),
+        month: 1,
+        day: 1,
         hour: 0,
         minute: 0,
         second: 0,
         millisecond: 0,
-      });
-      return startOfDecade;
-    }
+        microsecond: 0,
+        nanosecond: 0
+      })
+      break
     default:
-      throw new Error(`Unsupported unit: ${unit}`);
+      throw new Error(`Unsupported unit: ${unit}`)
   }
+
+  return startDate
 }

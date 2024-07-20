@@ -131,10 +131,10 @@ describe('CalendarCore', () => {
             start:
               Temporal.PlainDateTime.from('2024-06-12T11:00').toZonedDateTime(
                 mockTimeZone,
-              ),
+              ).toString(),
             end: Temporal.PlainDateTime.from(
               '2024-06-12T13:00',
-            ).toZonedDateTime(mockTimeZone),
+            ).toZonedDateTime(mockTimeZone).toString(),
           },
         ],
       })
@@ -147,10 +147,10 @@ describe('CalendarCore', () => {
             start:
               Temporal.PlainDateTime.from('2024-06-12T11:00').toZonedDateTime(
                 mockTimeZone,
-              ),
+              ).toString(),
             end: Temporal.PlainDateTime.from(
               '2024-06-12T12:00',
-            ).toZonedDateTime(mockTimeZone),
+            ).toZonedDateTime(mockTimeZone).toString(),
           },
         ],
       })
