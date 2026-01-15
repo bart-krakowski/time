@@ -11,6 +11,9 @@ import { generateDateRange } from '../calendar/generateDateRange'
 import { getDateDefaults } from '../utils/dateDefaults'
 import type { CalendarStore, DateRange } from '../calendar/types'
 import type { ParsedDateRange } from '../utils/dateRange'
+import { buildDateFormatter } from '../formatter/buildDateFormatter'
+import { buildDateTimeFormatter } from '../formatter/buildDateTimeFormatter'
+import { buildTimeFormatter } from '../formatter/buildTimeFormatter'
 
 export type DateInput = string | number | Date | Temporal.PlainDate
 
@@ -27,6 +30,16 @@ function toTemporalPlainDateString(date: DateInput): string {
   return date
 }
 
+function toDate(date: DateInput): Date {
+  if (date instanceof Date) {
+    return date
+  }
+  if (date instanceof Temporal.PlainDate) {
+    return new Date(date.year, date.month - 1, date.day)
+  }
+  return new Date(date)
+}
+
 /**
  * Base options interface for date-related core classes.
  */
@@ -41,41 +54,30 @@ export interface DateCoreOptions {
   calendar?: Temporal.CalendarLike
   /** Optional range of dates to be used. */
   range?: DateRange
+  /** Optional date formatter. */
+  dateFormatter?: Intl.DateTimeFormat
+  /** Optional time formatter. */
+  timeFormatter?: Intl.DateTimeFormat
+  /** Optional date time formatter. */
+  dateTimeFormatter?: Intl.DateTimeFormat
 }
 
-/**
- * Parsed options interface with all required fields and parsed range.
- */
 export interface ParsedDateCoreOptions
-  extends Omit<Required<DateCoreOptions>, 'range'> {
+  extends Omit<
+    Required<DateCoreOptions>,
+    'range' | 'dateFormatter' | 'timeFormatter' | 'dateTimeFormatter'
+  > {
   range: ParsedDateRange
 }
 
-/**
- * Base actions interface for date-related core classes.
- */
-export interface DateCoreActions {
-  /** Navigates to the previous period according to the current view mode. */
-  goToPreviousPeriod: () => void
-  /** Navigates to the next period according to the current view mode. */
-  goToNextPeriod: () => void
-  /** Resets the view to the current period based on today's date. */
-  goToCurrentPeriod: () => void
-  /** Navigates to a specific date. */
-  goToSpecificPeriod: (date: DateInput) => void
-  /** Checks if navigation to the previous period is allowed within the range. */
-  canGoPreviousPeriod: () => boolean
-  /** Checks if navigation to the next period is allowed within the range. */
-  canGoNextPeriod: () => boolean
-  /** Changes the current view mode. */
-  changeViewMode: (newViewMode: CalendarStore['viewMode']) => void
-  /** Retrieves the names of the days of the week, based on the current locale. */
-  getDaysNames: (weekday?: 'long' | 'short') => string[]
-}
-
-export abstract class DateCore implements DateCoreActions {
+export abstract class DateCore {
   store: Store<CalendarStore>
   options: ParsedDateCoreOptions
+  formatters: {
+    date: Intl.DateTimeFormat
+    time: Intl.DateTimeFormat
+    dateTime: Intl.DateTimeFormat
+  }
 
   constructor(options: DateCoreOptions) {
     const defaults = getDateDefaults()
@@ -85,11 +87,27 @@ export abstract class DateCore implements DateCoreActions {
     })
 
     this.options = {
-      locale: options.locale ?? defaults.locale,
-      timeZone: options.timeZone ?? defaults.timeZone,
-      calendar: options.calendar ?? defaults.calendar,
-      viewMode: options.viewMode,
+      ...defaults,
+      ...options,
       range: parsedRange,
+    }
+
+    this.formatters = {
+      date:
+        options.dateFormatter ??
+        buildDateFormatter({
+          locale: this.options.locale,
+        }),
+      time:
+        options.timeFormatter ??
+        buildTimeFormatter({
+          locale: this.options.locale,
+        }),
+      dateTime:
+        options.dateTimeFormatter ??
+        buildDateTimeFormatter({
+          locale: this.options.locale,
+        }),
     }
 
     const now = Temporal.Now.plainDateISO().withCalendar(this.options.calendar)
@@ -103,6 +121,18 @@ export abstract class DateCore implements DateCoreActions {
       activeDate: initialDate,
       viewMode: options.viewMode,
     })
+  }
+
+  formatDate(date: DateInput) {
+    return this.formatters.date.format(toDate(date))
+  }
+
+  formatTime(date: DateInput) {
+    return this.formatters.time.format(toDate(date))
+  }
+
+  formatDateTime(date: DateInput) {
+    return this.formatters.dateTime.format(toDate(date))
   }
 
   protected getFirstDayOfMonth() {

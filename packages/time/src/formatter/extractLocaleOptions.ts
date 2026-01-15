@@ -1,8 +1,8 @@
 import { getDefaultCalendar, getDefaultTimeZone } from '../utils/dateDefaults'
 import type {
-  IDateFormatterOptions,
-  IDateTimeFormatterOptions,
-  ITimeFormatterOptions,
+  DateFormatterOptions,
+  DateTimeFormatterOptions,
+  TimeFormatterOptions,
 } from './shared'
 
 /**
@@ -78,7 +78,7 @@ export function extractLocaleOptions({
   hourCycle,
   timeZone = getDefaultTimeZone(),
   ...formatOptions
-}: IDateFormatterOptions | IDateTimeFormatterOptions | ITimeFormatterOptions) {
+}: DateFormatterOptions | DateTimeFormatterOptions | TimeFormatterOptions) {
   return {
     localeMatcher,
     calendar,
