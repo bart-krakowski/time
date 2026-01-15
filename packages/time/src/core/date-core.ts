@@ -30,7 +30,7 @@ function toTemporalPlainDateString(date: DateInput): string {
 /**
  * Base options interface for date-related core classes.
  */
-export interface BaseDateCoreOptions {
+export interface DateCoreOptions {
   /** The initial view mode configuration. */
   viewMode: CalendarStore['viewMode']
   /** Optional locale for date formatting. Uses a BCP 47 language tag. */
@@ -46,15 +46,15 @@ export interface BaseDateCoreOptions {
 /**
  * Parsed options interface with all required fields and parsed range.
  */
-export interface ParsedBaseDateCoreOptions
-  extends Omit<Required<BaseDateCoreOptions>, 'range'> {
+export interface ParsedDateCoreOptions
+  extends Omit<Required<DateCoreOptions>, 'range'> {
   range: ParsedDateRange
 }
 
 /**
  * Base actions interface for date-related core classes.
  */
-export interface BaseDateActions {
+export interface DateCoreActions {
   /** Navigates to the previous period according to the current view mode. */
   goToPreviousPeriod: () => void
   /** Navigates to the next period according to the current view mode. */
@@ -73,11 +73,11 @@ export interface BaseDateActions {
   getDaysNames: (weekday?: 'long' | 'short') => string[]
 }
 
-export abstract class BaseDateCore implements BaseDateActions {
+export abstract class DateCore implements DateCoreActions {
   store: Store<CalendarStore>
-  options: ParsedBaseDateCoreOptions
+  options: ParsedDateCoreOptions
 
-  constructor(options: BaseDateCoreOptions) {
+  constructor(options: DateCoreOptions) {
     const defaults = getDateDefaults()
     const parsedRange = parseDateRange({
       range: options.range,

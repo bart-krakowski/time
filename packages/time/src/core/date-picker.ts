@@ -1,11 +1,7 @@
 import { Store } from '@tanstack/store'
 import { Temporal } from '@js-temporal/polyfill'
 import { isDateInRange, ParsedDateRange } from '../utils'
-import {
-  BaseDateCore,
-  type BaseDateCoreOptions,
-  type DateInput,
-} from './base-date-core'
+import { DateCore, type DateCoreOptions, type DateInput } from './date-core'
 import type { CalendarStore } from './calendar'
 import { groupDaysBy as baseGroupDaysBy } from '../calendar/groupDaysBy'
 import type { GroupDaysByProps } from '../calendar/groupDaysBy'
@@ -39,10 +35,10 @@ function toTemporalPlainDate(
 }
 
 function toDate(temporalDate: Temporal.PlainDate): Date {
-  return new Date(Date.UTC(temporalDate.year, temporalDate.month - 1, temporalDate.day))
+  return new Date(temporalDate.year, temporalDate.month - 1, temporalDate.day)
 }
 
-export interface DatePickerOptions extends BaseDateCoreOptions {
+export interface DatePickerOptions extends DateCoreOptions {
   /**
    * Selection mode: 'single' for single date, 'multiple' for multiple dates, 'range' for date range.
    */
@@ -60,7 +56,7 @@ export interface DatePickerCoreState extends CalendarStore {
   selectedDates: Map<string, Temporal.PlainDate>
 }
 
-export class DatePickerCore extends BaseDateCore {
+export class DatePickerCore extends DateCore {
   datePickerStore: Store<DatePickerCoreState>
 
   declare options: Required<DatePickerOptions> & {
@@ -218,12 +214,6 @@ export class DatePickerCore extends BaseDateCore {
     }
 
     const temporalDate = toTemporalPlainDate(date, this.options.calendar)
-    const dateKey = temporalDate.toString({ calendarName: 'never' })
-
-    if (this.datePickerStore.state.selectedDates.has(dateKey)) {
-      return false
-    }
-
     const sortedDates = selectedDates.sort((a, b) =>
       Temporal.PlainDate.compare(a, b),
     )

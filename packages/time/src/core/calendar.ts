@@ -2,7 +2,11 @@ import { Temporal } from '@js-temporal/polyfill'
 import { splitMultiDayEvents } from '../calendar/splitMultiDayEvents'
 import { getEventProps } from '../calendar/getEventProps'
 import { groupDaysBy } from '../calendar/groupDaysBy'
-import { BaseDateCore, type BaseDateCoreOptions } from './base-date-core'
+import {
+  DateCore,
+  ParsedDateCoreOptions,
+  type DateCoreOptions,
+} from './base-date-core'
 import type { GroupDaysByProps } from '../calendar/groupDaysBy'
 import type { CalendarStore, Day, Event, Resource } from '../calendar/types'
 
@@ -30,7 +34,7 @@ export interface ViewMode {
 export interface CalendarCoreOptions<
   TResource extends Resource,
   TEvent extends Event<TResource>,
-> extends BaseDateCoreOptions {
+> extends DateCoreOptions {
   /** An optional array of events to be handled by the calendar. */
   events?: TEvent[] | null
   /** Optional resources to be used in the calendar. */
@@ -105,7 +109,7 @@ export interface CalendarApi<
 type ParsedCalendarCoreOptions<
   TResource extends Resource,
   TEvent extends Event<TResource>,
-> = import('./base-date-core').ParsedBaseDateCoreOptions & {
+> = ParsedDateCoreOptions & {
   events: TEvent[] | null
   resources: TResource[] | null
 }
@@ -114,7 +118,7 @@ export class CalendarCore<
     TResource extends Resource,
     TEvent extends Event<TResource>,
   >
-  extends BaseDateCore
+  extends DateCore
   implements CalendarActions<TResource, TEvent>
 {
   declare options: ParsedCalendarCoreOptions<TResource, TEvent>

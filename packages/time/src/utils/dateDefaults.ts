@@ -1,7 +1,7 @@
 import type { Temporal } from '@js-temporal/polyfill'
 import { Locale } from '../formatter/shared'
 
-export interface IDateDefaults {
+export interface DateDefaults {
   calendar: Temporal.CalendarLike
   locale: Intl.UnicodeBCP47LocaleIdentifier
   timeZone: Temporal.TimeZoneLike
@@ -15,9 +15,9 @@ const {
 
 /**
  * getDateDefaults
- * @returns IDateDefaults
+ * @returns DateDefaults
  */
-export function getDateDefaults(): IDateDefaults {
+export function getDateDefaults(): DateDefaults {
   return {
     calendar: defaultCalendar,
     locale: defaultLocale,
