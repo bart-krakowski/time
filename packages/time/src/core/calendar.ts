@@ -6,14 +6,14 @@ import {
   DateCore,
   ParsedDateCoreOptions,
   type DateCoreOptions,
-} from './base-date-core'
+} from './date-core'
 import type { GroupDaysByProps } from '../calendar/groupDaysBy'
 import type { CalendarStore, Day, Event, Resource } from '../calendar/types'
 
 import '@bart-krakowski/get-week-info-polyfill'
 
 export type * from '../calendar/types'
-export * from './base-date-core'
+export * from './date-core'
 
 /**
  * Represents the configuration for the current viewing mode of a calendar,

@@ -178,84 +178,80 @@ export default function App() {
           ))}
         </div>
 
-        {groupedWeeks.map(
-          (week: Array<(typeof days)[0] | null>, weekIndex: number) => (
-            <div
-              key={weekIndex}
-              className="grid gap-px"
-              style={{
-                gridTemplateColumns: `repeat(${daysNames.length}, 1fr)`,
-              }}
-            >
-              {week.map((day: (typeof days)[0] | null) => {
-                if (!day) {
-                  return (
-                    <div
-                      key={`empty-${weekIndex}`}
-                      className="min-h-[100px] p-2 bg-gray-50 border border-gray-200"
-                    />
-                  )
-                }
-
-                const dateStr = day.date.toString()
-                const isToday = day.isToday
-                const isInCurrentPeriod = day.isInCurrentPeriod
-
+        {groupedWeeks.map((week, weekIndex) => (
+          <div
+            key={weekIndex}
+            className="grid gap-px"
+            style={{
+              gridTemplateColumns: `repeat(${daysNames.length}, 1fr)`,
+            }}
+          >
+            {week.map((day: (typeof days)[0] | null) => {
+              if (!day) {
                 return (
                   <div
-                    key={dateStr}
-                    className={`min-h-[100px] p-2 ${
-                      isToday
-                        ? 'bg-blue-50 border-2 border-blue-500'
-                        : isInCurrentPeriod
-                          ? 'bg-white border border-gray-200'
-                          : 'bg-gray-100 border border-gray-200 opacity-50'
-                    }`}
-                  >
-                    <div
-                      className={`text-sm mb-1 ${isToday ? 'font-bold' : 'font-normal'}`}
-                    >
-                      {day.date.day}
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                      {day.events.map((event: Event) => {
-                        const eventProps = getEventProps(event.id)
-                        const hasOverlappingEvents =
-                          (eventProps?.overlappingEvents.length ?? 0) > 0
-                        return (
-                          <div
-                            key={event.id}
-                            className={`text-[11px] px-1.5 py-1 rounded cursor-pointer text-white ${
-                              hasOverlappingEvents
-                                ? 'bg-red-500'
-                                : 'bg-blue-500'
-                            } ${eventProps?.isSplitEvent ? 'opacity-70' : 'opacity-100'}`}
-                            title={event.title}
-                          >
-                            <div className="font-medium">{event.title}</div>
-                            {event.resources && event.resources.length > 0 && (
-                              <div className="mt-0.5 flex flex-wrap gap-0.5">
-                                {event.resources.map((resource) => (
-                                  <span
-                                    key={resource.id}
-                                    className="text-[9px] px-1 py-0.5 rounded bg-white/20 backdrop-blur-sm"
-                                    title={resource.label}
-                                  >
-                                    {resource.label}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
+                    key={`empty-${weekIndex}`}
+                    className="min-h-[100px] p-2 bg-gray-50 border border-gray-200"
+                  />
                 )
-              })}
-            </div>
-          ),
-        )}
+              }
+
+              const dateStr = day.date.toString()
+              const isToday = day.isToday
+              const isInCurrentPeriod = day.isInCurrentPeriod
+
+              return (
+                <div
+                  key={dateStr}
+                  className={`min-h-[100px] p-2 ${
+                    isToday
+                      ? 'bg-blue-50 border-2 border-blue-500'
+                      : isInCurrentPeriod
+                        ? 'bg-white border border-gray-200'
+                        : 'bg-gray-100 border border-gray-200 opacity-50'
+                  }`}
+                >
+                  <div
+                    className={`text-sm mb-1 ${isToday ? 'font-bold' : 'font-normal'}`}
+                  >
+                    {day.date.day}
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    {day.events.map((event: Event) => {
+                      const eventProps = getEventProps(event.id)
+                      const hasOverlappingEvents =
+                        (eventProps?.overlappingEvents.length ?? 0) > 0
+                      return (
+                        <div
+                          key={event.id}
+                          className={`text-[11px] px-1.5 py-1 rounded cursor-pointer text-white ${
+                            hasOverlappingEvents ? 'bg-red-500' : 'bg-blue-500'
+                          } ${eventProps?.isSplitEvent ? 'opacity-70' : 'opacity-100'}`}
+                          title={event.title}
+                        >
+                          <div className="font-medium">{event.title}</div>
+                          {event.resources && event.resources.length > 0 && (
+                            <div className="mt-0.5 flex flex-wrap gap-0.5">
+                              {event.resources.map((resource) => (
+                                <span
+                                  key={resource.id}
+                                  className="text-[9px] px-1 py-0.5 rounded bg-white/20 backdrop-blur-sm"
+                                  title={resource.label}
+                                >
+                                  {resource.label}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        ))}
       </div>
 
       {isPending && (
