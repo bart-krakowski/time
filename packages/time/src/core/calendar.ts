@@ -2,13 +2,21 @@ import { Temporal } from '@js-temporal/polyfill'
 import { splitMultiDayEvents } from '../calendar/splitMultiDayEvents'
 import { getEventProps } from '../calendar/getEventProps'
 import { groupDaysBy } from '../calendar/groupDaysBy'
+import { getTimeSlots } from '../calendar/getTimeSlots'
 import {
   DateCore,
   ParsedDateCoreOptions,
   type DateCoreOptions,
 } from './date-core'
 import type { GroupDaysByProps } from '../calendar/groupDaysBy'
-import type { CalendarStore, Day, Event, Resource } from '../calendar/types'
+import type {
+  CalendarStore,
+  Day,
+  Event,
+  Resource,
+  TimeSlot,
+  TimeSlotOptions,
+} from '../calendar/types'
 
 import '@bart-krakowski/get-week-info-polyfill'
 
@@ -75,6 +83,10 @@ interface CalendarActions<
   groupDaysBy: (
     props: Omit<GroupDaysByProps<TResource, TEvent>, 'weekStartsOn' | 'locale'>,
   ) => (Day<TResource, TEvent> | null)[][]
+  /** Retrieves time slots for day view with configurable intervals. */
+  getTimeSlots: (options?: TimeSlotOptions) => TimeSlot[]
+  /** Retrieves events for a specific date. */
+  getEventsByDate: (date: string) => TEvent[]
 }
 
 interface CalendarState<
@@ -208,5 +220,18 @@ export class CalendarCore<
       weekStartsOn: this.getWeekStartsOn(),
       locale: this.options.locale,
     } as GroupDaysByProps<TResource, TEvent>)
+  }
+
+  getTimeSlots(options?: TimeSlotOptions): TimeSlot[] {
+    return getTimeSlots(this.options.locale, options)
+  }
+
+  getEventsByDate(date: string): TEvent[] {
+    // Normalize the date string to YYYY-MM-DD format
+    const targetDate = Temporal.PlainDate.from(date).toString({
+      calendarName: 'never',
+    })
+    const eventMap = this.getEventMap()
+    return eventMap.get(targetDate) ?? []
   }
 }

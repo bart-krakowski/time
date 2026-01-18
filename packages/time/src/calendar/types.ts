@@ -39,3 +39,18 @@ export interface DateRange {
   start: PossibleDate | null
   end: PossibleDate | null
 }
+
+export interface TimeSlot {
+  hour: number
+  minute: number
+  label: string
+}
+
+export interface TimeSlotOptions {
+  /** Start hour (0-23). Default: 0 */
+  startHour?: number
+  /** End hour (0-24). Default: 24 */
+  endHour?: number
+  /** Interval in minutes. Default: 60 */
+  interval?: number
+}

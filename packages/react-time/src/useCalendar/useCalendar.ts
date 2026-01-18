@@ -4,6 +4,7 @@ import { CalendarCore } from '@tanstack/time'
 import type {
   CalendarApi,
   CalendarCoreOptions,
+  CalendarStore,
   Event,
   Resource,
 } from '@tanstack/time'
