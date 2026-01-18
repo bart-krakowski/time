@@ -1,7 +1,7 @@
 import './setupTemporal'
 import { Temporal } from '@js-temporal/polyfill'
-import { getDefaultCalendar, getDefaultLocale, getDefaultTimeZone, normalizeLocale } from './dateDefaults'
-import { toZonedDateTime, type ToZonedDateTimeOptions } from './toZonedDateTime'
+import { getDefaultCalendar, getDefaultLocale, getDefaultTimeZone, normalizeLocale } from '../dateDefaults'
+import { toZonedDateTime, type ToZonedDateTimeOptions } from '../toZonedDateTime'
 
 export type StartOfUnit =
   | 'year'

@@ -1,12 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import '../src/polyfills/getWeekInfo'
 import { Temporal } from '@js-temporal/polyfill'
-import { startOf } from '../src/date/startOf'
-
-// Ensure Temporal is available globally
-if (!('Temporal' in globalThis)) {
-  ;(globalThis as Record<string, unknown>).Temporal = Temporal
-}
+import { startOf } from '../startOf'
 
 describe('startOf', () => {
   describe('input types', () => {
