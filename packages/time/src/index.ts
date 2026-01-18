@@ -1,5 +1,5 @@
 /**
  *  TanStack Time
  */
-export * from './utils/parse'
-export * from './utils/startOf'
+export * from './date/parse'
+export * from './date/startOf'

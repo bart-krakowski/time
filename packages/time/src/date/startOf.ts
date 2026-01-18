@@ -2,11 +2,6 @@ import './setupTemporal'
 import { Temporal } from '@js-temporal/polyfill'
 import { getDefaultCalendar, getDefaultLocale, getDefaultTimeZone, normalizeLocale } from './dateDefaults'
 import { toZonedDateTime, type ToZonedDateTimeOptions } from './toZonedDateTime'
-import {
-  fromZonedDateTime,
-  type ReturnFormat,
-  type FromZonedDateTimeResult,
-} from './fromZonedDateTime'
 
 export type StartOfUnit =
   | 'year'
@@ -18,28 +13,33 @@ export type StartOfUnit =
   | 'second'
   | 'millisecond'
 
-export interface StartOfOptions extends ToZonedDateTimeOptions {
-  returnFormat?: ReturnFormat
-}
-
 export interface StartOfParams {
   date: string | number | Date | Temporal.ZonedDateTime
   unit: StartOfUnit
-  returnFormat?: ReturnFormat
   options?: ToZonedDateTimeOptions
+}
+
+export interface StartOfResult {
+  value: Temporal.ZonedDateTime
+  timeZone: string
+  calendar: string
+  asDate(): Date
+  asEpoch(): number
+  asString(): string
+  asLongString(): string
+  asZonedDateTime(): Temporal.ZonedDateTime
 }
 
 /**
  * Returns the start of a given unit of time for a date
- * @param params - Parameters object containing date, unit, returnFormat, and options
- * @returns Object containing the value in the requested format and options (timeZone, calendar)
+ * @param params - Parameters object containing date, unit, and options
+ * @returns Object with conversion methods (asDate, asEpoch, asString, etc.) and properties (value, timeZone, calendar)
  */
-export function startOf<T extends ReturnFormat = 'standard'>({
+export function startOf({
   date,
   unit,
-  returnFormat = 'standard' as T,
   options = {},
-}: StartOfParams): FromZonedDateTimeResult<T> {
+}: StartOfParams): StartOfResult {
   const mergedOptions: ToZonedDateTimeOptions = {
     timeZone: options.timeZone ?? getDefaultTimeZone(),
     calendar: options.calendar ?? getDefaultCalendar(),
@@ -94,5 +94,28 @@ export function startOf<T extends ReturnFormat = 'standard'>({
       throw new Error(`Invalid unit: "${unit}". Must be one of: year, month, week, day, hour, minute, second, millisecond`)
   }
 
-  return fromZonedDateTime(zdt, returnFormat)
+  const timeZone = zdt.timeZoneId
+  const calendar = zdt.calendarId
+
+  // Return a plain object with methods and properties
+  return {
+    value: zdt,
+    timeZone,
+    calendar,
+    asDate() {
+      return new Date(zdt.epochMilliseconds)
+    },
+    asEpoch() {
+      return zdt.epochMilliseconds
+    },
+    asString() {
+      return zdt.toInstant().toString()
+    },
+    asLongString() {
+      return `${zdt.toInstant().toString()}[${timeZone}][u-ca=${calendar}]`
+    },
+    asZonedDateTime() {
+      return zdt
+    },
+  }
 }

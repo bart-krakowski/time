@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { parse } from '../src/utils/parse'
+import { parse } from '../parse'
 
 const dateTimeFormat = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
